@@ -1,0 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' as service;
+import 'package:flutter_base/src/core/extensions/text_style_extensions.dart';
+import 'package:flutter_base/src/core/extensions/context_extension.dart';
+import 'package:flutter_base/src/core/extensions/padding_extension.dart';
+import '../../../config/res/app_sizes.dart';
+import '../../../config/res/color_manager.dart';
+import '../../../config/res/constants_manager.dart';
+import '../../../core/navigation/navigator.dart';
+import '../../../core/widgets/text_fields/default_text_field.dart';
+part '../scaffolds/default_scaffold.dart';
+part '../fileds/custom_text_field.dart';
+part '../scaffolds/home_scaffold.dart';
