@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import "dart:developer";
+import 'dart:developer' show log;
 import 'dart:io';
-
-import "package:firebase_core/firebase_core.dart";
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import '../../config/res/config_imports.dart';
 
 part 'navigation_types.dart';
 part 'notification_routes.dart';
@@ -26,7 +26,7 @@ class NotificationService {
     importance: Importance.high,
   );
 
-  static String deviceToken = "";
+  static String deviceToken = '';
 
   Future<bool> _requestPermissions() async {
     bool? result;
@@ -61,14 +61,14 @@ class NotificationService {
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails(
             presentAlert: true, presentBadge: true, presentSound: true);
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       _channel.id,
       _channel.name,
       channelDescription: ConstantManager.appName,
       enableVibration: true,
       playSound: true,
-      icon: "@mipmap/ic_launcher",
+      icon: '@mipmap/ic_launcher',
       importance: Importance.high,
       priority: Priority.max,
     );
@@ -83,7 +83,7 @@ class NotificationService {
 
   Future<void> _initLocalNotification() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings("@mipmap/ic_launcher");
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
@@ -101,13 +101,13 @@ class NotificationService {
         onDidReceiveNotificationResponse: (NotificationResponse? payload) {
       if (payload?.payload != null) {
         _handleNotificationsTap(
-            RemoteMessage.fromMap(json.decode(payload?.payload ?? "")));
+            RemoteMessage.fromMap(json.decode(payload?.payload ?? '')));
       }
     });
   }
 
   Future<void> _registerNotification() async {
-    FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
     await firebaseMessaging.requestPermission(
       alert: true,
       badge: true,
@@ -122,8 +122,8 @@ class NotificationService {
 
   Future<void> _saveFcmToken() async {
     final token = await FirebaseMessaging.instance.getToken();
-    deviceToken = token ?? "";
-    log("Firebase Fcm token : ${token.toString()}");
+    deviceToken = token ?? '';
+    log('Firebase Fcm token : ${token.toString()}');
   }
 
   Future<void> _setForegroundNotificationOptions() async {

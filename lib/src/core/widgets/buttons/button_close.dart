@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-
-import '../../../config/res/color_manager.dart';
+import '../../../config/res/config_imports.dart';
 import '../../navigation/navigator.dart';
 
 class ButtonClose extends StatelessWidget {

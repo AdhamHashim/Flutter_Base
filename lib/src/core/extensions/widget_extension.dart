@@ -6,7 +6,7 @@ import '../widgets/icon_widget.dart';
 
 extension TextWithIcon on Text {
   Widget withIcon(
-    dynamic icon, {
+    IconData icon, {
     double spacing = 4.0,
     bool iconAfterText = false,
     MainAxisSize mainAxisSize = MainAxisSize.min,

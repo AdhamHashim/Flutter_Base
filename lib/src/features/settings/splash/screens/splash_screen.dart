@@ -20,7 +20,7 @@ class _SplashView extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Container(
+          SizedBox(
             width: context.width,
             height: context.height,
             child: AppAssets.lottie.loading.loading3.lottie(

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of 'config_imports.dart';
 
 class AppColors {
   static const Color main = Color(0xFF1B8354);
@@ -18,8 +18,6 @@ class AppColors {
   static const Color scaffoldBackground = Color(0xffF9FAFB);
   static const Color yellow = Color(0xffFDB022);
 
-
-  static const Color splashColor = Color(0xFF28924F99);
   static const Color grey = Color(0xFF5B5B5B);
   static const Color shadow = Color(0xFF5B5B5B);
 }

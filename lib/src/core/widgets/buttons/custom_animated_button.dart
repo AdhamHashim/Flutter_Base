@@ -1,11 +1,9 @@
 import 'dart:ui' show lerpDouble;
-
 import 'package:flutter/material.dart';
 
-import '../../../config/res/color_manager.dart';
+import '../../../config/res/config_imports.dart';
 
-// ignore: constant_identifier_names
-enum ButtonState { Busy, Idle }
+enum ButtonState { busy, idle }
 
 class CustomButtonAnimation extends StatefulWidget {
   final double height;
@@ -68,7 +66,7 @@ class CustomButtonState extends State<CustomButtonAnimation>
 
   late Animation<double> _animation;
   late AnimationController _controller;
-  ButtonState btn = ButtonState.Idle;
+  ButtonState btn = ButtonState.idle;
 
   // GlobalKey _buttonKey = GlobalKey();
   double _minWidth = 0;
@@ -88,7 +86,7 @@ class CustomButtonState extends State<CustomButtonAnimation>
     _animation.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {
         setState(() {
-          btn = ButtonState.Idle;
+          btn = ButtonState.idle;
         });
       }
     });
@@ -105,7 +103,7 @@ class CustomButtonState extends State<CustomButtonAnimation>
 
   void animateForward() {
     setState(() {
-      btn = ButtonState.Busy;
+      btn = ButtonState.busy;
     });
     _controller.forward();
   }
@@ -114,7 +112,7 @@ class CustomButtonState extends State<CustomButtonAnimation>
     _controller.reverse();
   }
 
-  lerpWidth(a, b, t) {
+  dynamic lerpWidth(double a, double b, double t) {
     if (a == 0.0 || b == 0.0) {
       return null;
     } else {
@@ -176,12 +174,12 @@ class CustomButtonState extends State<CustomButtonAnimation>
             ),
             clipBehavior: widget.clipBehavior,
             focusNode: widget.focusNode,
-            onPressed: btn == ButtonState.Idle
+            onPressed: btn == ButtonState.idle
                 ? () {
                     widget.onTap();
                   }
                 : null,
-            child: btn == ButtonState.Idle ? widget.child : widget.loader),
+            child: btn == ButtonState.idle ? widget.child : widget.loader),
       ),
     );
   }

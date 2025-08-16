@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/core/extensions/context_extension.dart';
-import 'package:flutter_base/src/core/extensions/text_style_extensions.dart';
-import '../../config/res/app_sizes.dart';
+
 import '../../config/res/assets.gen.dart';
+import '../../config/res/config_imports.dart';
+import '../extensions/context_extension.dart';
+import '../extensions/text_style_extensions.dart';
 
 class ErrorView extends StatelessWidget {
   final String error;
@@ -16,7 +17,7 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width ?? context.width,
       height: height ?? context.height,
       child: Column(

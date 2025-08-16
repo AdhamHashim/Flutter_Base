@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import '../../core/navigation/navigator.dart';
 
 enum Languages {
-  english(Locale('en'), 'English', "en"),
-  arabic(Locale('ar'), 'Arabic', "ar");
+  english(Locale('en'), 'English', 'en'),
+  arabic(Locale('ar'), 'Arabic', 'ar');
 
   final String title;
   final Locale locale;
@@ -23,11 +23,11 @@ enum Languages {
   static List<String> get titles =>
       Languages.values.map((e) => e.title).toList();
 
-  static setLocale(Languages lang) {
+  static void setLocale(Languages lang) {
     Go.navigatorKey.currentContext!.setLocale(lang.locale);
   }
 
-  static setLocaleWithContext(BuildContext context, Languages lang) {
+  static void setLocaleWithContext(BuildContext context, Languages lang) {
     context.setLocale(lang.locale);
   }
 

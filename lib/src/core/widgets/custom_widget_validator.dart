@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../config/res/color_manager.dart';
+import '../../config/res/config_imports.dart';
 
 class CustomWidgetValidator<T> extends StatelessWidget {
   final T? initialValue;

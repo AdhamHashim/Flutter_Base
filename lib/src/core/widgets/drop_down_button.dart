@@ -1,61 +1,75 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/language/locale_keys.g.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/config/res/color_manager.dart';
-import 'package:flutter_base/src/core/extensions/context_extension.dart';
-import 'package:flutter_base/src/core/extensions/padding_extension.dart';
-import 'package:flutter_base/src/core/extensions/sized_box_helper.dart';
-import 'package:flutter_base/src/core/extensions/text_style_extensions.dart';
-import 'package:flutter_base/src/core/widgets/image_widgets/cached_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../config/language/locale_keys.g.dart';
+import '../../config/res/config_imports.dart';
+import '../extensions/context_extension.dart';
+import '../extensions/padding_extension.dart';
+import '../extensions/sized_box_helper.dart';
+import '../extensions/text_style_extensions.dart';
 import '../helpers/validators.dart';
+import 'image_widgets/cached_image.dart';
 
-enum DropDownType { menu, bottomsheet }
+/// Dropdown display types
+enum CustomDropdownType { menu, bottomSheet }
 
-mixin DefaultDropDownHelpers<T> {
-  String Function(T?) get itemAsString;
-  DropDownType get dropDownType;
-  String Function(T)? get itemImage;
+/// Common reusable dropdown helpers (UI builders, decoration, popup config).
+mixin CustomDropdownHelpers<T> {
+  /// Converts an item into a string for display
+  String Function(T?) get itemToString;
+
+  /// Defines dropdown display type
+  CustomDropdownType get dropdownType;
+
+  /// (Optional) Gets the item’s image URL
+  String Function(T)? get itemImageUrl;
+
+  /// (Optional) Custom border radius
   BorderRadius? get borderRadius;
-  Widget buildItem(BuildContext context, T item, bool isSelected) {
-    return ListTile(
-      title: Text(
-        itemAsString(item),
-        style: TextStyle(
-          color: isSelected ? AppColors.primary : AppColors.black,
-        ),
-      ),
-      leading: dropDownType == DropDownType.menu
-          ? isSelected
-              ? const Icon(Icons.check, color: AppColors.primary)
-              : const SizedBox.shrink()
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isSelected)
-                  const Icon(Icons.check, color: AppColors.primary)
-                else
-                  25.szW,
-                AppSize.sH10.szW,
-                if (itemImage != null)
-                  CachedImage(
-                    url: itemImage!(item),
-                    height: 20.h,
-                    width: 30.w,
-                    borderRadius: BorderRadius.circular(3),
-                    fit: BoxFit.fill,
-                  ).paddingSymmetric(horizontal: 2.w),
-              ],
-            ),
-    );
-  }
 
+  /// Builds how each dropdown item is displayed
+  Widget Function(BuildContext, T, bool, bool) get buildDropdownItem =>
+      (BuildContext context, T item, bool isSelected, bool isFocused) {
+        return ListTile(
+          title: Text(
+            itemToString(item),
+            style: TextStyle(
+              color: isSelected ? AppColors.primary : AppColors.black,
+            ),
+          ),
+          leading: dropdownType == CustomDropdownType.menu
+              ? (isSelected
+                  ? const Icon(Icons.check, color: AppColors.primary)
+                  : const SizedBox.shrink())
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isSelected)
+                      const Icon(Icons.check, color: AppColors.primary)
+                    else
+                      25.szW,
+                    AppSize.sH10.szW,
+                    if (itemImageUrl != null)
+                      CachedImage(
+                        url: itemImageUrl!(item),
+                        height: 20.h,
+                        width: 30.w,
+                        borderRadius: BorderRadius.circular(3),
+                        fit: BoxFit.fill,
+                      ).paddingSymmetric(horizontal: 2.w),
+                  ],
+                ),
+        );
+      };
+
+  /// Loading indicator for async dropdown
   Widget buildLoadingIndicator() => const Center(
         child: CupertinoActivityIndicator(),
       );
 
+  /// Builds popup configuration based on dropdown type
   PopupProps<T> buildPopupProps() {
     final constraints = BoxConstraints(
       maxHeight: 300.h,
@@ -66,42 +80,47 @@ mixin DefaultDropDownHelpers<T> {
     final searchFieldDecoration = InputDecoration(
       hintText: LocaleKeys.search,
       prefixIcon: const Icon(Icons.search),
-      enabledBorder: dropDownType == DropDownType.bottomsheet
+      enabledBorder: dropdownType == CustomDropdownType.bottomSheet
           ? const OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.primary),
             )
           : null,
     );
 
-    if (dropDownType == DropDownType.menu) {
-      return PopupProps.menu(
-        showSearchBox: true,
-        showSelectedItems: true,
-        constraints: constraints,
-        itemBuilder: buildItem,
-        loadingBuilder: (_, __) => buildLoadingIndicator(),
-        searchFieldProps: TextFieldProps(decoration: searchFieldDecoration),
-        menuProps: const MenuProps(backgroundColor: AppColors.white),
-      );
-    } else {
-      return PopupProps.bottomSheet(
-        showSearchBox: true,
-        showSelectedItems: true,
-        constraints: constraints,
-        itemBuilder: buildItem,
-        loadingBuilder: (_, __) => buildLoadingIndicator(),
-        searchFieldProps: TextFieldProps(decoration: searchFieldDecoration),
-        bottomSheetProps:
-            const BottomSheetProps(backgroundColor: AppColors.white),
-      );
+    switch (dropdownType) {
+      case CustomDropdownType.menu:
+        return PopupProps.menu(
+          showSearchBox: true,
+          showSelectedItems: true,
+          constraints: constraints,
+          itemBuilder: buildDropdownItem,
+          loadingBuilder: (_, __) => buildLoadingIndicator(),
+          searchFieldProps: TextFieldProps(decoration: searchFieldDecoration),
+          menuProps: const MenuProps(backgroundColor: AppColors.white),
+        );
+
+      case CustomDropdownType.bottomSheet:
+        return PopupProps.bottomSheet(
+          showSearchBox: true,
+          showSelectedItems: true,
+          constraints: constraints,
+          itemBuilder: buildDropdownItem,
+          loadingBuilder: (_, __) => buildLoadingIndicator(),
+          searchFieldProps: TextFieldProps(decoration: searchFieldDecoration),
+          bottomSheetProps: const BottomSheetProps(
+            backgroundColor: AppColors.white,
+          ),
+        );
     }
   }
 
+  /// Input decoration for the main dropdown field
   InputDecoration buildInputDecoration({
     required Widget? prefixIcon,
     required String? hint,
   }) {
     final radius = borderRadius ?? BorderRadius.circular(AppCircular.r20);
+
     return InputDecoration(
       prefixIcon: prefixIcon,
       contentPadding: EdgeInsets.symmetric(
@@ -126,14 +145,15 @@ mixin DefaultDropDownHelpers<T> {
   }
 }
 
-class DefaultDropDownField<T> extends StatelessWidget
-    with DefaultDropDownHelpers<T> {
+/// Reusable custom dropdown field
+class CustomDropdownField<T> extends StatelessWidget
+    with CustomDropdownHelpers<T> {
   @override
-  final String Function(T?) itemAsString;
+  final String Function(T?) itemToString;
   @override
-  final DropDownType dropDownType;
+  final CustomDropdownType dropdownType;
   @override
-  final String Function(T)? itemImage;
+  final String Function(T)? itemImageUrl;
   @override
   final BorderRadius? borderRadius;
   final String? Function(T?)? validator;
@@ -141,14 +161,14 @@ class DefaultDropDownField<T> extends StatelessWidget
   final T? selectedItem;
   final String? hint;
   final String? label;
-  final Future<List<T>> Function(String)? asyncItems;
+  final Future<List<T>> Function(String, LoadProps?)? asyncItems;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
-  final Widget Function(BuildContext, T?)? dropdownBuilder;
+  final Widget Function(BuildContext, T?)? customSelectedItemBuilder;
 
-  const DefaultDropDownField({
+  const CustomDropdownField({
     super.key,
-    required this.itemAsString,
+    required this.itemToString,
     this.asyncItems,
     this.validator,
     this.onChanged,
@@ -156,9 +176,9 @@ class DefaultDropDownField<T> extends StatelessWidget
     this.selectedItem,
     this.label,
     this.prefixIcon,
-    this.dropdownBuilder,
-    this.dropDownType = DropDownType.menu,
-    this.itemImage,
+    this.customSelectedItemBuilder,
+    this.dropdownType = CustomDropdownType.menu,
+    this.itemImageUrl,
     this.borderRadius,
     this.suffixIcon,
   });
@@ -183,30 +203,31 @@ class DefaultDropDownField<T> extends StatelessWidget
             validator: validator ?? Validators.validateDropDown,
             onChanged: onChanged,
             selectedItem: selectedItem,
-            clearButtonProps: const ClearButtonProps(
-              color: Colors.black,
-              isVisible: false,
-              padding: EdgeInsets.zero,
-              alignment: Alignment.centerLeft,
-            ),
-            dropdownDecoratorProps: DropDownDecoratorProps(
+            decoratorProps: DropDownDecoratorProps(
               baseStyle: const TextStyle(color: Colors.black),
-              dropdownSearchDecoration: buildInputDecoration(
+              decoration: buildInputDecoration(
                 prefixIcon: prefixIcon,
                 hint: hint,
               ),
             ),
-            dropdownBuilder: dropdownBuilder,
-            compareFn: (item, selectedItem) => item == selectedItem,
-            dropdownButtonProps: DropdownButtonProps(
-              padding: EdgeInsets.zero,
-              icon: suffixIcon ?? const Icon(Icons.arrow_drop_down),
-              visualDensity: const VisualDensity(horizontal: 0, vertical: 0),
+            items: asyncItems,
+            suffixProps: DropdownSuffixProps(
+              clearButtonProps: const ClearButtonProps(
+                isVisible: false,
+                icon: Icon(Icons.clear, size: 18, color: Colors.black),
+                alignment: Alignment.centerLeft,
+              ),
+              dropdownButtonProps: DropdownButtonProps(
+                padding: EdgeInsets.zero,
+                iconOpened: suffixIcon ?? const Icon(Icons.arrow_drop_down),
+                visualDensity: const VisualDensity(horizontal: 0, vertical: 0),
+              ),
             ),
+            dropdownBuilder: customSelectedItemBuilder,
+            compareFn: (item, selected) => item == selected,
             autoValidateMode: AutovalidateMode.onUserInteraction,
-            itemAsString: itemAsString,
+            itemAsString: itemToString,
             popupProps: buildPopupProps(),
-            asyncItems: asyncItems,
           ),
         ),
       ],

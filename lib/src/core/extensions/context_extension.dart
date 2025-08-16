@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/language/languages.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
+
+import '../../config/language/languages.dart';
+import '../../config/res/config_imports.dart';
 
 extension ContextExtension on BuildContext {
   void hideKeyboard() {

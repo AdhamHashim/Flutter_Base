@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/core/helpers/loading_manager.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import '../../config/res/color_manager.dart';
+import '../../config/res/config_imports.dart';
+import '../helpers/loading_manager.dart';
 
 class CustomLoading {
-  static showLoadingView() {
+  static Center showLoadingView() {
     return Center(
       child: SpinKitCircle(
         color: AppColors.main,
@@ -15,11 +14,7 @@ class CustomLoading {
     );
   }
 
-  static showFullScreenLoading() {
-    FullScreenLoadingManager.show();
-  }
+  static void showFullScreenLoading() => FullScreenLoadingManager.show();
 
-  static hideFullScreenLoading() {
-    return FullScreenLoadingManager.hide();
-  }
+  static void hideFullScreenLoading() => FullScreenLoadingManager.hide();
 }

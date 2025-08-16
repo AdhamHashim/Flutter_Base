@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
-import 'package:flutter_base/src/core/extensions/text_style_extensions.dart';
 
-import '../../../config/res/color_manager.dart';
+import '../../../config/res/config_imports.dart';
+import '../../extensions/text_style_extensions.dart';
+
 
 class DefaultTextField extends StatefulWidget {
   final String? title;
@@ -89,13 +88,13 @@ class _DefaultTextFieldState extends State<DefaultTextField> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLabel = widget.label != null;
+    final bool isLabel = widget.label != null;
     return TextFormField(
       controller: widget.controller,
       onChanged: widget.onChanged,
       inputFormatters: widget.inputFormatters,
       obscureText: widget.isPassword == true ? _isSecure : widget.secure,
-      obscuringCharacter: "*",
+      obscuringCharacter: '*',
       onTap: widget.onTap,
       onTapOutside: (event) {
         if (widget.closeWhenTapOutSide == true) {

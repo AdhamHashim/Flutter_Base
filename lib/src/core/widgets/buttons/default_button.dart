@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
-import 'package:flutter_base/src/core/extensions/context_extension.dart';
 
-import '../../../config/res/app_sizes.dart';
-import '../../../config/res/color_manager.dart';
+import '../../../config/res/config_imports.dart';
+import '../../extensions/context_extension.dart';
+
 
 class DefaultButton extends StatelessWidget {
   final String? title;

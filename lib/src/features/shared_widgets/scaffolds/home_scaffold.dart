@@ -82,7 +82,7 @@ class HomeScaffold extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(AppPadding.pH2),
         decoration: BoxDecoration(
-          color: const Color(0xFFB8EACB).withOpacity(.2),
+          color: const Color(0xFFB8EACB).withAlpha(20),
           shape: BoxShape.circle,
         ),
         // child: Center(

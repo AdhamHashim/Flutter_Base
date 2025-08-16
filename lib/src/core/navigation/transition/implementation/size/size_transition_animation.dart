@@ -1,7 +1,7 @@
-import 'package:flutter_base/src/core/navigation/Constants/imports_constants.dart';
-import 'package:flutter/cupertino.dart';
+ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../../constants/imports_constants.dart';
 import '../../Factory/transition_creator.dart';
 import 'Animator/size_animator.dart';
 import 'Option/size_animation_option.dart';

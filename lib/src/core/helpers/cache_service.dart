@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../config/res/config_imports.dart';
+
 class CacheStorage {
   static late final SharedPreferences _sharedPrefrences;
 
@@ -32,7 +34,9 @@ class CacheStorage {
 
   static Map<String, dynamic>? _tryDecode(String key) {
     try {
-      return jsonDecode(_sharedPrefrences.getString(key) ?? "");
+      return jsonDecode(
+        _sharedPrefrences.getString(key) ?? ConstantManager.emptyText,
+      );
     } catch (e) {
       return null;
     }
@@ -57,11 +61,10 @@ class CacheStorage {
 class SecureStorage {
   SecureStorage._();
   static const _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-      resetOnError: true,
-    )
-  );
+      aOptions: AndroidOptions(
+    encryptedSharedPreferences: true,
+    resetOnError: true,
+  ));
 
   static Future<void> write(String key, String value) async {
     await _storage.write(key: key, value: value);

@@ -8,20 +8,20 @@ import '../../config/language/locale_keys.g.dart';
 
 class LauncherHelper {
   static void launchURL({required String url}) async {
-    if (!url.toString().startsWith("https")) {
-      url = "https://$url";
+    if (!url.toString().startsWith('https')) {
+      url = 'https://$url';
     }
     await launchUrl(Uri.parse(url));
   }
 
   static void launchWhatsApp(String phone) async {
-    String message = 'مرحبا بك';
-    if (phone.startsWith("00966")) {
+    final String message = 'مرحبا بك';
+    if (phone.startsWith('00966')) {
       phone = phone.substring(5);
     }
     final whatsAppNativeApp = Platform.isIOS
-        ? "https://wa.me/$phone?text=$message"
-        : "whatsapp://send?phone=$phone&text=$message";
+        ? 'https://wa.me/$phone?text=$message'
+        : 'whatsapp://send?phone=$phone&text=$message';
     debugPrint(whatsAppNativeApp);
     if (await canLaunchUrl(Uri.parse(whatsAppNativeApp))) {
       await launchUrl(Uri.parse(whatsAppNativeApp));
@@ -147,11 +147,11 @@ class LauncherHelper {
     }
   }
 
-  static void callPhone({phone}) async {
+  static void callPhone({required String phone}) async {
     await launchUrl(Uri.parse('tel:$phone'));
   }
 
-  static void sendMail(mail) async {
+  static void sendMail({required String mail}) async {
     await launchUrl(Uri.parse('mailto:$mail'));
   }
 }

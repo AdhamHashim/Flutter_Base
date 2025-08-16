@@ -1,4 +1,5 @@
-import 'package:flutter_base/src/config/res/constants_manager.dart';
+ 
+import '../../../config/res/config_imports.dart';
 
 class DropDownModel {
   final int id;
@@ -23,7 +24,7 @@ class DropDownModel {
     );
   }
 
-  Map<String, dynamic> toJson() => {"id": id, "name": name};
+  Map<String, dynamic> toJson() => {'id': id, 'name': name};
 
   @override
   bool operator ==(Object other) =>

@@ -2,23 +2,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_base/src/config/language/languages.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/config/res/color_manager.dart';
-import 'package:flutter_base/src/core/extensions/padding_extension.dart';
-import 'package:flutter_base/src/core/widgets/custom_loading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../config/language/languages.dart';
 import '../../config/language/locale_keys.g.dart';
+import '../../config/res/config_imports.dart';
+import '../extensions/padding_extension.dart';
 import '../navigation/navigator.dart';
+import '../widgets/custom_loading.dart';
 
 class Helpers {
   static Future<File?> getImage() async {
     final ImagePicker picker = ImagePicker();
-    XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      File imageFile = File(image.path);
+      final File imageFile = File(image.path);
       return imageFile;
     }
     return null;
@@ -28,7 +27,7 @@ class Helpers {
     final ImagePicker picker = ImagePicker();
     final List<XFile> result = await picker.pickMultiImage();
     if (result.isNotEmpty) {
-      List<File> files = result.map((e) => File(e.path)).toList();
+      final List<File> files = result.map((e) => File(e.path)).toList();
       return files;
     } else {
       return [];
@@ -88,9 +87,10 @@ class Helpers {
     return image;
   }
 
-  static void shareApp(url) {
+  static void shareApp(String url) {
     CustomLoading.showFullScreenLoading();
-    Share.share(url).whenComplete(() {
+    final ShareParams params = ShareParams(uri: Uri.parse(url));
+    SharePlus.instance.share(params).whenComplete(() {
       CustomLoading.hideFullScreenLoading();
     });
   }
@@ -107,7 +107,7 @@ class Helpers {
     required String ar,
     required String en,
   }) {
-    if (Languages.currentLanguage.languageCode == "ar") {
+    if (Languages.currentLanguage.languageCode == 'ar') {
       return ar;
     } else {
       return en;

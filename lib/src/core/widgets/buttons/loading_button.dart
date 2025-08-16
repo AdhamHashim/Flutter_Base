@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/core/extensions/context_extension.dart';
-import 'package:flutter_base/src/core/extensions/text_style_extensions.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import '../../../config/res/app_sizes.dart';
-import '../../../config/res/color_manager.dart';
+import '../../../config/res/config_imports.dart';
+import '../../extensions/context_extension.dart';
+import '../../extensions/text_style_extensions.dart';
 import 'custom_animated_button.dart';
 
 class LoadingButton extends StatelessWidget {

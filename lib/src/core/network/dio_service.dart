@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
-import 'package:flutter_base/src/core/network/extensions.dart';
-import 'package:flutter_base/src/core/shared/base_model.dart';
 import '../../config/language/languages.dart' show Languages;
 import '../../config/language/locale_keys.g.dart';
+import '../../config/res/config_imports.dart';
 import '../error/exceptions.dart';
+import '../shared/base_model.dart';
+import 'extensions.dart';
 import 'log_interceptor.dart';
 import 'network_request.dart';
 import 'network_service.dart';

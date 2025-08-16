@@ -1,6 +1,6 @@
-import 'package:flutter_base/src/core/navigation/Constants/imports_constants.dart';
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 
+import '../../../constants/imports_constants.dart';
 import '../../Factory/transition_creator.dart';
 import 'Option/slide_animation_option.dart';
 import 'animator/slide_animator.dart';

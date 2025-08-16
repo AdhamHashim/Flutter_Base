@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
+
+import '../../config/res/config_imports.dart';
 
 extension MarginExtension on Widget {
   Widget margin(EdgeInsetsGeometry margin) {

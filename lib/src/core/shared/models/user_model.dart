@@ -58,25 +58,25 @@ class UserModel {
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json["id"],
-        image: json["image"],
-        fullName: json["fullName"],
-        phoneNumber: json["phoneNumber"],
-        email: json["email"],
-        city: json["city"],
-        userType: json["userType"],
-        allowNotify: json["allowNotify"],
-        token: json["token"],
+        id: json['id'],
+        image: json['image'],
+        fullName: json['fullName'],
+        phoneNumber: json['phoneNumber'],
+        email: json['email'],
+        city: json['city'],
+        userType: json['userType'],
+        allowNotify: json['allowNotify'],
+        token: json['token'],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "image": image,
-        "fullName": fullName,
-        "phoneNumber": phoneNumber,
-        "email": email,
-        "city": city,
-        "userType": userType,
-        "allowNotify": allowNotify,
+        'id': id,
+        'image': image,
+        'fullName': fullName,
+        'phoneNumber': phoneNumber,
+        'email': email,
+        'city': city,
+        'userType': userType,
+        'allowNotify': allowNotify,
       };
 }

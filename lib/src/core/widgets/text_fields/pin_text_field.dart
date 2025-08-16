@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; 
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
-import 'package:flutter_base/src/core/extensions/context_extension.dart';
-import 'package:flutter_base/src/core/extensions/text_style_extensions.dart';
-import 'package:flutter_base/src/core/helpers/validators.dart';
-import 'package:flutter_base/src/core/widgets/custom_widget_validator.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
-import '../../../config/res/color_manager.dart';
+
+import '../../../config/res/config_imports.dart';
+import '../../extensions/context_extension.dart';
+import '../../extensions/text_style_extensions.dart';
+import '../../helpers/validators.dart';
+import '../custom_widget_validator.dart';
 
 class CustomPinTextField extends StatelessWidget {
   final ValueChanged<String>? onCompleted;

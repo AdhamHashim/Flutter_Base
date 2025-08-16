@@ -1,10 +1,7 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-
 import 'package:watcher/watcher.dart';
-
 import '../utils/exceptions.dart';
 import '../utils/generate_constants.dart';
 import 'models/names.dart';
@@ -19,7 +16,7 @@ void main() async {
   final String previousContent = file.readAsStringSync();
   watcher.events.listen((WatchEvent event) {
     if (event.type == ChangeType.MODIFY) {
-      print('File changed: ${watcher.path}');
+      log('File changed: ${watcher.path}');
       handleFileChange(file, previousContent);
     }
   });
@@ -28,7 +25,7 @@ void main() async {
       await generateJsonTranslate(lang: 'en', jsonMap: jsonMap);
   await generateJsonTranslate(lang: 'ar', jsonMap: jsonMap);
   await generateAppStrings(jsonEnMap);
-  print('Watching for changes in: ${watcher.path}');
+  log('Watching for changes in: ${watcher.path}');
 }
 
 void handleFileChange(File file, String previousContent) async {
@@ -39,11 +36,11 @@ void handleFileChange(File file, String previousContent) async {
 
     for (int i = 0; i < currentLines.length; i++) {
       if (i >= previousLines.length || currentLines[i] != previousLines[i]) {
-        print('Line ${i + 1} changed');
-        print(
+        log('Line ${i + 1} changed');
+        log(
             'Previous: ${(i) >= previousLines.length ? 'null' : previousLines[i]}');
-        print('Current: ${currentLines[i]}');
-        print('------------------------------------------------------');
+        log('Current: ${currentLines[i]}');
+        log('------------------------------------------------------');
       }
     }
     previousContent = currentContent;
@@ -53,7 +50,7 @@ void handleFileChange(File file, String previousContent) async {
     await generateJsonTranslate(lang: 'ar', jsonMap: jsonMap);
     await generateAppStrings(jsonEnMap);
   } catch (e) {
-    print('Uknown Key');
+    log('Uknown Key');
   }
 }
 
@@ -62,12 +59,12 @@ Future<Map<String, dynamic>> generateJsonTranslate({
   required Map<String, dynamic> jsonMap,
 }) async {
   final StringBuffer buffer = StringBuffer();
-  String filePath = lang == 'en'
+  final String filePath = lang == 'en'
       ? GenerateConstants.langEnJsonAssetFilePath
       : lang == 'ar'
           ? GenerateConstants.langArJsonAssetFilePath
           : '';
-  File file = File(filePath);
+  final File file = File(filePath);
   buffer.writeln('{');
   // String content = file.readAsStringSync().trim();
   // final Map<String, dynamic> fileMap = json.decode(content);
@@ -80,29 +77,29 @@ Future<Map<String, dynamic>> generateJsonTranslate({
   // buffer.writeln(bufferStringTrim);
   int counter = 0;
   //print('fileMap ${fileMap.toString()}');
-  jsonMap.forEach((String key, dynamic value) {
+  jsonMap.forEach((String key, value) {
     //print('$lang($counter)  "$key": "$value"');
     try {
       final Names keyNames = Names.fromString(key);
       // if (!fileMap.containsKey(keyNames.snakeCase)) {
-        //print('$lang($counter)  !containsKey "${keyNames.snakeCase}" ');
-        lang == 'en'
-            ? buffer.write('  "${keyNames.snakeCase}": "${keyNames.original}"')
-            : buffer.write('  "${keyNames.snakeCase}": "$value"');
-        if (counter < jsonMap.length - 1) {
-          buffer.write(',');
+      //print('$lang($counter)  !containsKey "${keyNames.snakeCase}" ');
+      lang == 'en'
+          ? buffer.write('  "${keyNames.snakeCase}": "${keyNames.original}"')
+          : buffer.write('  "${keyNames.snakeCase}": "$value"');
+      if (counter < jsonMap.length - 1) {
+        buffer.write(',');
         // }
         buffer.writeln();
       }
     } on NamesException {
       final String keyStr = '[$key]';
       const String errorMessage = 'is not valid!';
-      print(
+      log(
           '${GenerateConstants.blueColorCode} $keyStr ${GenerateConstants.redColorCode}$errorMessage');
     }
     counter++;
   });
-  List<String> linesAfterWrite = buffer.toString().trim().split('\n');
+  final List<String> linesAfterWrite = buffer.toString().trim().split('\n');
   String lastLineOfLinesAfterWrite = linesAfterWrite.last.trimRight();
   //print('lastLineOfLinesAfterWrite $lastLineOfLinesAfterWrite');
   if (lastLineOfLinesAfterWrite[lastLineOfLinesAfterWrite.length - 1] == ',') {
@@ -115,7 +112,7 @@ Future<Map<String, dynamic>> generateJsonTranslate({
   buffer.writeln('');
   buffer.writeln('}');
   await file.writeAsString(buffer.toString());
-  print(
+  log(
       '${GenerateConstants.greenColorCode} Lang Json File Updated successfully at $filePath ${GenerateConstants.resetColorCode}');
   return json.decode(buffer.toString());
 }
@@ -143,13 +140,13 @@ Future<void> generateAppStrings(Map<String, dynamic> jsonMap) async {
     } on NamesException {
       final String keyStr = '[$key]';
       const String errorMessage = 'is not valid!';
-      print(
+      log(
           '${GenerateConstants.blueColorCode} $keyStr ${GenerateConstants.redColorCode}$errorMessage');
     }
   });
   buffer.writeln('}');
-  File file = File(GenerateConstants.outputStringsFilePath);
+  final File file = File(GenerateConstants.outputStringsFilePath);
   await file.writeAsString(buffer.toString());
-  print(
+  log(
       '${GenerateConstants.greenColorCode} class AppStrings Generated successfully at ${GenerateConstants.outputStringsFilePath} ${GenerateConstants.resetColorCode}');
 }

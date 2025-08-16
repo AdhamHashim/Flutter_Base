@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
+
+import '../../../config/res/config_imports.dart';
 
 class ImageView extends StatelessWidget {
   const ImageView({

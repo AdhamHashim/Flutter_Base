@@ -1,7 +1,7 @@
-import 'package:flutter_base/src/core/network/dio_service.dart';
-import 'package:flutter_base/src/core/network/network_service.dart';
-import 'package:flutter_base/src/core/notification/notification_service.dart';
-import '../../../config/res/constants_manager.dart';
+import '../../../config/res/config_imports.dart';
+import '../../network/dio_service.dart';
+import '../../network/network_service.dart';
+import '../../notification/notification_service.dart';
 import '../user_cubit/user_cubit.dart' show UserCubit;
 
 void setUpServiceLocator() {

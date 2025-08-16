@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../config/res/color_manager.dart';
+
+import '../../config/res/config_imports.dart';
 
 class ImageHelper {
   static final ImagePicker _picker = ImagePicker();
@@ -27,7 +28,7 @@ class ImageHelper {
   }
 
   static Future<File?> _cropImage({required String sourcePath}) async {
-    CroppedFile? croppedFile = await _cropper.cropImage(
+    final CroppedFile? croppedFile = await _cropper.cropImage(
       sourcePath: sourcePath,
       uiSettings: [
         AndroidUiSettings(

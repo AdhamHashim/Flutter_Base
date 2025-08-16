@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../config/res/color_manager.dart';
-import '../../config/res/constants_manager.dart';
+import '../../config/res/config_imports.dart';
 
 extension TextStyleEx on TextStyle {
   TextStyle get bold => copyWith(fontWeight: FontWeight.bold);

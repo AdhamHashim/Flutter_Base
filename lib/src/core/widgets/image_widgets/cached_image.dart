@@ -1,11 +1,10 @@
 import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import '../../../config/res/app_sizes.dart';
-import '../../../config/res/color_manager.dart';
+import '../../../config/res/config_imports.dart';
+
 
 class CachedImage extends StatelessWidget {
   final String url;

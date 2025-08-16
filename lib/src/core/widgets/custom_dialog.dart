@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/config/res/color_manager.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
+
+import '../../config/res/config_imports.dart';
 
 Future showCustomDialog(BuildContext context,
     {required Widget child,

@@ -1,16 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_base/src/config/language/locale_keys.g.dart';
+
+import '../../config/language/locale_keys.g.dart';
 
 class ServerException extends Equatable implements Exception {
   final String message;
-
   const ServerException(this.message);
 
   @override
-  String toString() {
-    return message;
-  }
+  String toString() => message;
 
   @override
   List<Object?> get props => [message];
@@ -37,12 +35,12 @@ class ConflictException extends ServerException {
 }
 
 class InternalServerErrorException extends ServerException {
-  InternalServerErrorException([message])
+  InternalServerErrorException([String? message])
       : super(message ?? LocaleKeys.checkInternet);
 }
 
 class NoInternetConnectionException extends ServerException {
-  NoInternetConnectionException([message])
+  NoInternetConnectionException([String? message])
       : super(message ?? LocaleKeys.checkInternet.tr());
 }
 

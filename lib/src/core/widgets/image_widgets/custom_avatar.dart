@@ -1,9 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/config/res/color_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../config/res/config_imports.dart';
 
 class CustomAvatar extends StatelessWidget {
   final String icon;
@@ -35,7 +33,6 @@ class CustomAvatar extends StatelessWidget {
         padding: padding ?? EdgeInsets.all(AppPadding.pH8),
         child: SvgPicture.asset(
           icon,
-          color: iconColor,
           height: height,
           width: width,
         ),

@@ -5,7 +5,7 @@ class SplashCubit extends Cubit<SplashState> {
 
   void initApp() async {
     Helpers.changeStatusbarColor(
-      statusBarColor: AppColors.main.withOpacity(0.5),
+      statusBarColor: AppColors.main.withAlpha(50),
     );
     _notificationNavigator();
     await sl<NotificationService>().setupNotifications();

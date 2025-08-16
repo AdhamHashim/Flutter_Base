@@ -67,7 +67,7 @@ This template is intended to reduce boilerplate and encourage separation of conc
 1. USERS
 
 
-**FLUTTER_VERSION** : 3.32.1
+**FLUTTER_VERSION** : 3.35.1
 
 ## Links for development :
 
@@ -145,3 +145,13 @@ dart run build_runner build
 ```bash
 dart scripts/create_feature.dart +feature name
 ```
+
+### Run This Command To Generate Models 
+```bash
+dart run tool/generate_models.dart
+```
+### After Files generate Run This Command 
+```bash
+flutter pub run build_runner build --delete-conflicting-outputs
+```
+

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_base/src/core/shared/base_state.dart';
-import 'package:flutter_base/src/core/widgets/exeption_view.dart';
-import 'package:flutter_base/src/core/widgets/not_contain_data.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import '../shared/base_state.dart';
+import '../widgets/exeption_view.dart';
+import '../widgets/not_contain_data.dart';
 
 class StatusBuilder<T> extends StatelessWidget {
   final BaseStatus status;

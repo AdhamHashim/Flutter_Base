@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
-import 'package:flutter_base/src/core/extensions/material_color_extension.dart';
-import '../res/color_manager.dart';
+import '../../core/extensions/material_color_extension.dart';
+import '../res/config_imports.dart';
 
 class AppTheme {
   static ThemeData get light {

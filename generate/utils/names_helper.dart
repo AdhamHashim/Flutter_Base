@@ -9,7 +9,7 @@ abstract class NamesHelper {
         input.replaceAll(RegExp(r'[^\w\s]'), '').replaceAll(' ', '_');
     // Check if input String needs to be converted to snake case
     if (!snakeCase.contains('_')) {
-      String snakeWithoutUnderscore = snakeCase;
+      final String snakeWithoutUnderscore = snakeCase;
       if (isCamelCase(snakeWithoutUnderscore)) {
         snakeCase = camelToSnakeCase(snakeWithoutUnderscore);
       }
@@ -35,7 +35,7 @@ abstract class NamesHelper {
   }
 
   static String snakeToCamelCase(String input) {
-    List<String> parts = input.replaceAll('?', '').split('_');
+    final List<String> parts = input.replaceAll('?', '').split('_');
     String camelCase = parts[0];
     for (int i = 1; i < parts.length; i++) {
       camelCase += parts[i][0].toUpperCase() + parts[i].substring(1);
@@ -51,7 +51,7 @@ abstract class NamesHelper {
   static String camelToSnakeCase(String input) {
     String snakeCase = '';
     for (int i = 0; i < input.length; i++) {
-      String currentChar = input[i];
+      final String currentChar = input[i];
       if (currentChar == currentChar.toUpperCase()) {
         if (i != 0) {
           snakeCase += '_';

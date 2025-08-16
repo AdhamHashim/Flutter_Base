@@ -1,11 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/color_manager.dart';
-import 'package:flutter_base/src/core/extensions/indexed_map.dart';
-import 'package:flutter_base/src/core/extensions/sized_box_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../config/res/config_imports.dart';
+import '../../extensions/indexed_map.dart';
+import '../../extensions/sized_box_helper.dart';
 import '../../helpers/image_helper.dart';
 import '../text_fields/default_text_field.dart';
 import 'cached_image.dart';
@@ -74,7 +73,7 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
               }
             },
             child: widget.tappedItem! is DefaultTextField
-                ? AbsorbPointer(child: widget.tappedItem!)
+                ? AbsorbPointer(child: widget.tappedItem)
                 : widget.tappedItem!,
           ),
         },

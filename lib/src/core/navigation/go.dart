@@ -1,5 +1,3 @@
-library go;
-
 export 'Transition/implementation/cupertino/Options/cupertino_animation_option.dart';
 export 'Transition/implementation/fade/Option/fade_animation_option.dart';
 export 'Transition/implementation/rotation/Option/rotation_animation_option.dart';

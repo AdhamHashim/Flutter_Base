@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_base/src/config/res/constants_manager.dart';
-import 'package:flutter_base/src/core/helpers/cache_service.dart' show CacheStorage, SecureStorage;
-import 'package:flutter_base/src/core/network/log_interceptor.dart' show logDebug;
-import 'package:flutter_base/src/core/network/network_service.dart';
-import 'package:flutter_base/src/core/shared/models/user_model.dart' show UserModel;
-import 'package:flutter_bloc/flutter_bloc.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../config/res/config_imports.dart';
+import '../../helpers/cache_service.dart';
+import '../../network/log_interceptor.dart';
+import '../../network/network_service.dart';
+import '../models/user_model.dart';
 part 'user_state.dart';
 part 'user_utils.dart';
 

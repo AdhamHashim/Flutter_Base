@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/app_sizes.dart';
-import 'package:flutter_base/src/config/res/color_manager.dart';
-import 'package:flutter_base/src/core/extensions/context_extension.dart';
-import 'package:flutter_base/src/core/widgets/image_widgets/cached_image.dart';
 
+import '../../../config/res/config_imports.dart';
+import '../../extensions/context_extension.dart';
+import 'cached_image.dart';
+ 
 class ImageSlider extends StatefulWidget {
   final Color? activeColor;
   final Color? inActiveColor;

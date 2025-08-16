@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_base/src/config/res/color_manager.dart';
-import 'package:flutter_base/src/core/extensions/sized_box_helper.dart';
-import 'package:flutter_base/src/core/navigation/navigator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../config/res/config_imports.dart';
+import '../extensions/sized_box_helper.dart';
+import '../navigation/navigator.dart';
 
 Future showDefaultBottomSheet({BuildContext? context, required Widget child}) {
   return showModalBottomSheet(
-      isScrollControlled: true,
-      context: context ?? Go.context,
-      builder: (context) => DefaultSheetBody(
-            child: child,
-          ));
+    isScrollControlled: true,
+    context: context ?? Go.context,
+    builder: (context) => DefaultSheetBody(
+      child: child,
+    ),
+  );
 }
 
 class DefaultSheetBody extends StatelessWidget {
@@ -56,7 +58,7 @@ class DefaultSheetBody extends StatelessWidget {
                       ),
                     ),
                   ),
-                  15.szH,
+                  AppSize.sH14.szH,
                   child,
                 ],
               ),
