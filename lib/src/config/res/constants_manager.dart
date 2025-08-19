@@ -1,6 +1,6 @@
 part of 'config_imports.dart';
 
-final GetIt sl = GetIt.instance;
+final GetIt injector = GetIt.instance;
 
 class ConstantManager {
   static const String bundleId = 'com.flutter.app_name';

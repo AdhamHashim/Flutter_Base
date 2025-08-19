@@ -93,6 +93,11 @@ class StatusBuilder<T> extends StatelessWidget {
           : const Expanded(
               child: ExceptionView(),
             ),
+      onLoadingMore: () {
+        return circularLoading
+            ? _buildCircularLoading()
+            : _buildShimmerLoading();
+      },
     );
   }
 }

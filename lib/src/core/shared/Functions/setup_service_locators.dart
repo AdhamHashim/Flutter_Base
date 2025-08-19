@@ -1,6 +1,4 @@
 import '../../../config/res/config_imports.dart';
-import '../../network/dio_service.dart';
-import '../../network/network_service.dart';
 import '../../notification/notification_service.dart';
 import '../user_cubit/user_cubit.dart' show UserCubit;
 
@@ -9,15 +7,12 @@ void setUpServiceLocator() {
 }
 
 void setUpGeneralDependencies() {
-  sl.registerLazySingleton<NetworkService>(
-    () => DioService(),
-  );
 
-  sl.registerLazySingleton<UserCubit>(
+  injector.registerLazySingleton<UserCubit>(
     () => UserCubit(),
   );
 
-  sl.registerFactory<NotificationService>(
+  injector.registerFactory<NotificationService>(
     () => NotificationService(),
   );
 }

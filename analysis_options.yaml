@@ -4,7 +4,6 @@ analyzer:
   errors:
     # نخلي أغلب التحذيرات Errors مش مجرد Warnings
     avoid_print: error
-    prefer_single_quotes: error
     empty_catches: error
     prefer_const_constructors: error
     prefer_final_locals: error
@@ -17,7 +16,6 @@ analyzer:
 
 linter:
   rules:
-    prefer_single_quotes: true
     avoid_print: true
     empty_catches: true
     prefer_const_constructors: true

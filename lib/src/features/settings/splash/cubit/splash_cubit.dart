@@ -8,7 +8,7 @@ class SplashCubit extends Cubit<SplashState> {
       statusBarColor: AppColors.main.withAlpha(50),
     );
     _notificationNavigator();
-    await sl<NotificationService>().setupNotifications();
+    await injector<NotificationService>().setupNotifications();
     Future.delayed(const Duration(milliseconds: ConstantManager.splashTimer),
         () async {
       if (!Go.context.mounted) return;

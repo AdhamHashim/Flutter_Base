@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../config/res/config_imports.dart';
 import '../../helpers/cache_service.dart';
 import '../../network/log_interceptor.dart';
@@ -25,7 +24,7 @@ class UserCubit extends Cubit<UserState> with UserUtils {
       _saveUser(user),
       _saveToken(token),
     ]);
-    sl<NetworkService>().setToken(token);
+    injector<NetworkService>().setToken(token);
     emit(state.copyWith(userModel: user, userStatus: UserStatus.loggedIn));
   }
 
@@ -55,7 +54,7 @@ class UserCubit extends Cubit<UserState> with UserUtils {
     final token = await SecureStorage.read(_tokenKey);
     log('userMap $userMap, token $token');
     if (token != null && userMap != null) {
-      sl<NetworkService>().setToken(token);
+      injector<NetworkService>().setToken(token);
       emit(
         state.copyWith(
           userModel: UserModel.fromJson(userMap),
@@ -68,12 +67,12 @@ class UserCubit extends Cubit<UserState> with UserUtils {
   }
 
   void _clearUser() {
-    sl<NetworkService>().removeToken();
+    injector<NetworkService>().removeToken();
     emit(UserState.initial());
   }
 
   UserModel get user => state.userModel;
-  static UserCubit get instance => sl<UserCubit>();
+  static UserCubit get instance => injector<UserCubit>();
 
   bool get isUserLoggedIn => state.userStatus == UserStatus.loggedIn;
 }
