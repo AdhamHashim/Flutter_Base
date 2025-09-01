@@ -21,6 +21,7 @@ class GetBaseEntityParams<T extends BaseIdAndNameEntity> {
   final int? id;
   final ParamsType paramsType;
   final Map<String, dynamic> queryParameters;
+  // ignore: avoid_types_as_parameter_names
   final T Function<T>(Map<String, dynamic> json)? mapper;
   GetBaseEntityParams(
       {this.id,

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
 import '../../config/language/languages.dart' show Languages;
 import '../../config/language/locale_keys.g.dart';
 import '../../config/res/config_imports.dart';
@@ -11,6 +12,7 @@ import 'log_interceptor.dart';
 import 'network_request.dart';
 import 'network_service.dart';
 
+@LazySingleton(as: NetworkService)
 class DioService implements NetworkService {
   late final Dio _dio;
 
@@ -91,25 +93,25 @@ class DioService implements NetworkService {
         switch (error.response!.statusCode) {
           case HttpStatus.badRequest:
             throw BadRequestException(
-              error.response?.data['title'] ?? LocaleKeys.badRequest,
+              error.response?.data['message'] ?? LocaleKeys.badRequest,
             );
           case HttpStatus.unauthorized:
             throw UnauthorizedException(
-              error.response?.data['title'] ?? LocaleKeys.unauthorized,
+              error.response?.data['message'] ?? LocaleKeys.unauthorized,
             );
           case HttpStatus.locked:
             throw BlockedException(
-              error.response?.data['title'] ?? LocaleKeys.unauthorized,
+              error.response?.data['message'] ?? LocaleKeys.unauthorized,
             );
           case HttpStatus.notFound:
             throw NotFoundException(LocaleKeys.notFound);
           case HttpStatus.conflict:
             throw ConflictException(
-              error.response?.data['title'] ?? LocaleKeys.serverError,
+              error.response?.data['message'] ?? LocaleKeys.serverError,
             );
           case HttpStatus.internalServerError:
             throw InternalServerErrorException(
-              error.response?.data['title'] ?? LocaleKeys.serverError,
+              error.response?.data['message'] ?? LocaleKeys.serverError,
             );
           default:
             throw ServerException(LocaleKeys.serverError);
@@ -118,11 +120,11 @@ class DioService implements NetworkService {
         throw ServerException(LocaleKeys.intenetWeakness);
       case DioExceptionType.unknown:
         throw ServerException(
-          error.response?.data['title'] ?? LocaleKeys.exceptionError,
+          error.response?.data['message'] ?? LocaleKeys.exceptionError,
         );
       default:
         throw ServerException(
-          error.response?.data['title'] ?? LocaleKeys.exceptionError,
+          error.response?.data['message'] ?? LocaleKeys.exceptionError,
         );
     }
   }

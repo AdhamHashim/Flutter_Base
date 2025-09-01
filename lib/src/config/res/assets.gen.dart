@@ -1,3 +1,5 @@
+// dart format width=80
+
 /// GENERATED CODE - DO NOT MODIFY BY HAND
 /// *****************************************************
 ///  FlutterGen
@@ -5,7 +7,7 @@
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
-// ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
+// ignore_for_file: deprecated_member_use,directives_ordering,implicit_dynamic_list_literal,unnecessary_import
 
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart' as _lottie;
@@ -36,14 +38,14 @@ class $AssetsFontsGen {
 
   /// List of all assets
   List<String> get values => [
-    iBMBold,
-    iBMExtraLight,
-    iBMLight,
-    iBMMedium,
-    iBMRegular,
-    iBMSemiBold,
-    iBMThin,
-  ];
+        iBMBold,
+        iBMExtraLight,
+        iBMLight,
+        iBMMedium,
+        iBMRegular,
+        iBMSemiBold,
+        iBMThin
+      ];
 }
 
 class $AssetsLottieGen {
@@ -109,13 +111,8 @@ class $AssetsLottieDataGen {
       const LottieGenImage('assets/lottie/data/not_found_2.json');
 
   /// List of all assets
-  List<LottieGenImage> get values => [
-    emptyBox,
-    emptyCart,
-    noData,
-    notFound1,
-    notFound2,
-  ];
+  List<LottieGenImage> get values =>
+      [emptyBox, emptyCart, noData, notFound1, notFound2];
 }
 
 class $AssetsLottieErrorGen {
@@ -146,14 +143,8 @@ class $AssetsLottieErrorGen {
       const LottieGenImage('assets/lottie/error/error_4.json');
 
   /// List of all assets
-  List<LottieGenImage> get values => [
-    apiError,
-    error,
-    error1,
-    error2,
-    error3,
-    error4,
-  ];
+  List<LottieGenImage> get values =>
+      [apiError, error, error1, error2, error3, error4];
 }
 
 class $AssetsLottieLoadingGen {
@@ -219,7 +210,10 @@ class AppAssets {
 }
 
 class LottieGenImage {
-  const LottieGenImage(this._assetName, {this.flavors = const {}});
+  const LottieGenImage(
+    this._assetName, {
+    this.flavors = const {},
+  });
 
   final String _assetName;
   final Set<String> flavors;
@@ -236,8 +230,11 @@ class LottieGenImage {
     _lottie.LottieImageProviderFactory? imageProviderFactory,
     Key? key,
     AssetBundle? bundle,
-    Widget Function(BuildContext, Widget, _lottie.LottieComposition?)?
-    frameBuilder,
+    Widget Function(
+      BuildContext,
+      Widget,
+      _lottie.LottieComposition?,
+    )? frameBuilder,
     ImageErrorWidgetBuilder? errorBuilder,
     double? width,
     double? height,

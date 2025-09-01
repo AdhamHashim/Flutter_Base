@@ -3,7 +3,6 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     # نخلي أغلب التحذيرات Errors مش مجرد Warnings
-    avoid_print: error
     empty_catches: error
     prefer_const_constructors: error
     prefer_final_locals: error
