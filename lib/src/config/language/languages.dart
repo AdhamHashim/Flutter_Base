@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import '../../core/navigation/navigator.dart';
 
 enum Languages {
-  english(Locale('en'), 'English', 'en'),
-  arabic(Locale('ar'), 'Arabic', 'ar');
+  english(Locale('en'), 'English', "en"),
+  arabic(Locale('ar'), 'Arabic', "ar");
 
   final String title;
   final Locale locale;
@@ -17,7 +17,7 @@ enum Languages {
     this.languageCode,
   );
 
-  static List<Locale> get suppoerLocales =>
+  static List<Locale> get supportLocales =>
       Languages.values.map((e) => e.locale).toList();
 
   static List<String> get titles =>

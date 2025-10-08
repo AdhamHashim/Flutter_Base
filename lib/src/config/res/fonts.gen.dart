@@ -11,6 +11,6 @@
 class FontFamily {
   FontFamily._();
 
-  /// Font family: IBM
-  static const String ibm = 'IBM';
+  /// Font family: Expo
+  static const String expo = 'Expo';
 }

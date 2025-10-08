@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../config/language/locale_keys.g.dart';
+import '../../../generated/locale_keys.g.dart';
 import '../../config/res/config_imports.dart';
 import '../extensions/context_extension.dart';
 import '../extensions/padding_extension.dart';
@@ -78,7 +78,7 @@ mixin CustomDropdownHelpers<T> {
     );
 
     final searchFieldDecoration = InputDecoration(
-      hintText: LocaleKeys.search,
+      hintText: LocaleKeys.app_search,
       prefixIcon: const Icon(Icons.search),
       enabledBorder: dropdownType == CustomDropdownType.bottomSheet
           ? const OutlineInputBorder(
@@ -94,7 +94,7 @@ mixin CustomDropdownHelpers<T> {
           showSelectedItems: true,
           constraints: constraints,
           itemBuilder: buildDropdownItem,
-          loadingBuilder: (_, __) => buildLoadingIndicator(),
+          loadingBuilder: (_, _) => buildLoadingIndicator(),
           searchFieldProps: TextFieldProps(decoration: searchFieldDecoration),
           menuProps: const MenuProps(backgroundColor: AppColors.white),
         );
@@ -105,7 +105,7 @@ mixin CustomDropdownHelpers<T> {
           showSelectedItems: true,
           constraints: constraints,
           itemBuilder: buildDropdownItem,
-          loadingBuilder: (_, __) => buildLoadingIndicator(),
+          loadingBuilder: (_, _) => buildLoadingIndicator(),
           searchFieldProps: TextFieldProps(decoration: searchFieldDecoration),
           bottomSheetProps: const BottomSheetProps(
             backgroundColor: AppColors.white,

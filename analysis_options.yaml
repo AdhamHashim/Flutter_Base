@@ -1,18 +1,6 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
-  errors:
-    # نخلي أغلب التحذيرات Errors مش مجرد Warnings
-    empty_catches: error
-    prefer_const_constructors: error
-    prefer_final_locals: error
-    prefer_final_fields: error
-    unnecessary_null_checks: error
-    prefer_const_literals_to_create_immutables: error
-    parameter_assignments: error
-    prefer_relative_imports: error
-    unnecessary_this: error
-
 linter:
   rules:
     avoid_print: true

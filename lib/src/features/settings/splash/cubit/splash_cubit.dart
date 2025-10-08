@@ -3,28 +3,19 @@ part of '../imports/view_imports.dart';
 class SplashCubit extends Cubit<SplashState> {
   SplashCubit() : super(SplashState.initial());
 
-  void initApp() async {
-    Helpers.changeStatusbarColor(
-      statusBarColor: AppColors.main.withAlpha(50),
-    );
+  void initApp(BuildContext context) async {
     _notificationNavigator();
     await injector<NotificationService>().setupNotifications();
-    Future.delayed(const Duration(milliseconds: ConstantManager.splashTimer),
-        () async {
-      if (!Go.context.mounted) return;
-      await Go.context.read<UserCubit>().init();
-      // Go.offAll(const HomeScreen());
-    });
+    if (!context.mounted) return;
+    await context.read<UserCubit>().init();
+    Go.offAll(const IntroScreen());
   }
+}
 
-  NotificationNavigator _notificationNavigator() {
-    return NotificationNavigator(
-      onRoutingMessage: (message) {
-        NotificationRoutes.navigateByType(message.data);
-      },
-      onNoInitialMessage: () {
-        // Go.offAll(const NotificationScreen());
-      },
-    );
-  }
+NotificationNavigator _notificationNavigator() {
+  return NotificationNavigator(
+    onNoInitialMessage: () {},
+    onRoutingMessage: (message) =>
+        NotificationRoutes.navigateByType(message.data),
+  );
 }

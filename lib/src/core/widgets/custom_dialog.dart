@@ -15,7 +15,7 @@ Future showCustomDialog(BuildContext context,
     barrierDismissible: barrierDismissible,
     barrierColor: Colors.black.withValues(alpha: 0.5),
     transitionDuration: const Duration(milliseconds: 250),
-    pageBuilder: (_, __, ___) {
+    pageBuilder: (_, _, _) {
       return Center(
         child: Material(
           color: Colors.transparent,
@@ -32,7 +32,7 @@ Future showCustomDialog(BuildContext context,
         ),
       );
     },
-    transitionBuilder: (_, anim, __, child) {
+    transitionBuilder: (_, anim, _, child) {
       return ScaleTransition(
         scale: anim,
         child: FadeTransition(

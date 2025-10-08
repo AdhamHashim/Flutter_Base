@@ -121,9 +121,15 @@ class NotificationService {
   }
 
   Future<void> _saveFcmToken() async {
-    final token = await FirebaseMessaging.instance.getToken();
-    deviceToken = token ?? '';
-    log('Firebase Fcm token : ${token.toString()}');
+    final String? token;
+    if (Platform.isIOS) {
+      token = await FirebaseMessaging.instance.getAPNSToken();
+    } else {
+      token = await FirebaseMessaging.instance.getToken();
+    }
+
+    deviceToken = token ?? "";
+    log("Firebase Fcm token : ${token.toString()}");
   }
 
   Future<void> _setForegroundNotificationOptions() async {

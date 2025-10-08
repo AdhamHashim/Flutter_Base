@@ -19,7 +19,7 @@ class AppTheme {
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.white,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.grey,
+        unselectedItemColor: AppColors.hintText,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
@@ -66,7 +66,7 @@ class AppTheme {
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColorsWithDarkMode.white,
         selectedItemColor: AppColorsWithDarkMode.primary,
-        unselectedItemColor: AppColorsWithDarkMode.grey,
+        unselectedItemColor: AppColorsWithDarkMode.hintText,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,

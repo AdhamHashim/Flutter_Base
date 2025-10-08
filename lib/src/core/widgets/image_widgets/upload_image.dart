@@ -1,7 +1,7 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../config/res/config_imports.dart';
 import '../../extensions/indexed_map.dart';
 import '../../extensions/sized_box_helper.dart';
@@ -72,7 +72,7 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
                 _pickMultiImages();
               }
             },
-            child: widget.tappedItem! is DefaultTextField
+            child: widget.tappedItem! is AppTextField
                 ? AbsorbPointer(child: widget.tappedItem)
                 : widget.tappedItem!,
           ),

@@ -1,10 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../config/language/locale_keys.g.dart';
+import '../../../generated/locale_keys.g.dart';
 
 class LauncherHelper {
   static void launchURL({required String url}) async {
@@ -26,7 +27,7 @@ class LauncherHelper {
     if (await canLaunchUrl(Uri.parse(whatsAppNativeApp))) {
       await launchUrl(Uri.parse(whatsAppNativeApp));
     } else {
-      throw LocaleKeys.exceptionError;
+      throw LocaleKeys.app_exception_error.tr();
     }
   }
 

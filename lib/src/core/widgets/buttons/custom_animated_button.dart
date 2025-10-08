@@ -1,11 +1,13 @@
+import 'dart:async';
 import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 
 import '../../../config/res/config_imports.dart';
+import '../../helpers/vibrate.dart';
 
-enum ButtonState { busy, idle }
+enum ButtonStatus { loading, idle }
 
-class CustomButtonAnimation extends StatefulWidget {
+class CustomAnimatedButton extends StatefulWidget {
   final double height;
   final double width;
   final double minWidth;
@@ -14,8 +16,9 @@ class CustomButtonAnimation extends StatefulWidget {
   final Curve curve;
   final Curve reverseCurve;
   final Widget child;
-  final VoidCallback onTap;
+  final FutureOr<void> Function() onTap;
   final Color? color;
+  final Gradient? gradient; // New gradient property
   final Brightness? colorBrightness;
   final double? elevation;
   final EdgeInsetsGeometry padding;
@@ -29,7 +32,7 @@ class CustomButtonAnimation extends StatefulWidget {
   final Color? disabledColor;
   final Color? disabledTextColor;
 
-  const CustomButtonAnimation({
+  const CustomAnimatedButton({
     required this.height,
     required this.width,
     this.minWidth = 0,
@@ -40,6 +43,7 @@ class CustomButtonAnimation extends StatefulWidget {
     required this.child,
     required this.onTap,
     this.color,
+    this.gradient, // New gradient parameter
     this.colorBrightness,
     this.elevation,
     this.padding = const EdgeInsets.all(0),
@@ -48,27 +52,28 @@ class CustomButtonAnimation extends StatefulWidget {
     this.focusNode,
     this.materialTapTargetSize,
     this.roundLoadingShape = true,
-    this.borderSide = const BorderSide(color: Colors.transparent, width: 0),
+    this.borderSide = BorderSide.none,
     this.disabledElevation,
     this.disabledColor,
     this.disabledTextColor,
     super.key,
   })  : assert(elevation == null || elevation >= 0.0),
-        assert(disabledElevation == null || disabledElevation >= 0.0);
+        assert(disabledElevation == null || disabledElevation >= 0.0),
+        assert(color == null || gradient == null,
+            'Cannot provide both color and gradient');
 
   @override
   CustomButtonState createState() => CustomButtonState();
 }
 
-class CustomButtonState extends State<CustomButtonAnimation>
+class CustomButtonState extends State<CustomAnimatedButton>
     with TickerProviderStateMixin {
   double? loaderWidth;
 
   late Animation<double> _animation;
   late AnimationController _controller;
-  ButtonState btn = ButtonState.idle;
+  ButtonStatus buttonStatus = ButtonStatus.idle;
 
-  // GlobalKey _buttonKey = GlobalKey();
   double _minWidth = 0;
 
   @override
@@ -86,7 +91,7 @@ class CustomButtonState extends State<CustomButtonAnimation>
     _animation.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {
         setState(() {
-          btn = ButtonState.idle;
+          buttonStatus = ButtonStatus.idle;
         });
       }
     });
@@ -101,14 +106,14 @@ class CustomButtonState extends State<CustomButtonAnimation>
     super.dispose();
   }
 
-  void animateForward() {
+  void startLoading() {
     setState(() {
-      btn = ButtonState.busy;
+      buttonStatus = ButtonStatus.loading;
     });
     _controller.forward();
   }
 
-  void animateReverse() {
+  void stopLoading() {
     _controller.reverse();
   }
 
@@ -135,51 +140,65 @@ class CustomButtonState extends State<CustomButtonAnimation>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        return buttonBody();
+        return _buildButton();
       },
     );
   }
 
-  Widget buttonBody() {
+  void doWhileLoading() async {
+    try {
+      startLoading();
+
+      HapticFeedbackManager.rigid();
+      await widget.onTap();
+    } finally {
+      stopLoading();
+    }
+  }
+
+  Widget _buildButton() {
     return SizedBox(
       height: widget.height,
       width: lerpWidth(widget.width, minWidth, _animation.value),
-      child: ButtonTheme(
-        height: widget.height,
-        shape: RoundedRectangleBorder(
-          side: widget.borderSide,
-          borderRadius: BorderRadius.circular(widget.roundLoadingShape
-              ? lerpDouble(
-                  widget.borderRadius,
-                  widget.height / 2,
-                  _animation.value,
-                )!
-              : widget.borderRadius),
-        ),
-        child: ElevatedButton(
-            // key: _buttonKey,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: widget.color,
-              elevation: widget.elevation,
-              padding: widget.padding,
-              disabledBackgroundColor:
-                  widget.disabledColor ?? AppColors.scaffoldBackground,
-              shape: RoundedRectangleBorder(
-                side: widget.borderSide,
-                borderRadius: BorderRadius.circular(widget.roundLoadingShape
-                    ? lerpDouble(widget.borderRadius, widget.height / 2,
-                        _animation.value)!
-                    : widget.borderRadius),
-              ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: buttonStatus == ButtonStatus.idle ? doWhileLoading : null,
+          customBorder: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(widget.roundLoadingShape
+                ? lerpDouble(
+                    widget.borderRadius,
+                    widget.height / 2,
+                    _animation.value,
+                  )!
+                : widget.borderRadius),
+          ),
+          splashColor: AppColors.secondary,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              gradient: widget.gradient,
+              color: widget.gradient == null ? widget.color : null,
+              borderRadius: BorderRadius.circular(widget.roundLoadingShape
+                  ? lerpDouble(
+                      widget.borderRadius,
+                      widget.height / 2,
+                      _animation.value,
+                    )!
+                  : widget.borderRadius),
+              border: widget.borderSide == BorderSide.none
+                  ? null
+                  : Border.fromBorderSide(widget.borderSide),
             ),
-            clipBehavior: widget.clipBehavior,
-            focusNode: widget.focusNode,
-            onPressed: btn == ButtonState.idle
-                ? () {
-                    widget.onTap();
-                  }
-                : null,
-            child: btn == ButtonState.idle ? widget.child : widget.loader),
+            child: Container(
+              padding: widget.padding,
+              alignment: Alignment.center,
+              child: buttonStatus == ButtonStatus.idle
+                  ? widget.child
+                  : widget.loader,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -17,10 +17,10 @@ class Names {
   factory Names.fromString(String input) {
     String original = input.trim();
 
-    String snakeCase = '';
+    String snakeCase = "";
     if (NamesHelper.shortKey.hasMatch(input)) {
-      snakeCase = NamesHelper.toSnakeCase(original.split('#\$').first.trim());
-      original = original.split('#\$').last.trim();
+      snakeCase = NamesHelper.toSnakeCase(original.split("#\$").first.trim());
+      original = original.split("#\$").last.trim();
     } else {
       snakeCase = NamesHelper.toSnakeCase(original);
     }

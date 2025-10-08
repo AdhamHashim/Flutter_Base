@@ -15,7 +15,7 @@ class MessageUtils {
         message,
         style: TextStyle(
           color: textColor ?? Colors.red,
-          fontSize: FontSize.s14,
+          fontSize: FontSizeManager.s14,
         ),
       ),
       backgroundColor: backgroundColor ?? AppColors.white,

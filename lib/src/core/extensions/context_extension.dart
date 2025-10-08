@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../../config/language/languages.dart';
 import '../../config/res/config_imports.dart';
+import 'text_style_extensions.dart';
 
 extension ContextExtension on BuildContext {
   void hideKeyboard() {
@@ -10,9 +10,14 @@ extension ContextExtension on BuildContext {
 
   MediaQueryData get mediaQuery => MediaQuery.of(this);
 
+  EdgeInsets get viewPadding => MediaQuery.viewPaddingOf(this);
+
+  EdgeInsets get viewInsets => MediaQuery.viewInsetsOf(this);
+
   ThemeData get theme => Theme.of(this);
 
   TextTheme get textTheme => theme.textTheme;
+  TextStyle get textStyle => theme.textTheme.bodyMedium!.setFontFamily;
 
   double get width => mediaQuery.size.width;
 

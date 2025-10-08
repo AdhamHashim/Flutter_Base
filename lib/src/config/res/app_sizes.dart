@@ -14,6 +14,7 @@ class AppMargin {
   static double mH18 = 18.0.h;
   static double mH20 = 20.0.h;
   static double mH30 = 30.0.h;
+  static double mH40 = 40.0.h;
 
   // VALUES FOR WIDTH
   static double mW2 = 2.0.w;
@@ -95,9 +96,10 @@ class AppSize {
   static double sW40 = 40.0.w;
   static double sW50 = 50.0.w;
   static double sW60 = 60.0.w;
+  static double sW70 = 70.0.w;
 }
 
-class FontSize {
+class FontSizeManager {
   static double s6 = 6.0.sp;
   static double s8 = 8.0.sp;
   static double s10 = 10.0.sp;

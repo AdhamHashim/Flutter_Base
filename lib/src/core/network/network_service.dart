@@ -10,4 +10,6 @@ abstract interface class NetworkService {
   void setToken(String token);
 
   void removeToken();
+
+  void changeLocale({String? locale});
 }

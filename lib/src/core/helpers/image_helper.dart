@@ -35,7 +35,6 @@ class ImageHelper {
           toolbarTitle: 'Cropper',
           toolbarColor: AppColors.primary,
           toolbarWidgetColor: Colors.white,
-          statusBarColor: AppColors.primary,
           activeControlsWidgetColor: AppColors.primary,
           aspectRatioPresets: [
             CropAspectRatioPreset.original,

@@ -1,61 +1,50 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services") // ✅ مهم جداً
 }
 
 android {
-    namespace = "com.example.appp"
-    compileSdk = 36   // ✅ Android 35
-
-    ndkVersion = flutter.ndkVersion
+    namespace = "com.aait.flutter_base"
+    compileSdk = 36
+    ndkVersion = "29.0.13599879"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
-
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+    kotlin {
+        jvmToolchain(17)
     }
 
     defaultConfig {
-        applicationId = "com.example.appp"
-
-        // ✅ الصياغة الصحيحة في Kotlin DSL
+        applicationId = "com.aait.flutter_base"
         minSdk = flutter.minSdkVersion
-        targetSdk = 36
-
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
     buildTypes {
-    release {
-        signingConfig = signingConfigs.getByName("debug")
-
-        // لازم الاتنين ميتفتحوش الا عند التسليم والرفع الاستور لانهم وظيفتهم لتقليل حجم التطبيق ودمج الكلاسات ويحذف الللغات واللاي اوت اللي مش مستخدم
-        isMinifyEnabled = false
-        isShrinkResources = false   // ✅ أضف السطر ده
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro"
-        )
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug") // مؤقتاً للتجربة
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
     }
-    debug {
-        signingConfig = signingConfigs.getByName("debug")
-    }
-}
 
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5") // ✅
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 
 flutter {
     source = "../.."
 }
+

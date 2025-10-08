@@ -53,7 +53,7 @@ class DefaultSheetBody extends StatelessWidget {
                       width: 100.w,
                       height: 5.h,
                       decoration: BoxDecoration(
-                        color: AppColors.whiteGrey,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
