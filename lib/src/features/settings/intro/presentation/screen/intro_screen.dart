@@ -30,7 +30,7 @@ class _IntroBody extends StatelessWidget {
             title: LocaleKeys.intro_welcome.tr(),
             subtitle: LocaleKeys.intro_platformInfo.tr(),
             backGroundImagePath: AppAssets.svg.onboarding1.path,
-            pointerImagePath: AppAssets.svg.carousel1Png.path,
+            pointerImagePath: AppAssets.svg.carousel1.path,
           ),
         ),
         IntroSectionWidget(
@@ -38,7 +38,7 @@ class _IntroBody extends StatelessWidget {
             title: LocaleKeys.intro_explore.tr(),
             subtitle: LocaleKeys.intro_browse.tr(),
             backGroundImagePath: AppAssets.svg.onboarding2.path,
-            pointerImagePath: AppAssets.svg.carousel2Png.path,
+            pointerImagePath: AppAssets.svg.carousel1.path,
           ),
         ),
         IntroSectionWidget(
@@ -46,7 +46,7 @@ class _IntroBody extends StatelessWidget {
             title: LocaleKeys.intro_firstStep.tr(),
             subtitle: LocaleKeys.intro_overview.tr(),
             backGroundImagePath: AppAssets.svg.onboarding3.path,
-            pointerImagePath: AppAssets.svg.carousel3Png.path,
+            pointerImagePath: AppAssets.svg.carousel3.path,
           ),
         ),
       ],

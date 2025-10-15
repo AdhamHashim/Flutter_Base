@@ -70,6 +70,7 @@ dev_dependencies:
   build_runner: null 
   easy_localization_loader: null
   flutter_gen_runner: null
+  injectable_generator: null
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter

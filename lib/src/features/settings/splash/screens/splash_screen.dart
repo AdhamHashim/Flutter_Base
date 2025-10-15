@@ -41,18 +41,18 @@ class _SplashViewState extends State<_SplashView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AppAssets.lottie.splash.lottie(
+      body: AppAssets.svg.onboarding1.image(
         width: context.width,
         height: context.height,
         fit: BoxFit.fill,
-        controller: _controller,
-        onLoaded: (composition) {
-          if (mounted) {
-            _controller
-              ..duration = composition.duration
-              ..forward();
-          }
-        },
+        // controller: _controller,
+        // onLoaded: (composition) {
+        //   if (mounted) {
+        //     _controller
+        //       ..duration = composition.duration
+        //       ..forward();
+        //   }
+        // },
       ),
     );
   }
