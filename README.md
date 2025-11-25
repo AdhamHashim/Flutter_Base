@@ -1,6 +1,6 @@
 # Project Title : Flutter Base
 
-# Project BackEnd : ASP.NET
+# Project BackEnd : ASP or PHP
 
 ## Project Description : Flutter Base Description
 
@@ -10,7 +10,7 @@
 
 1. USERS
 
-**FLUTTER_VERSION** : 3.35.2
+**FLUTTER_VERSION** : 3.38.3
 
 ## Links for development :
 
@@ -43,13 +43,15 @@
 ## App Bundle :
 
 - com.aait.flutter_base
+or
+- com.cs.flutter_base
 
 ## FireBase :
 
 1. FIREBASE_ACCOUNT_HOLDER
    - flutteraaitsa@gmail.com
 2. PROJECT_NAME_IN_FIREBASE
-   - RoshanElsharq
+   - Flutter_Base
 
 ## Team members :
 
