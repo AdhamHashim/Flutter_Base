@@ -5,8 +5,11 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SplashCubit>(
-      create: (context) => SplashCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => injector<BaseUrlCubit>()),
+        BlocProvider(create: (context) => injector<SplashCubit>()),
+      ],
       child: _SplashView(),
     );
   }
@@ -17,42 +20,25 @@ class _SplashView extends StatefulWidget {
   State<_SplashView> createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<_SplashView>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
+class _SplashViewState extends State<_SplashView> {
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
-    _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        context.read<SplashCubit>().initApp(context);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    context.read<SplashCubit>().initApp(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AppAssets.svg.onboarding1.image(
+      body: Container(
         width: context.width,
         height: context.height,
-        fit: BoxFit.fill,
-        // controller: _controller,
-        // onLoaded: (composition) {
-        //   if (mounted) {
-        //     _controller
-        //       ..duration = composition.duration
-        //       ..forward();
-        //   }
-        // },
+        padding: EdgeInsets.all(AppPadding.pH20),
+        decoration: const BoxDecoration(gradient: AppColors.gradient),
+        child: AppAssets.svg.baseSvg.onboarding1.image(
+          width: context.width * .3,
+          height: context.height * .16,
+        ),
       ),
     );
   }

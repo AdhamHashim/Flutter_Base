@@ -34,20 +34,14 @@ class AppTheme {
           ),
         ),
       ),
-      dialogTheme: const DialogThemeData(
-        surfaceTintColor: Colors.transparent,
-      ),
+      dialogTheme: const DialogThemeData(surfaceTintColor: Colors.transparent),
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: AppColors.primary,
         selectionColor: AppColors.primary.withValues(alpha: 0.2),
         selectionHandleColor: AppColors.primary,
       ),
-      appBarTheme: const AppBarTheme(
-        foregroundColor: AppColors.white,
-      ),
-      iconTheme: const IconThemeData(
-        color: AppColors.white,
-      ),
+      appBarTheme: const AppBarTheme(foregroundColor: AppColors.white),
+      iconTheme: const IconThemeData(color: AppColors.white),
       inputDecorationTheme: const InputDecorationTheme(
         prefixIconColor: AppColors.border,
       ),
@@ -77,21 +71,15 @@ class AppTheme {
           foregroundColor: AppColorsWithDarkMode.primary,
           minimumSize: Size(AppSize.sW30, AppSize.sH30),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              AppSize.sH0,
-            ),
+            borderRadius: BorderRadius.circular(AppSize.sH0),
           ),
         ),
       ),
-      dialogTheme: const DialogThemeData(
-        surfaceTintColor: Colors.transparent,
-      ),
+      dialogTheme: const DialogThemeData(surfaceTintColor: Colors.transparent),
       appBarTheme: const AppBarTheme(
         foregroundColor: AppColorsWithDarkMode.white,
       ),
-      iconTheme: const IconThemeData(
-        color: AppColorsWithDarkMode.white,
-      ),
+      iconTheme: const IconThemeData(color: AppColorsWithDarkMode.white),
       inputDecorationTheme: const InputDecorationTheme(
         prefixIconColor: AppColorsWithDarkMode.border,
       ),

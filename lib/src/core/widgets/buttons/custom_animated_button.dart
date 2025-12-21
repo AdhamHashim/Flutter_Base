@@ -3,7 +3,6 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 
 import '../../../config/res/config_imports.dart';
-import '../../helpers/vibrate.dart';
 
 enum ButtonStatus { loading, idle }
 
@@ -57,10 +56,12 @@ class CustomAnimatedButton extends StatefulWidget {
     this.disabledColor,
     this.disabledTextColor,
     super.key,
-  })  : assert(elevation == null || elevation >= 0.0),
-        assert(disabledElevation == null || disabledElevation >= 0.0),
-        assert(color == null || gradient == null,
-            'Cannot provide both color and gradient');
+  }) : assert(elevation == null || elevation >= 0.0),
+       assert(disabledElevation == null || disabledElevation >= 0.0),
+       assert(
+         color == null || gradient == null,
+         'Cannot provide both color and gradient',
+       );
 
   @override
   CustomButtonState createState() => CustomButtonState();
@@ -80,13 +81,18 @@ class CustomButtonState extends State<CustomAnimatedButton>
   void initState() {
     super.initState();
 
-    _controller =
-        AnimationController(vsync: this, duration: widget.animationDuration);
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.animationDuration,
+    );
 
-    _animation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    _animation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
         parent: _controller,
         curve: widget.curve,
-        reverseCurve: widget.reverseCurve));
+        reverseCurve: widget.reverseCurve,
+      ),
+    );
 
     _animation.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {
@@ -148,8 +154,6 @@ class CustomButtonState extends State<CustomAnimatedButton>
   void doWhileLoading() async {
     try {
       startLoading();
-
-      HapticFeedbackManager.rigid();
       await widget.onTap();
     } finally {
       stopLoading();
@@ -165,13 +169,15 @@ class CustomButtonState extends State<CustomAnimatedButton>
         child: InkWell(
           onTap: buttonStatus == ButtonStatus.idle ? doWhileLoading : null,
           customBorder: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(widget.roundLoadingShape
-                ? lerpDouble(
-                    widget.borderRadius,
-                    widget.height / 2,
-                    _animation.value,
-                  )!
-                : widget.borderRadius),
+            borderRadius: BorderRadius.circular(
+              widget.roundLoadingShape
+                  ? lerpDouble(
+                      widget.borderRadius,
+                      widget.height / 2,
+                      _animation.value,
+                    )!
+                  : widget.borderRadius,
+            ),
           ),
           splashColor: AppColors.secondary,
           child: AnimatedContainer(
@@ -179,13 +185,15 @@ class CustomButtonState extends State<CustomAnimatedButton>
             decoration: BoxDecoration(
               gradient: widget.gradient,
               color: widget.gradient == null ? widget.color : null,
-              borderRadius: BorderRadius.circular(widget.roundLoadingShape
-                  ? lerpDouble(
-                      widget.borderRadius,
-                      widget.height / 2,
-                      _animation.value,
-                    )!
-                  : widget.borderRadius),
+              borderRadius: BorderRadius.circular(
+                widget.roundLoadingShape
+                    ? lerpDouble(
+                        widget.borderRadius,
+                        widget.height / 2,
+                        _animation.value,
+                      )!
+                    : widget.borderRadius,
+              ),
               border: widget.borderSide == BorderSide.none
                   ? null
                   : Border.fromBorderSide(widget.borderSide),

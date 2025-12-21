@@ -1,4 +1,4 @@
-import '../shared/base_model.dart';
+import '../shared/models/base_model.dart';
 import 'network_request.dart';
 
 abstract interface class NetworkService {
@@ -12,4 +12,6 @@ abstract interface class NetworkService {
   void removeToken();
 
   void changeLocale({String? locale});
+
+  Future<void> updateBaseUrl();
 }

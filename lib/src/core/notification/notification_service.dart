@@ -33,16 +33,14 @@ class NotificationService {
     if (Platform.isIOS) {
       result = await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
     } else {
       result = await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.requestNotificationsPermission();
       await _createAndroidChannel();
     }
@@ -52,7 +50,8 @@ class NotificationService {
   Future<void> _createAndroidChannel() async {
     _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(_channel);
   }
 
@@ -60,25 +59,33 @@ class NotificationService {
     if (Platform.isIOS) return;
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails(
-            presentAlert: true, presentBadge: true, presentSound: true);
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        );
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      _channel.id,
-      _channel.name,
-      channelDescription: ConstantManager.appName,
-      enableVibration: true,
-      playSound: true,
-      icon: '@mipmap/ic_launcher',
-      importance: Importance.high,
-      priority: Priority.max,
-    );
+          _channel.id,
+          _channel.name,
+          channelDescription: ConstantManager.projectName,
+          enableVibration: true,
+          playSound: true,
+          icon: '@mipmap/ic_launcher',
+          importance: Importance.high,
+          priority: Priority.max,
+        );
     final notificationDetails = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
     final notification = message.notification;
-    await _flutterLocalNotificationsPlugin.show(notification.hashCode,
-        notification?.title ?? '', notification?.body, notificationDetails,
-        payload: json.encode(message.toMap()));
+    await _flutterLocalNotificationsPlugin.show(
+      notification.hashCode,
+      notification?.title ?? '',
+      notification?.body,
+      notificationDetails,
+      payload: json.encode(message.toMap()),
+    );
   }
 
   Future<void> _initLocalNotification() async {
@@ -87,23 +94,26 @@ class NotificationService {
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        );
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse? payload) {
+        if (payload?.payload != null) {
+          _handleNotificationsTap(
+            RemoteMessage.fromMap(json.decode(payload?.payload ?? '')),
+          );
+        }
+      },
     );
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (NotificationResponse? payload) {
-      if (payload?.payload != null) {
-        _handleNotificationsTap(
-            RemoteMessage.fromMap(json.decode(payload?.payload ?? '')));
-      }
-    });
   }
 
   Future<void> _registerNotification() async {

@@ -1,41 +1,11 @@
 import 'dart:io';
-
-import 'package:easy_localization/easy_localization.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
-
-import '../../../generated/locale_keys.g.dart';
 import '../../config/language/languages.dart';
 import '../../config/res/config_imports.dart';
-import '../extensions/padding_extension.dart';
-import '../navigation/navigator.dart';
 import '../widgets/custom_loading.dart';
 
 class Helpers {
-  static Future<File?> getImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      final File imageFile = File(image.path);
-      return imageFile;
-    }
-    return null;
-  }
-
-  static Future<List<File>> getImages() async {
-    final ImagePicker picker = ImagePicker();
-    final List<XFile> result = await picker.pickMultiImage();
-    if (result.isNotEmpty) {
-      final List<File> files = result.map((e) => File(e.path)).toList();
-      return files;
-    } else {
-      return [];
-    }
-  }
-
   static void changeStatusbarColor({
     required Color statusBarColor,
     Brightness? statusBarIconBrightness,
@@ -47,117 +17,6 @@ class Helpers {
         systemNavigationBarColor: AppColors.main,
       ),
     );
-  }
-
-  static Future<File?> getImageFromCameraOrDevice() async {
-    final ImagePicker picker = ImagePicker();
-    File? image;
-    await showModalBottomSheet(
-      context: Go.navigatorKey.currentContext!,
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: Text(LocaleKeys.app_photo_library.tr()),
-                onTap: () async {
-                  final currentImage = await picker.pickImage(
-                    source: ImageSource.gallery,
-                  );
-                  if (currentImage != null) {
-                    image = File(currentImage.path);
-                  }
-                  Go.back();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: Text(LocaleKeys.app_camera.tr()),
-                onTap: () async {
-                  final currentImage = await picker.pickImage(
-                    source: ImageSource.camera,
-                  );
-                  if (currentImage != null) {
-                    image = File(currentImage.path);
-                  }
-                  Go.back();
-                },
-              ),
-            ],
-          ).paddingAll(AppPadding.pH10),
-        );
-      },
-    );
-    return image;
-  }
-
-  static Future<File?> getMedia() async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
-    );
-    if (result != null && result.files.single.path != null) {
-      final String filePath = result.files.single.path!;
-      return File(filePath);
-    }
-    return null;
-  }
-
-  static Future<List<File?>> getMultiMedia() async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowMultiple: true,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
-    );
-    if (result != null && result.files.isNotEmpty) {
-      final List<File> files = result.files
-          .where((file) => file.path != null)
-          .map((file) => File(file.path!))
-          .toList();
-      return files;
-    }
-    return [];
-  }
-
-  static Future<List<File?>> getImageOrFile(bool isSingle) async {
-    List<File?> image = [];
-    await showModalBottomSheet(
-      context: Go.navigatorKey.currentContext!,
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.file_copy),
-                title: const Text("LocaleKeys.selectFiles"),
-                onTap: () async {
-                  if (isSingle) {
-                    image = [await getMedia()];
-                  } else {
-                    image = await getMultiMedia();
-                  }
-                  Go.back();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.image),
-                title: const Text("LocaleKeys.selectImages"),
-                onTap: () async {
-                  if (isSingle) {
-                    image = [await getImage()];
-                  } else {
-                    image = await getImages();
-                  }
-                  Go.back();
-                },
-              ),
-            ],
-          ).paddingAll(AppPadding.pH10),
-        );
-      },
-    );
-    return image;
   }
 
   static void shareApp(String url) {

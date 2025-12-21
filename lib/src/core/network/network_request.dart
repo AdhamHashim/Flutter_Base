@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 
 enum RequestMethod { get, post, put, delete, patch }
 
-
 class NetworkRequest<GenericModel> {
   final String path;
   final RequestMethod method;

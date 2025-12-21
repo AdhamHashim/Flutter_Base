@@ -135,4 +135,5 @@ class AppCircular {
   static double r15 = 15.0.r;
   static double r20 = 20.0.r;
   static double r40 = 40.0.r;
+  static double infinity = 200.0.r;
 }

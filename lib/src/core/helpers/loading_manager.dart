@@ -37,9 +37,7 @@ class _FullScreenLoadingManagerState extends State<FullScreenLoadingManager> {
                 height: 1.sh,
                 width: 1.sw,
                 color: Colors.grey.withValues(alpha: 0.3),
-                child: Center(
-                  child: CupertinoActivityIndicator(radius: 15.sp),
-                ),
+                child: Center(child: CupertinoActivityIndicator(radius: 15.sp)),
               ),
             );
           },

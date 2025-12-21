@@ -39,12 +39,12 @@ class ConflictException extends ServerException {
 
 class InternalServerErrorException extends ServerException {
   const InternalServerErrorException([String? message])
-      : super(message ?? LocaleKeys.app_check_internet);
+    : super(message ?? LocaleKeys.app_check_internet);
 }
 
 class NoInternetConnectionException extends ServerException {
   NoInternetConnectionException([String? message])
-      : super(message ?? LocaleKeys.app_check_internet.tr());
+    : super(message ?? LocaleKeys.app_check_internet.tr());
 }
 
 class CacheException implements Exception {}

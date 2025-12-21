@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../config/res/config_imports.dart';
 import '../../extensions/context_extension.dart';
-import '../../extensions/sized_box_helper.dart';
+import '../../extensions/widgets/sized_box_helper.dart';
 import '../../extensions/text_style_extensions.dart';
 import 'custom_animated_button.dart';
 

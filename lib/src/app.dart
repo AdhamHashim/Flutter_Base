@@ -7,29 +7,13 @@ import 'config/themes/app_theme.dart';
 import 'core/helpers/loading_manager.dart';
 import 'core/navigation/navigator.dart';
 import 'core/navigation/route_generator.dart';
-import 'core/network/un_authenticated_interceptor.dart';
+import 'core/shared/cubits/user_cubit/user_cubit.dart';
 import 'core/shared/route_observer.dart';
-import 'core/shared/user_cubit/user_cubit.dart' show UserCubit;
-import 'core/widgets/offline_widget.dart';
+import 'core/widgets/handling_views/offline_widget.dart';
 import 'features/settings/splash/imports/view_imports.dart';
 
-class App extends StatefulWidget {
+class App extends StatelessWidget {
   const App({super.key});
-
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  @override
-  void initState() {
-    super.initState();
-    _addUnAuthenticatedListener();
-  }
-
-  void _addUnAuthenticatedListener() {
-    UnAuthenticatedInterceptor.instance.addListener(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +36,13 @@ class _AppState extends State<App> {
             navigatorObservers: [AppNavigationObserver()],
             theme: AppTheme.light,
             builder: (context, child) {
-              return OfflineWidget(
-                child: FullScreenLoadingManager(child: child!),
+              return MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: const TextScaler.linear(1.0)),
+                child: OfflineWidget(
+                  child: FullScreenLoadingManager(child: child!),
+                ),
               );
             },
           ),

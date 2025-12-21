@@ -1,12 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../config/res/config_imports.dart';
 import '../../extensions/indexed_map.dart';
-import '../../extensions/sized_box_helper.dart';
+import '../../extensions/widgets/sized_box_helper.dart';
 import '../../helpers/image_helper.dart';
-import '../text_fields/default_text_field.dart';
+import '../fields/text_fields/default_text_field.dart';
 import 'cached_image.dart';
 
 enum UploadImageType { single, multi }
@@ -17,12 +16,13 @@ class UploadImageWidget extends StatefulWidget {
   final Function(List<File>)? onUpload;
   final UploadImageType uploadImageType;
 
-  const UploadImageWidget(
-      {super.key,
-      this.removedImages,
-      this.tappedItem,
-      this.onUpload,
-      this.uploadImageType = UploadImageType.single});
+  const UploadImageWidget({
+    super.key,
+    this.removedImages,
+    this.tappedItem,
+    this.onUpload,
+    this.uploadImageType = UploadImageType.single,
+  });
 
   @override
   State<UploadImageWidget> createState() => _UploadImageWidgetState();
@@ -72,7 +72,7 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
                 _pickMultiImages();
               }
             },
-            child: widget.tappedItem! is AppTextField
+            child: widget.tappedItem! is DefaultTextField
                 ? AbsorbPointer(child: widget.tappedItem)
                 : widget.tappedItem!,
           ),
@@ -91,27 +91,29 @@ class _UploadImageWidgetState extends State<UploadImageWidget> {
                       clipBehavior: Clip.none,
                       children: [
                         ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: item is String
-                                ? CachedImage(
-                                    url: item,
-                                    width: 70.0.w,
-                                    height: 70.0.h,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Image.file(
-                                    item,
-                                    width: 70.0.w,
-                                    height: 70.0.h,
-                                    fit: BoxFit.cover,
-                                  )),
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: item is String
+                              ? CachedImage(
+                                  url: item,
+                                  width: 70.0.w,
+                                  height: 70.0.h,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.file(
+                                  item,
+                                  width: 70.0.w,
+                                  height: 70.0.h,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
                         PositionedDirectional(
                           top: 3,
                           end: 3,
                           child: GestureDetector(
                             onTap: () {
-                              imageValue.value =
-                                  List.from(imageValue.value..removeAt(index));
+                              imageValue.value = List.from(
+                                imageValue.value..removeAt(index),
+                              );
                             },
                             child: Container(
                               decoration: const BoxDecoration(

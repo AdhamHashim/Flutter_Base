@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multiple_result/multiple_result.dart';
 import '../../../../../../config/res/config_imports.dart';
 import '../../../../../error/failure.dart';
-import '../../../../../shared/base_state.dart';
+import '../../../../../extensions/base_state.dart';
 import '../../../../../widgets/custom_messages.dart';
 import '../../../domain/base_domain_imports.dart';
 
@@ -28,7 +28,10 @@ abstract class AsyncCubit<T> extends Cubit<AsyncState<T>> {
 
   void setError({String? errorMessage, bool showToast = false}) {
     if (showToast && errorMessage != null) {
-      MessageUtils.showSnackBar(errorMessage);
+      MessageUtils.showSnackBar(
+        message: errorMessage,
+        baseStatus: BaseStatus.error,
+      );
     }
     emit(state.error(errorMessage: errorMessage));
   }
@@ -61,7 +64,10 @@ abstract class AsyncCubit<T> extends Cubit<AsyncState<T>> {
         }
       },
       (failure) {
-        MessageUtils.showSnackBar(failure.message);
+        MessageUtils.showSnackBar(
+          message: failure.message,
+          baseStatus: BaseStatus.error,
+        );
         setError(errorMessage: failure.message);
       },
     );

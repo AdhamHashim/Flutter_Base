@@ -33,11 +33,15 @@ extension ContextExtension on BuildContext {
   bool get isLight => theme.brightness == Brightness.light;
 
   bool get isMaterial => theme.platform == TargetPlatform.android;
+
+  bool get isRight => Directionality.of(this) == TextDirection.rtl;
 }
 
 extension LanguageExtension on Widget {
-  Widget overRideLocaization(
-      {required BuildContext context, required Languages lang}) {
+  Widget overRideLocaization({
+    required BuildContext context,
+    required Languages lang,
+  }) {
     return Localizations.override(
       context: context,
       locale: lang.locale,

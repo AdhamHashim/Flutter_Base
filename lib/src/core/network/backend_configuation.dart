@@ -3,7 +3,6 @@ enum BackendType { php, asp }
 extension BackendTypeX on BackendType {
   bool get isPhp => this == BackendType.php;
   bool get isAsp => this == BackendType.asp;
-
 }
 
 class BackendConfiguation {

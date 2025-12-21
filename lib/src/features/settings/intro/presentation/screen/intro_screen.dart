@@ -29,24 +29,24 @@ class _IntroBody extends StatelessWidget {
           introDto: IntroDto(
             title: LocaleKeys.intro_welcome.tr(),
             subtitle: LocaleKeys.intro_platformInfo.tr(),
-            backGroundImagePath: AppAssets.svg.onboarding1.path,
-            pointerImagePath: AppAssets.svg.carousel1.path,
+            backGroundImagePath: AppAssets.svg.baseSvg.onboarding1.path,
+            pointerImagePath: AppAssets.svg.baseSvg.carousel1.path,
           ),
         ),
         IntroSectionWidget(
           introDto: IntroDto(
             title: LocaleKeys.intro_explore.tr(),
             subtitle: LocaleKeys.intro_browse.tr(),
-            backGroundImagePath: AppAssets.svg.onboarding2.path,
-            pointerImagePath: AppAssets.svg.carousel1.path,
+            backGroundImagePath: AppAssets.svg.baseSvg.onboarding2.path,
+            pointerImagePath: AppAssets.svg.baseSvg.carousel1.path,
           ),
         ),
         IntroSectionWidget(
           introDto: IntroDto(
             title: LocaleKeys.intro_firstStep.tr(),
             subtitle: LocaleKeys.intro_overview.tr(),
-            backGroundImagePath: AppAssets.svg.onboarding3.path,
-            pointerImagePath: AppAssets.svg.carousel3.path,
+            backGroundImagePath: AppAssets.svg.baseSvg.onboarding3.path,
+            pointerImagePath: AppAssets.svg.baseSvg.carousel3.path,
           ),
         ),
       ],

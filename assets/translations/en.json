@@ -84,7 +84,11 @@
     "scripInjectionValidate": "Invalid characters found",
     "filedValidation": "Please enter",
     "please": "Please Select",
-    "search": "Search"
+    "search": "Search",
+    "pass_symbols": "Password Must Contain Alphabets, Numbers and Symbols",
+    "pass_example": "Example: MyPass123!",
+    "select":"Select"
+
   },
   "intro": {
     "skip": "Skip",

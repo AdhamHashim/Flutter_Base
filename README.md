@@ -10,7 +10,7 @@
 
 1. USERS
 
-**FLUTTER_VERSION** : 3.38.3
+**FLUTTER_VERSION** : 3.35.3
 
 ## Links for development :
 
@@ -35,10 +35,7 @@
 
 1. [App in app store]()
 2. [App in google play]()
-
-## Google Key Data :
-
-- Google_Key_Here
+ 
 
 ## App Bundle :
 
@@ -49,7 +46,9 @@ or
 ## FireBase :
 
 1. FIREBASE_ACCOUNT_HOLDER
-   - flutteraaitsa@gmail.com
+   - AAIT
+   or
+   - CS
 2. PROJECT_NAME_IN_FIREBASE
    - Flutter_Base
 

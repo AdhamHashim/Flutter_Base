@@ -84,7 +84,10 @@
     "please_enter_your_phone_number": "الرجاء ادخال رقم الجوال",
     "filedValidation": "الرجاء إدخال",
     "please": "الرجاء اختيار ",
-    "search": "بحث"
+    "search": "بحث",
+    "pass_symbols": "يجب أن تحتوي كلمة المرور على حروف وأرقام ورموز",
+    "pass_example": "مثال: MyPass123!",
+    "select":"اختر"
   },
   "intro": {
     "skip": "تخطي",

@@ -88,6 +88,9 @@ abstract class  LocaleKeys {
   static const app_filedValidation = 'app.filedValidation';
   static const app_please = 'app.please';
   static const app_search = 'app.search';
+  static const app_pass_symbols = 'app.pass_symbols';
+  static const app_pass_example = 'app.pass_example';
+  static const app_select = 'app.select';
   static const app = 'app';
   static const intro_skip = 'intro.skip';
   static const intro_firstStep = 'intro.firstStep';

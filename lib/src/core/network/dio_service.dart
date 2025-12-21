@@ -1,33 +1,28 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../../../generated/locale_keys.g.dart';
+import '../../config/language/languages.dart';
 import '../../config/res/config_imports.dart';
 import '../error/exceptions.dart';
+import '../helpers/cache_service.dart';
 import '../navigation/navigator.dart';
-import '../shared/base_model.dart';
+import '../shared/models/base_model.dart';
 import 'backend_configuation.dart';
 import 'configuration_interceptor.dart';
 import 'extensions.dart';
 import 'network_request.dart';
 import 'network_service.dart';
-import 'un_authenticated_interceptor.dart';
 
 @LazySingleton(as: NetworkService)
 class DioService implements NetworkService {
   late final Dio _dio;
 
   DioService() {
-    _initDio();
-  }
-
-  void _initDio() {
     _dio = Dio()
-      ..options.baseUrl = ConstantManager.baseUrl
       ..options.connectTimeout = const Duration(
         seconds: ConstantManager.connectTimeoutDuration,
       )
@@ -53,7 +48,16 @@ class DioService implements NetworkService {
         ),
       );
     }
-    _dio.interceptors.add(UnAuthenticatedInterceptor.instance);
+  }
+
+  Future<String> getBaseUrl() async {
+    return await SecureStorage.read(SecureLocalVariableKeys.baseUrlKey) ?? '';
+  }
+
+  @override
+  Future<void> updateBaseUrl() async {
+    final baseUrl = await getBaseUrl();
+    _dio.options.baseUrl = baseUrl;
   }
 
   @override
@@ -72,7 +76,11 @@ class DioService implements NetworkService {
   void changeLocale({String? locale}) {
     _dio.options.headers[HttpHeaders.acceptLanguageHeader] =
         locale ?? Go.context.locale.languageCode;
-    _dio.options.headers['Lang'] = locale ?? Go.context.locale.languageCode;
+    _dio.options.headers['lang'] = locale ?? Go.context.locale.languageCode;
+  }
+
+  Future<Map<String, dynamic>> publicHeaders() async {
+    return {"lang": Languages.currentLanguage.languageCode};
   }
 
   @override
@@ -81,6 +89,7 @@ class DioService implements NetworkService {
     Model Function(dynamic json)? mapper,
   }) async {
     try {
+      final publicHeadersValue = await publicHeaders();
       await networkRequest.prepareRequestData();
       final response = await _dio.request(
         networkRequest.path,
@@ -98,7 +107,9 @@ class DioService implements NetworkService {
             : null,
         options: Options(
           method: networkRequest.asString(),
-          headers: networkRequest.headers,
+          headers: networkRequest.headers != null
+              ? {...networkRequest.headers!, ...publicHeadersValue}
+              : publicHeadersValue,
         ),
       );
       if (mapper != null) {

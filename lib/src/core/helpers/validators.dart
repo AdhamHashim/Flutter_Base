@@ -31,6 +31,40 @@ class Validators {
     return null;
   }
 
+  static String? validatePassword(String? value, {String? fieldTitle}) {
+    if (value?.trim().isEmpty ?? true) {
+      return fieldTitle == null
+          ? LocaleKeys.app_fill_field.tr(context: Go.context)
+          : "${LocaleKeys.app_filedValidation.tr()} $fieldTitle";
+    } else if (!RegExp(
+      r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[@#$%^&*()_+=\[\]{};:,.<>?/\\|`~!-]).{8,16}$",
+    ).hasMatch(value!)) {
+      return LocaleKeys.app_pass_symbols.tr(context: Go.context);
+    } else if (value.length > 16) {
+      return LocaleKeys.app_pass_validation.tr(context: Go.context);
+    } else if (RegExp(r'[<>]').hasMatch(value)) {
+      return LocaleKeys.app_scripInjectionValidate.tr(context: Go.context);
+    }
+    return null;
+  }
+
+  static String? validatePasswordConfirm(
+    String? value,
+    String? pass, {
+    String? fieldTitle,
+  }) {
+    if (value?.trim().isEmpty ?? true) {
+      return fieldTitle == null
+          ? LocaleKeys.app_fill_field.tr(context: Go.context)
+          : "${LocaleKeys.app_filedValidation.tr()} $fieldTitle";
+    } else if (RegExp(r'[<>]').hasMatch(value!)) {
+      return LocaleKeys.app_scripInjectionValidate.tr(context: Go.context);
+    } else if (value != pass) {
+      return LocaleKeys.app_confirm_validation.tr(context: Go.context);
+    }
+    return null;
+  }
+
   static String? validatePhone(String? value, {String? fieldTitle}) {
     if (value?.trim().isEmpty ?? true) {
       return fieldTitle == null
