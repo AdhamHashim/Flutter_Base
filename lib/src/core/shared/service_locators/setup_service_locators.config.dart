@@ -12,6 +12,7 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../../features/settings/splash/imports/view_imports.dart' as _i222;
 import '../../base_crud/code/data/base_data_imports.dart' as _i241;
 import '../../base_crud/code/domain/base_domain_imports.dart' as _i267;
 import '../../base_crud/code/presentation/cubit/get_base_name_and_id/get_base_name_and_id_cubit.dart'
@@ -32,6 +33,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i30.GetBaseEntityCubit(),
     );
     gh.factory<_i200.BaseUrlCubit>(() => _i200.BaseUrlCubit());
+    gh.factory<_i222.SplashCubit>(() => _i222.SplashCubit());
     gh.lazySingleton<_i996.UserCubit>(() => _i996.UserCubit());
     gh.lazySingleton<_i632.NetworkService>(() => _i37.DioService());
     gh.lazySingleton<_i241.BaseRemoteDataSource>(
