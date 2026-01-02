@@ -40,6 +40,18 @@ class PaginatedListConfig {
   /// Scroll controller
   final ScrollController? controller;
 
+  /// Whether to enable pull-to-refresh
+  final bool enableRefresh;
+
+  /// Color of the refresh indicator
+  final Color? refreshIndicatorColor;
+
+  /// Background color of the refresh indicator
+  final Color? refreshIndicatorBackgroundColor;
+
+  /// Displacement of the refresh indicator
+  final double refreshIndicatorDisplacement;
+
   const PaginatedListConfig({
     this.viewType = ListViewType.list,
     this.scrollDirection = Axis.vertical,
@@ -53,6 +65,10 @@ class PaginatedListConfig {
     this.reverse = false,
     this.primary,
     this.controller,
+    this.enableRefresh = true,
+    this.refreshIndicatorColor,
+    this.refreshIndicatorBackgroundColor,
+    this.refreshIndicatorDisplacement = 40.0,
   });
 
   /// Create a copy with modified values
@@ -69,6 +85,10 @@ class PaginatedListConfig {
     bool? reverse,
     bool? primary,
     ScrollController? controller,
+    bool? enableRefresh,
+    Color? refreshIndicatorColor,
+    Color? refreshIndicatorBackgroundColor,
+    double? refreshIndicatorDisplacement,
   }) {
     return PaginatedListConfig(
       viewType: viewType ?? this.viewType,
@@ -83,6 +103,10 @@ class PaginatedListConfig {
       reverse: reverse ?? this.reverse,
       primary: primary ?? this.primary,
       controller: controller ?? this.controller,
+      enableRefresh: enableRefresh ?? this.enableRefresh,
+      refreshIndicatorColor: refreshIndicatorColor ?? this.refreshIndicatorColor,
+      refreshIndicatorBackgroundColor: refreshIndicatorBackgroundColor ?? this.refreshIndicatorBackgroundColor,
+      refreshIndicatorDisplacement: refreshIndicatorDisplacement ?? this.refreshIndicatorDisplacement,
     );
   }
 }

@@ -81,6 +81,10 @@ class _PaginatedListWidgetState<C extends PaginatedCubit<T>, T>
     }
   }
 
+  Future<void> _onRefresh() async {
+    await _cubit.refresh();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<C, AsyncState<PaginatedData<T>>>(
@@ -95,20 +99,57 @@ class _PaginatedListWidgetState<C extends PaginatedCubit<T>, T>
         // Show error state
         if (state.status == BaseStatus.error) {
           if (widget.errorBuilder != null) {
-            return widget.errorBuilder!(context, state.errorMessage ?? '');
+            return _wrapWithRefreshIndicator(
+              widget.errorBuilder!(context, state.errorMessage ?? ''),
+              needsScrollable: true,
+            );
           }
-          return ErrorView(error: state.errorMessage ?? '');
+          return _wrapWithRefreshIndicator(
+            ErrorView(error: state.errorMessage ?? ''),
+            needsScrollable: true,
+          );
         }
 
         // Show empty state
         final data = state.data;
         if (data.items.isEmpty && state.status == BaseStatus.success) {
-          return widget.emptyWidget ?? const NotContainData();
+          return _wrapWithRefreshIndicator(
+            widget.emptyWidget ?? const NotContainData(),
+            needsScrollable: true,
+          );
         }
 
         // Show list with data
-        return _buildListView(data, state.status == BaseStatus.loadingMore);
+        return _wrapWithRefreshIndicator(
+          _buildListView(data, state.status == BaseStatus.loadingMore),
+        );
       },
+    );
+  }
+
+  Widget _wrapWithRefreshIndicator(
+    Widget child, {
+    bool needsScrollable = false,
+  }) {
+    if (!widget.config.enableRefresh) {
+      return child;
+    }
+
+    // For non-scrollable content (empty/error states), wrap in a scrollable
+    // to enable pull-to-refresh gesture
+    final scrollableChild = needsScrollable
+        ? CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [SliverFillRemaining(hasScrollBody: false, child: child)],
+          )
+        : child;
+
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      color: widget.config.refreshIndicatorColor,
+      backgroundColor: widget.config.refreshIndicatorBackgroundColor,
+      displacement: widget.config.refreshIndicatorDisplacement,
+      child: scrollableChild,
     );
   }
 
@@ -179,6 +220,15 @@ class _PaginatedListWidgetState<C extends PaginatedCubit<T>, T>
     }
   }
 
+  /// Returns the scroll physics, ensuring AlwaysScrollableScrollPhysics
+  /// when refresh is enabled so pull-to-refresh works even with short lists
+  ScrollPhysics? get _scrollPhysics {
+    if (widget.config.enableRefresh) {
+      return const AlwaysScrollableScrollPhysics();
+    }
+    return widget.config.physics;
+  }
+
   Widget _buildRegularListView(
     PaginatedData<T> data,
     int itemCount,
@@ -188,7 +238,7 @@ class _PaginatedListWidgetState<C extends PaginatedCubit<T>, T>
       key: _pageStorageKey,
       controller: _scrollController,
       scrollDirection: widget.config.scrollDirection,
-      physics: widget.config.physics,
+      physics: _scrollPhysics,
       padding: widget.config.padding,
       shrinkWrap: widget.config.shrinkWrap,
       reverse: widget.config.reverse,
@@ -212,7 +262,7 @@ class _PaginatedListWidgetState<C extends PaginatedCubit<T>, T>
       key: _pageStorageKey,
       controller: _scrollController,
       scrollDirection: widget.config.scrollDirection,
-      physics: widget.config.physics,
+      physics: _scrollPhysics,
       padding: widget.config.padding,
       shrinkWrap: widget.config.shrinkWrap,
       reverse: widget.config.reverse,
@@ -242,7 +292,7 @@ class _PaginatedListWidgetState<C extends PaginatedCubit<T>, T>
       key: _pageStorageKey,
       controller: _scrollController,
       scrollDirection: widget.config.scrollDirection,
-      physics: widget.config.physics,
+      physics: _scrollPhysics,
       padding: widget.config.padding,
       shrinkWrap: widget.config.shrinkWrap,
       reverse: widget.config.reverse,

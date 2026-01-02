@@ -5,10 +5,10 @@ import 'package:multiple_result/multiple_result.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../../core/base_crud/code/presentation/cubit/base_cubit/async_cubit.dart';
 import '../../../../../core/error/failure.dart';
+import '../../../../extensions/base_state.dart';
 import '../../../handling_views/error_view.dart';
 import '../../../handling_views/not_contain_data.dart';
-import '../../../../extensions/base_state.dart';
-import '../../../../widgets/universal_media/widgets.dart' show LoadingIndicator;
+import '../../../universal_media/widgets.dart';
 
 part '../cubits/paginated_cubit.dart';
 part '../paginated_list_widget.dart';
