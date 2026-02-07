@@ -91,6 +91,7 @@ abstract class  LocaleKeys {
   static const app_pass_symbols = 'app.pass_symbols';
   static const app_pass_example = 'app.pass_example';
   static const app_select = 'app.select';
+  static const app_user_validity_expired = 'app.user_validity_expired';
   static const app = 'app';
   static const intro_skip = 'intro.skip';
   static const intro_firstStep = 'intro.firstStep';
@@ -102,5 +103,23 @@ abstract class  LocaleKeys {
   static const intro_welcome = 'intro.welcome';
   static const intro_platformInfo = 'intro.platformInfo';
   static const intro = 'intro';
+  static const complaint_title = 'complaint.title';
+  static const complaint_new = 'complaint.new';
+  static const complaint_progress = 'complaint.progress';
+  static const complaint_show_details = 'complaint.show_details';
+  static const complaint_resolved = 'complaint.resolved';
+  static const complaint_add_btn = 'complaint.add_btn';
+  static const complaint_reason_label = 'complaint.reason_label';
+  static const complaint_reason_hint = 'complaint.reason_hint';
+  static const complaint_details_label = 'complaint.details_label';
+  static const complaint_details_hint = 'complaint.details_hint';
+  static const complaint_upload_photos = 'complaint.upload_photos';
+  static const complaint_success_msg = 'complaint.success_msg';
+  static const complaint_review_msg = 'complaint.review_msg';
+  static const complaint_details_title = 'complaint.details_title';
+  static const complaint_reason = 'complaint.reason';
+  static const complaint_photos = 'complaint.photos';
+  static const complaint_admin_response = 'complaint.admin_response';
+  static const complaint = 'complaint';
 
 }

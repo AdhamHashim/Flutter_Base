@@ -4,7 +4,7 @@ final GetIt injector = GetIt.instance;
 
 class ConstantManager {
   static const String bundleId = 'com.aait.flutter_base';
-  static const String projectName = 'Flutter_Base';
+  static const String appName = 'Flutter_Base';
   static const String fontFamily = 'Expo';
 
   static const int splashTimer = 3000;
@@ -20,6 +20,7 @@ class ConstantManager {
   static const String english = 'English';
   static const int pgSize = 10;
   static const int pgFirst = 1;
+  static const int maxLines = 5;
   static String platform = Platform.isAndroid ? 'android' : 'ios';
 
   static Map<String, dynamic>? paginateJson(int page) => {

@@ -18,6 +18,7 @@ class Helpers {
       ),
     );
   }
+  
 
   static void shareApp(String url) {
     CustomLoading.showFullScreenLoading();

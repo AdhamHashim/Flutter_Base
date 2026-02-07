@@ -2,11 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' show log;
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import '../../../generated/locale_keys.g.dart';
 import '../../config/res/config_imports.dart';
+import '../extensions/base_state.dart';
+ import '../shared/cubits/user_cubit/user_cubit.dart';
+import '../widgets/custom_messages.dart';
 
 part 'navigation_types.dart';
 part 'notification_routes.dart';
@@ -27,7 +31,6 @@ class NotificationService {
   );
 
   static String deviceToken = '';
-
   Future<bool> _requestPermissions() async {
     bool? result;
     if (Platform.isIOS) {
@@ -67,7 +70,7 @@ class NotificationService {
         AndroidNotificationDetails(
           _channel.id,
           _channel.name,
-          channelDescription: ConstantManager.projectName,
+          channelDescription: ConstantManager.appName,
           enableVibration: true,
           playSound: true,
           icon: '@mipmap/ic_launcher',
@@ -132,12 +135,7 @@ class NotificationService {
 
   Future<void> _saveFcmToken() async {
     final String? token;
-    if (Platform.isIOS) {
-      token = await FirebaseMessaging.instance.getAPNSToken();
-    } else {
-      token = await FirebaseMessaging.instance.getToken();
-    }
-
+    token = await FirebaseMessaging.instance.getToken();
     deviceToken = token ?? "";
     log("Firebase Fcm token : ${token.toString()}");
   }
@@ -164,12 +162,31 @@ class NotificationService {
 
   void _configureNotification() async {
     FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
+      final type = event.data['type'];
+      if (_isLogoutNotification(type)) {
+        await _handleLogoutNotification();
+        return;
+      }
       _showNotification(event);
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) {
       _handleNotificationsTap(event);
     });
+  }
+
+  bool _isLogoutNotification(String? type) {
+    return type == NotificationType.blockNotification.id ||
+        type == NotificationType.deleteAccountNotification.id;
+  }
+
+  Future<void> _handleLogoutNotification() async {
+    await UserCubit.instance.logout();
+    // Go.offAll(const LoginScreen());
+    MessageUtils.showSnackBar(
+      baseStatus: BaseStatus.error,
+      message: LocaleKeys.app_user_validity_expired.tr(),
+    );
   }
 }
 

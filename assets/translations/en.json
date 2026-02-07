@@ -87,7 +87,8 @@
     "search": "Search",
     "pass_symbols": "Password Must Contain Alphabets, Numbers and Symbols",
     "pass_example": "Example: MyPass123!",
-    "select":"Select"
+    "select":"Select",
+    "user_validity_expired": "User's validity has expired. Please register again"
 
   },
   "intro": {
@@ -100,5 +101,24 @@
     "next": "Next",
     "welcome": "Welcome to Roshan AlSharq\nReal Estate",
     "platformInfo": "A Saudi platform that helps you find your dream home\neasily and securely"
+  },
+  "complaint": {
+    "title": "Complaint and Suggestions",
+    "new": "New",
+    "progress": "In Progress",
+    "show_details": "Show Details",
+    "resolved": "Resolved",
+    "add_btn": "Add New Complaint",
+    "reason_label": "Complaint Reason",
+    "reason_hint": "Entered complaint reason",
+    "details_label": "Complaint Details",
+    "details_hint": "Write your complaint details here",
+    "upload_photos": "Upload Photos",
+    "success_msg": "Complaint Sent Successfully",
+    "review_msg": "Your request is under review. You'll be notified as soon as the admin responds",
+    "details_title": "Complaint Details",
+    "reason": "Reason",
+    "photos": "Photos",
+    "admin_response": "Admin Response"
   }
 }

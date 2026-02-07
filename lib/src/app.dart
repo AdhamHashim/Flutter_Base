@@ -26,7 +26,7 @@ class App extends StatelessWidget {
           create: (context) => injector<UserCubit>(),
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: ConstantManager.projectName,
+            title: ConstantManager.appName,
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,

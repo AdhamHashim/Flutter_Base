@@ -1,14 +1,34 @@
 part of 'notification_service.dart';
 
 enum NotificationType {
-  none(0, navigation: HomeNavigation()),
-  message(1, navigation: MessageNavigation()),
-  update(2, navigation: UpdateNavigation()),
-  warning(3, navigation: HomeNavigation()),
-  error(4, navigation: HomeNavigation()),
-  success(5, navigation: HomeNavigation());
+  none('none', navigation: HomeNavigation()),
 
-  final int id;
+  walletTransactionNotification(
+    'wallet_transaction_notification',
+    navigation: WalletNavigation(),
+  ),
+  blockNotification(
+    'block_notification',
+    navigation: BlockNotificationNavigation(),
+  ),
+  deleteAccountNotification(
+    'delete_account_notification',
+    navigation: BlockNotificationNavigation(),
+  ),
+  adminNotification(
+    'admin_notification',
+    navigation: NotificationScreenNavigation(),
+  ),
+  adminReplyComplaintNotification(
+    'admin_reply_complaint_notification',
+    navigation: ComplainDetailsNavigation(),
+  ),
+  adminComplaintInProgressNotification(
+    'admin_complaint_in_progress_notification',
+    navigation: ComplainDetailsNavigation(),
+  );
+
+  final String id;
   final NotificationNavigation navigation;
   const NotificationType(this.id, {required this.navigation});
 }
