@@ -1,8 +1,8 @@
-part of 'notification_service.dart';
+import 'notification_navigation.dart';
 
+/// Notification type identifiers and their associated navigation behavior.
 enum NotificationType {
   none('none', navigation: HomeNavigation()),
-
   walletTransactionNotification(
     'wallet_transaction_notification',
     navigation: WalletNavigation(),
