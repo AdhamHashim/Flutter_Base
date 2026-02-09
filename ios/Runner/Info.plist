@@ -16,10 +16,6 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>Flutter_Base</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-	<string>googlemaps</string>
-	</array>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,8 +24,26 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>googlemaps</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>We need access to documents for file picking.</string>
+	<key>NSFileSystemUsageDescription</key>
+	<string>Need permission to access file system</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>نحتاج للوصول إلى موقعك لعرض موقعك على الخريطة وتحسين تجربة التوصيل.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to your location to show nearby places.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Need permission to save files</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to select files.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -38,20 +52,6 @@
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Need permission to save files</string>
-	<key>NSFileSystemUsageDescription</key>
-	<string>Need permission to access file system</string>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>نحتاج للوصول إلى موقعك لعرض موقعك على الخريطة وتحسين تجربة التوصيل.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library to select files.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to your location to show nearby places.</string>
-	<key>NSDocumentsFolderUsageDescription</key>
-	<string>We need access to documents for file picking.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

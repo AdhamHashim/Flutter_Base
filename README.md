@@ -10,7 +10,7 @@
 
 1. USERS
 
-**FLUTTER_VERSION** : 3.35.3
+**FLUTTER_VERSION** : 3.38.9
 
 ## Links for development :
 
@@ -56,7 +56,7 @@ or
 
 1. **Flutter**
 
-   - 
+   - DEVELOPER_NAME
 
 2. **Backend**
 

@@ -1,3 +1,9 @@
+// Remove deprecated property (AGP 8.1+); may be set by global gradle.properties or cache
+try {
+    val badKey = "android.bundle.enableUncompressedNativeLibs"
+    (project.properties as? MutableMap<String, Any?>)?.remove(badKey)
+} catch (_: Exception) { /* properties may be read-only */ }
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -33,6 +39,12 @@ android {
         }
     }
 
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     buildTypes {
         getByName("release") {
             signingConfig = signingConfigs.getByName("debug") // مؤقتاً للتجربة
@@ -48,9 +60,8 @@ android {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
 
 flutter {
