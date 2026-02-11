@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "301593055481",
+    "project_id": "clean-solution-d7088",
+    "storage_bucket": "clean-solution-d7088.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301593055481:android:507756286b025f56cfd228",
+        "android_client_info": {
+          "package_name": "com.aait.cleansolution"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmhJf3Vb1xbX-A7gcOzzSLXST0e1vb-nQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -20,7 +20,7 @@ class ErrorView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         spacing: AppMargin.mH10,
         children: [
-          AppAssets.lottie.error.error3.lottie(
+          AppAssets.lottie.error1.lottie(
             width: width ?? context.width * .8,
             height: height != null ? (height! * .8) : context.height * .3,
             fit: BoxFit.fill,

@@ -61,7 +61,7 @@ class SuccessDialogBodyState extends State<SuccessDialogBody> {
       spacing: AppMargin.mH10,
       children: [
         Center(
-          child: AppAssets.lottie.success.done.lottie(
+          child: AppAssets.lottie.successfullOrder.lottie(
             width: context.width * .3,
             fit: BoxFit.contain,
           ),

@@ -46,24 +46,49 @@ class $AssetsFontsGen {
 class $AssetsLottieGen {
   const $AssetsLottieGen();
 
-  /// Directory path: assets/lottie/data
-  $AssetsLottieDataGen get data => const $AssetsLottieDataGen();
+  /// File path: assets/lottie/error_1.json
+  LottieGenImage get error1 =>
+      const LottieGenImage('assets/lottie/error_1.json');
 
-  /// Directory path: assets/lottie/error
-  $AssetsLottieErrorGen get error => const $AssetsLottieErrorGen();
+  /// File path: assets/lottie/error_4.json
+  LottieGenImage get error4 =>
+      const LottieGenImage('assets/lottie/error_4.json');
 
-  /// Directory path: assets/lottie/loading
-  $AssetsLottieLoadingGen get loading => const $AssetsLottieLoadingGen();
+  /// File path: assets/lottie/no_internet.json
+  LottieGenImage get noInternet =>
+      const LottieGenImage('assets/lottie/no_internet.json');
 
-  /// Directory path: assets/lottie/network
-  $AssetsLottieNetworkGen get network => const $AssetsLottieNetworkGen();
+  /// File path: assets/lottie/not_found_2.json
+  LottieGenImage get notFound2 =>
+      const LottieGenImage('assets/lottie/not_found_2.json');
 
-  /// Directory path: assets/lottie/success
-  $AssetsLottieSuccessGen get success => const $AssetsLottieSuccessGen();
+  /// File path: assets/lottie/successfull_order.json
+  LottieGenImage get successfullOrder =>
+      const LottieGenImage('assets/lottie/successfull_order.json');
+
+  /// File path: assets/lottie/visit.json
+  LottieGenImage get visit => const LottieGenImage('assets/lottie/visit.json');
+
+  /// File path: assets/lottie/wait.json
+  LottieGenImage get wait => const LottieGenImage('assets/lottie/wait.json');
+
+  /// List of all assets
+  List<LottieGenImage> get values => [
+    error1,
+    error4,
+    noInternet,
+    notFound2,
+    successfullOrder,
+    visit,
+    wait,
+  ];
 }
 
 class $AssetsSvgGen {
   const $AssetsSvgGen();
+
+  /// Directory path: assets/svg/app_svg
+  $AssetsSvgAppSvgGen get appSvg => const $AssetsSvgAppSvgGen();
 
   /// Directory path: assets/svg/base_svg
   $AssetsSvgBaseSvgGen get baseSvg => const $AssetsSvgBaseSvgGen();
@@ -78,132 +103,25 @@ class $AssetsTranslationsGen {
   /// File path: assets/translations/en.json
   String get en => 'assets/translations/en.json';
 
+  /// File path: assets/translations/lang.json
+  String get lang => 'assets/translations/lang.json';
+
   /// List of all assets
-  List<String> get values => [ar, en];
+  List<String> get values => [ar, en, lang];
 }
 
-class $AssetsLottieDataGen {
-  const $AssetsLottieDataGen();
+class $AssetsSvgAppSvgGen {
+  const $AssetsSvgAppSvgGen();
 
-  /// File path: assets/lottie/data/empty_box.json
-  LottieGenImage get emptyBox =>
-      const LottieGenImage('assets/lottie/data/empty_box.json');
+  /// File path: assets/svg/app_svg/app_logo.png
+  AssetGenImage get appLogo =>
+      const AssetGenImage('assets/svg/app_svg/app_logo.png');
 
-  /// File path: assets/lottie/data/empty_cart.json
-  LottieGenImage get emptyCart =>
-      const LottieGenImage('assets/lottie/data/empty_cart.json');
-
-  /// File path: assets/lottie/data/no_data.json
-  LottieGenImage get noData =>
-      const LottieGenImage('assets/lottie/data/no_data.json');
-
-  /// File path: assets/lottie/data/not_found_1.json
-  LottieGenImage get notFound1 =>
-      const LottieGenImage('assets/lottie/data/not_found_1.json');
-
-  /// File path: assets/lottie/data/not_found_2.json
-  LottieGenImage get notFound2 =>
-      const LottieGenImage('assets/lottie/data/not_found_2.json');
+  /// File path: assets/svg/app_svg/home.svg
+  SvgGenImage get home => const SvgGenImage('assets/svg/app_svg/home.svg');
 
   /// List of all assets
-  List<LottieGenImage> get values => [
-    emptyBox,
-    emptyCart,
-    noData,
-    notFound1,
-    notFound2,
-  ];
-}
-
-class $AssetsLottieErrorGen {
-  const $AssetsLottieErrorGen();
-
-  /// File path: assets/lottie/error/api_error.json
-  LottieGenImage get apiError =>
-      const LottieGenImage('assets/lottie/error/api_error.json');
-
-  /// File path: assets/lottie/error/error.json
-  LottieGenImage get error =>
-      const LottieGenImage('assets/lottie/error/error.json');
-
-  /// File path: assets/lottie/error/error_1.json
-  LottieGenImage get error1 =>
-      const LottieGenImage('assets/lottie/error/error_1.json');
-
-  /// File path: assets/lottie/error/error_2.json
-  LottieGenImage get error2 =>
-      const LottieGenImage('assets/lottie/error/error_2.json');
-
-  /// File path: assets/lottie/error/error_3.json
-  LottieGenImage get error3 =>
-      const LottieGenImage('assets/lottie/error/error_3.json');
-
-  /// File path: assets/lottie/error/error_4.json
-  LottieGenImage get error4 =>
-      const LottieGenImage('assets/lottie/error/error_4.json');
-
-  /// List of all assets
-  List<LottieGenImage> get values => [
-    apiError,
-    error,
-    error1,
-    error2,
-    error3,
-    error4,
-  ];
-}
-
-class $AssetsLottieLoadingGen {
-  const $AssetsLottieLoadingGen();
-
-  /// File path: assets/lottie/loading/loading.json
-  LottieGenImage get loading =>
-      const LottieGenImage('assets/lottie/loading/loading.json');
-
-  /// File path: assets/lottie/loading/loading_2.json
-  LottieGenImage get loading2 =>
-      const LottieGenImage('assets/lottie/loading/loading_2.json');
-
-  /// File path: assets/lottie/loading/loading_3.json
-  LottieGenImage get loading3 =>
-      const LottieGenImage('assets/lottie/loading/loading_3.json');
-
-  /// File path: assets/lottie/loading/loading_4.json
-  LottieGenImage get loading4 =>
-      const LottieGenImage('assets/lottie/loading/loading_4.json');
-
-  /// List of all assets
-  List<LottieGenImage> get values => [loading, loading2, loading3, loading4];
-}
-
-class $AssetsLottieNetworkGen {
-  const $AssetsLottieNetworkGen();
-
-  /// File path: assets/lottie/network/no_internet.json
-  LottieGenImage get noInternet =>
-      const LottieGenImage('assets/lottie/network/no_internet.json');
-
-  /// List of all assets
-  List<LottieGenImage> get values => [noInternet];
-}
-
-class $AssetsLottieSuccessGen {
-  const $AssetsLottieSuccessGen();
-
-  /// File path: assets/lottie/success/done.json
-  LottieGenImage get done =>
-      const LottieGenImage('assets/lottie/success/done.json');
-
-  /// File path: assets/lottie/success/success.json
-  LottieGenImage get success =>
-      const LottieGenImage('assets/lottie/success/success.json');
-
-  /// File path: assets/lottie/success/successfull_order.json
-  LottieGenImage get successfullOrder =>
-      const LottieGenImage('assets/lottie/success/successfull_order.json');
-
-  /// List of all assets
-  List<LottieGenImage> get values => [done, success, successfullOrder];
+  List<dynamic> get values => [appLogo, home];
 }
 
 class $AssetsSvgBaseSvgGen {
@@ -241,6 +159,10 @@ class $AssetsSvgBaseSvgGen {
   AssetGenImage get onboarding3 =>
       const AssetGenImage('assets/svg/base_svg/Onboarding_3.png');
 
+  /// File path: assets/svg/base_svg/Upload_doted.png
+  AssetGenImage get uploadDoted =>
+      const AssetGenImage('assets/svg/base_svg/Upload_doted.png');
+
   /// File path: assets/svg/base_svg/arrow_back.svg
   SvgGenImage get arrowBack =>
       const SvgGenImage('assets/svg/base_svg/arrow_back.svg');
@@ -249,9 +171,29 @@ class $AssetsSvgBaseSvgGen {
   SvgGenImage get arrowDown =>
       const SvgGenImage('assets/svg/base_svg/arrow_down.svg');
 
+  /// File path: assets/svg/base_svg/change_email.svg
+  SvgGenImage get changeEmail =>
+      const SvgGenImage('assets/svg/base_svg/change_email.svg');
+
+  /// File path: assets/svg/base_svg/change_pass.svg
+  SvgGenImage get changePass =>
+      const SvgGenImage('assets/svg/base_svg/change_pass.svg');
+
+  /// File path: assets/svg/base_svg/chats_empty.png
+  AssetGenImage get chatsEmpty =>
+      const AssetGenImage('assets/svg/base_svg/chats_empty.png');
+
+  /// File path: assets/svg/base_svg/complain_empty.png
+  AssetGenImage get complainEmpty =>
+      const AssetGenImage('assets/svg/base_svg/complain_empty.png');
+
   /// File path: assets/svg/base_svg/correct.svg
   SvgGenImage get correct =>
       const SvgGenImage('assets/svg/base_svg/correct.svg');
+
+  /// File path: assets/svg/base_svg/delete_all.svg
+  SvgGenImage get deleteAll =>
+      const SvgGenImage('assets/svg/base_svg/delete_all.svg');
 
   /// File path: assets/svg/base_svg/drop_down_arrow_down.svg
   SvgGenImage get dropDownArrowDown =>
@@ -261,8 +203,39 @@ class $AssetsSvgBaseSvgGen {
   SvgGenImage get dropDownClose =>
       const SvgGenImage('assets/svg/base_svg/drop_down_close.svg');
 
+  /// File path: assets/svg/base_svg/notification_delete.svg
+  SvgGenImage get notificationDelete =>
+      const SvgGenImage('assets/svg/base_svg/notification_delete.svg');
+
+  /// File path: assets/svg/base_svg/notification_dialog.png
+  AssetGenImage get notificationDialog =>
+      const AssetGenImage('assets/svg/base_svg/notification_dialog.png');
+
+  /// File path: assets/svg/base_svg/notification_empty.png
+  AssetGenImage get notificationEmpty =>
+      const AssetGenImage('assets/svg/base_svg/notification_empty.png');
+
+  /// File path: assets/svg/base_svg/notifications copy.svg
+  SvgGenImage get notificationsCopy =>
+      const SvgGenImage('assets/svg/base_svg/notifications copy.svg');
+
+  /// File path: assets/svg/base_svg/notifications.svg
+  SvgGenImage get notifications =>
+      const SvgGenImage('assets/svg/base_svg/notifications.svg');
+
+  /// File path: assets/svg/base_svg/notify.svg
+  SvgGenImage get notify => const SvgGenImage('assets/svg/base_svg/notify.svg');
+
+  /// File path: assets/svg/base_svg/profile.png
+  AssetGenImage get profile =>
+      const AssetGenImage('assets/svg/base_svg/profile.png');
+
   /// File path: assets/svg/base_svg/search.svg
   SvgGenImage get search => const SvgGenImage('assets/svg/base_svg/search.svg');
+
+  /// File path: assets/svg/base_svg/sessions_empty.png
+  AssetGenImage get sessionsEmpty =>
+      const AssetGenImage('assets/svg/base_svg/sessions_empty.png');
 
   /// List of all assets
   List<dynamic> get values => [
@@ -274,12 +247,26 @@ class $AssetsSvgBaseSvgGen {
     onboarding1,
     onboarding2,
     onboarding3,
+    uploadDoted,
     arrowBack,
     arrowDown,
+    changeEmail,
+    changePass,
+    chatsEmpty,
+    complainEmpty,
     correct,
+    deleteAll,
     dropDownArrowDown,
     dropDownClose,
+    notificationDelete,
+    notificationDialog,
+    notificationEmpty,
+    notificationsCopy,
+    notifications,
+    notify,
+    profile,
     search,
+    sessionsEmpty,
   ];
 }
 

@@ -14,7 +14,7 @@ class _IntroView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SafeArea(child: _IntroBody()));
+    return const Scaffold(body: _IntroBody());
   }
 }
 
@@ -27,24 +27,24 @@ class _IntroBody extends StatelessWidget {
       children: [
         IntroSectionWidget(
           introDto: IntroDto(
-            title: LocaleKeys.intro_welcome.tr(),
-            subtitle: LocaleKeys.intro_platformInfo.tr(),
+            title: LocaleKeys.introWelcome,
+            subtitle: LocaleKeys.introPlatforminfo,
             backGroundImagePath: AppAssets.svg.baseSvg.onboarding1.path,
             pointerImagePath: AppAssets.svg.baseSvg.carousel1.path,
           ),
         ),
         IntroSectionWidget(
           introDto: IntroDto(
-            title: LocaleKeys.intro_explore.tr(),
-            subtitle: LocaleKeys.intro_browse.tr(),
+            title: LocaleKeys.introExplore,
+            subtitle: LocaleKeys.introBrowse,
             backGroundImagePath: AppAssets.svg.baseSvg.onboarding2.path,
             pointerImagePath: AppAssets.svg.baseSvg.carousel1.path,
           ),
         ),
         IntroSectionWidget(
           introDto: IntroDto(
-            title: LocaleKeys.intro_firstStep.tr(),
-            subtitle: LocaleKeys.intro_overview.tr(),
+            title: LocaleKeys.introFirststep,
+            subtitle: LocaleKeys.introOverview,
             backGroundImagePath: AppAssets.svg.baseSvg.onboarding3.path,
             pointerImagePath: AppAssets.svg.baseSvg.carousel3.path,
           ),

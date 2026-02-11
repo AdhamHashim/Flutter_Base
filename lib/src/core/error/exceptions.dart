@@ -1,7 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../generated/locale_keys.g.dart';
+import '../../config/language/locale_keys.g.dart';
 
 class ServerException extends Equatable implements Exception {
   final String message;
@@ -38,13 +37,13 @@ class ConflictException extends ServerException {
 }
 
 class InternalServerErrorException extends ServerException {
-  const InternalServerErrorException([String? message])
-    : super(message ?? LocaleKeys.app_check_internet);
+  InternalServerErrorException([String? message])
+      : super(message ?? LocaleKeys.checkInternet);
 }
 
 class NoInternetConnectionException extends ServerException {
   NoInternetConnectionException([String? message])
-    : super(message ?? LocaleKeys.app_check_internet.tr());
+      : super(message ?? LocaleKeys.checkInternet);
 }
 
 class CacheException implements Exception {}

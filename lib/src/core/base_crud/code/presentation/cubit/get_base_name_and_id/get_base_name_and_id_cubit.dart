@@ -1,7 +1,10 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:injectable/injectable.dart';
+
 import '../../../../../../config/res/config_imports.dart';
 import '../../../domain/base_domain_imports.dart';
 
@@ -11,7 +14,7 @@ part 'get_base_name_and_id_state.dart';
 class GetBaseEntityCubit<T extends BaseEntity> extends Cubit<GetBaseEntityState>
     with HydratedMixin {
   GetBaseEntityCubit()
-      : super(GetBaseEntityState(dataState: Async<List<T>>.initial())) {
+    : super(GetBaseEntityState(dataState: Async<List<T>>.initial())) {
     getBaseEntityseCase = injector();
     hydrate();
   }
@@ -56,13 +59,16 @@ class GetBaseEntityCubit<T extends BaseEntity> extends Cubit<GetBaseEntityState>
   @override
   GetBaseEntityState<BaseEntity>? fromJson(Map<String, dynamic> json) {
     final data = List<T>.from(
-      json['data'].map((x) => baseIdAndNameEntityFromJson<T>(x)),
+      json['data'].map((x) => BaseEntity.fromJson<T>(x)),
+
+      // json['data'].map((x) => baseIdAndNameEntityFromJson<T>(x)),
     );
     return GetBaseEntityState(dataState: Async<List<T>>.success(data));
   }
 
   @override
   Map<String, dynamic>? toJson(GetBaseEntityState<BaseEntity> state) {
+    // This line will now work because BaseEntity has a .toJson() method
     return {'data': state.dataState.data?.map((e) => e.toJson()).toList()};
   }
 }
@@ -75,41 +81,41 @@ class GetBaseEntityCubit<T extends BaseEntity> extends Cubit<GetBaseEntityState>
  *       builder: (context, state) {
  *         return FloatingActionButton(
  *           onPressed: () {
- *             final cubit =
+ *             final cubits =
  *                 context.read<GetBaseNameAndIdCubit<CategoryEntity>>();
- *             cubit.fGetBaseNameAndIdWithQuery(
+ *             cubits.fGetBaseNameAndIdWithQuery(
  *               params: GetBaseIdAndNameParams(
-        //                 id: 39,
-        //                 paramsType: ParamsType.query,
-        //                 queryParameters: {
-        //                   'scope': 'types',
-        //                   'type': 'meals',
-        //                   'all': 'false',
-        //                 }),
-        //           );
-        //         },
-        //         child: state.data.isLoading
-        //             ? const CircularProgressIndicator(
-        //                 color: AppColors.white,
-        //               )
-        //             : state.data.isSuccess
-        //                 ? Builder(builder: (context) {
-        //                     final list =
-        //                         state.data.data as List<CategoryEntity>?;
-        //                     if (list == null || list.isEmpty) {
-        //                       return const Icon(Icons.add);
-        //                     }
-        //                     final firstItem = list.firstOrNull;
-        //                     if (firstItem == null) {
-        //                       return const Icon(Icons.add);
-        //                     }
-        //                     return Text(firstItem.name,
-        //                         style: TextStyles.bold12
-        //                             .copyWith(color: AppColors.white));
-        //                   })
-        //                 : const Icon(Icons.add),
-        //       );
-        //     },
-        //   ),
-        // ),
+    //                 id: 39,
+    //                 paramsType: ParamsType.query,
+    //                 queryParameters: {
+    //                   'scope': 'types',
+    //                   'type': 'meals',
+    //                   'all': 'false',
+    //                 }),
+    //           );
+    //         },
+    //         child: state.data.isLoading
+    //             ? const CircularProgressIndicator(
+    //                 color: AppColors.white,
+    //               )
+    //             : state.data.isSuccess
+    //                 ? Builder(builder: (context) {
+    //                     final list =
+    //                         state.data.data as List<CategoryEntity>?;
+    //                     if (list == null || list.isEmpty) {
+    //                       return const Icon(Icons.add);
+    //                     }
+    //                     final firstItem = list.firstOrNull;
+    //                     if (firstItem == null) {
+    //                       return const Icon(Icons.add);
+    //                     }
+    //                     return Text(firstItem.name,
+    //                         style: TextStyles.bold12
+    //                             .copyWith(color: AppColors.white));
+    //                   })
+    //                 : const Icon(Icons.add),
+    //       );
+    //     },
+    //   ),
+    // ),
  */

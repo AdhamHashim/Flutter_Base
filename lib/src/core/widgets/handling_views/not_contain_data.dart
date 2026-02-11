@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../generated/locale_keys.g.dart';
+import '../../../config/language/locale_keys.g.dart';
 import '../../../config/res/assets.gen.dart';
 import '../../../config/res/config_imports.dart';
 import '../../extensions/context_extension.dart';
@@ -28,14 +27,14 @@ class NotContainData extends StatelessWidget {
         children: [
           Visibility(
             visible: placeHolder != null,
-            replacement: AppAssets.lottie.data.notFound2.lottie(
+            replacement: AppAssets.lottie.notFound2.lottie(
               width: width ?? context.width * .8,
               height: height != null ? (height! * .8) : context.height * .3,
             ),
             child: placeHolder ?? const SizedBox.shrink(),
           ),
           Text(
-            errorMessage ?? LocaleKeys.app_errorexception_notcontaindesc,
+            errorMessage ?? LocaleKeys.errorexceptionNotcontaindesc,
             style: const TextStyle().setPrimaryColor.s12.medium,
           ),
         ],

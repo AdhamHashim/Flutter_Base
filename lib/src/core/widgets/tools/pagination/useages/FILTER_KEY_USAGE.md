@@ -29,7 +29,7 @@ class OrdersCubit extends PaginatedCubit<OrderEntity> {
     };
 
     return await baseCrudUseCase.call(
-      CrudBaseParmas(
+      CrudBaseParams(
         api: '${ApiConstants.myOrders}',
         httpRequestType: HttpRequestType.get,
         queryParameters: queryParams,
@@ -119,6 +119,7 @@ When you use the filter key, it will be added to your API URL:
 - With key: `GET /api/my-orders?page=1&limit=10&type=pending`
 
 You can customize the parameter name in your `fetchPageData` implementation:
+
 - `'type': key` → `?type=pending`
 - `'status': key` → `?status=pending`
 - `'stage': key` → `?stage=pending`

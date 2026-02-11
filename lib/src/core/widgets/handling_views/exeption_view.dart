@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../generated/locale_keys.g.dart';
+ import '../../../config/language/locale_keys.g.dart';
 import '../../../config/res/assets.gen.dart';
 import '../../../config/res/config_imports.dart';
 import '../../extensions/context_extension.dart';
@@ -19,12 +19,12 @@ class ExceptionView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: AppMargin.mH10,
           children: [
-            AppAssets.lottie.error.error1.lottie(
+            AppAssets.lottie.error1.lottie(
               width: context.width * .7,
               height: context.height * .3,
             ),
             Text(
-              LocaleKeys.app_exception_error,
+              LocaleKeys.exceptionError,
               style: const TextStyle().setPrimaryColor.s13.medium,
             ),
           ],

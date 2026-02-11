@@ -57,7 +57,7 @@ class ProductsCubit extends PaginatedCubit<ProductEntity> {
   @override
   Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page) async {
     return await baseCrudUseCase.call(
-      CrudBaseParmas(
+      CrudBaseParams(
         api: '/api/products?page=$page',
         httpRequestType: HttpRequestType.get,
         mapper: (json) => json,
@@ -97,8 +97,8 @@ Your API should return data in this format:
 ```json
 {
   "data": [
-    {"id": 1, "name": "Product 1", "image": "url", "price": 99.99},
-    {"id": 2, "name": "Product 2", "image": "url", "price": 149.99}
+    { "id": 1, "name": "Product 1", "image": "url", "price": 99.99 },
+    { "id": 2, "name": "Product 2", "image": "url", "price": 149.99 }
   ],
   "pagination": {
     "total_items": 100,
@@ -116,20 +116,20 @@ Your API should return data in this format:
 
 ### PaginatedListConfig
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `viewType` | `ListViewType` | `ListViewType.list` | List or Grid view |
-| `scrollDirection` | `Axis` | `Axis.vertical` | Scroll direction |
-| `physics` | `ScrollPhysics?` | `null` | Scroll physics |
-| `padding` | `EdgeInsetsGeometry?` | `null` | List padding |
-| `itemMargin` | `EdgeInsetsGeometry?` | `null` | Individual item margin |
-| `useSeparator` | `bool` | `false` | Use separator in list view |
-| `separator` | `Widget?` | `Divider()` | Custom separator widget |
-| `gridDelegate` | `SliverGridDelegate?` | 2 columns | Grid configuration |
-| `shrinkWrap` | `bool` | `false` | Shrink wrap the list |
-| `reverse` | `bool` | `false` | Reverse list order |
-| `primary` | `bool?` | `null` | Primary scroll |
-| `controller` | `ScrollController?` | `null` | Custom scroll controller |
+| Parameter         | Type                  | Default             | Description                |
+| ----------------- | --------------------- | ------------------- | -------------------------- |
+| `viewType`        | `ListViewType`        | `ListViewType.list` | List or Grid view          |
+| `scrollDirection` | `Axis`                | `Axis.vertical`     | Scroll direction           |
+| `physics`         | `ScrollPhysics?`      | `null`              | Scroll physics             |
+| `padding`         | `EdgeInsetsGeometry?` | `null`              | List padding               |
+| `itemMargin`      | `EdgeInsetsGeometry?` | `null`              | Individual item margin     |
+| `useSeparator`    | `bool`                | `false`             | Use separator in list view |
+| `separator`       | `Widget?`             | `Divider()`         | Custom separator widget    |
+| `gridDelegate`    | `SliverGridDelegate?` | 2 columns           | Grid configuration         |
+| `shrinkWrap`      | `bool`                | `false`             | Shrink wrap the list       |
+| `reverse`         | `bool`                | `false`             | Reverse list order         |
+| `primary`         | `bool?`               | `null`              | Primary scroll             |
+| `controller`      | `ScrollController?`   | `null`              | Custom scroll controller   |
 
 ## Usage Examples
 
@@ -257,15 +257,15 @@ Your cubit (extending `PaginatedCubit`) has these methods:
 
 ### PaginatedListWidget
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `itemBuilder` | Yes | Builder for each item |
-| `config` | No | List configuration |
-| `skeletonBuilder` | No | Loading skeleton widget |
-| `errorBuilder` | No | Error state widget |
-| `emptyWidget` | No | Empty state widget |
-| `loadMoreIndicator` | No | Custom load more indicator |
-| `loadMoreThreshold` | No | Scroll threshold for load more (0.0-1.0) |
+| Parameter           | Required | Description                              |
+| ------------------- | -------- | ---------------------------------------- |
+| `itemBuilder`       | Yes      | Builder for each item                    |
+| `config`            | No       | List configuration                       |
+| `skeletonBuilder`   | No       | Loading skeleton widget                  |
+| `errorBuilder`      | No       | Error state widget                       |
+| `emptyWidget`       | No       | Empty state widget                       |
+| `loadMoreIndicator` | No       | Custom load more indicator               |
+| `loadMoreThreshold` | No       | Scroll threshold for load more (0.0-1.0) |
 
 ## Complete Example
 

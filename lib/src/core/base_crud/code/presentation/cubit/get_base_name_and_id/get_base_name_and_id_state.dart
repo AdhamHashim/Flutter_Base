@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'get_base_name_and_id_cubit.dart';
 
 class GetBaseEntityState<T extends BaseEntity> extends Equatable {

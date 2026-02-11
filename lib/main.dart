@@ -1,4 +1,5 @@
 import 'package:easy_logger/easy_logger.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ void main() async {
   Bloc.observer = AppBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
   await Future.wait([
-    // Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+    Firebase.initializeApp(),
     EasyLocalization.ensureInitialized(), // Initialize localization
     CacheStorage.init(), // Initialize local cache
     ScreenUtil.ensureScreenSize(), // Initialize screen size utils

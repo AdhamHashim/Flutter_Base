@@ -5,8 +5,7 @@ part of '../base_domain_imports.dart';
 class BaseCrudUseCase {
   final BaseRepository repository;
   BaseCrudUseCase({required this.repository});
-  Future<Result<T, Failure>> call<T>(
-      CrudBaseParmas param) async {
+  Future<Result<T, Failure>> call<T>(CrudBaseParams param) async {
     return await repository.crudCall<T>(param);
   }
 }
@@ -24,7 +23,7 @@ enum HttpRequestType {
   const HttpRequestType({required this.requestMethod});
 }
 
-class CrudBaseParmas<T> {
+class CrudBaseParams<T> {
   final String api;
   final HttpRequestType httpRequestType;
   final Map<String, dynamic>? body;
@@ -32,16 +31,17 @@ class CrudBaseParmas<T> {
   final T Function(dynamic) mapper;
   final bool isFromData;
   final void Function(int, int)? onSendProgress;
-  CrudBaseParmas(
-      {required this.api,
-      required this.httpRequestType,
-      this.body,
-      this.queryParameters,
-      this.onSendProgress,
-      this.isFromData = false,
-      required this.mapper});
+  CrudBaseParams({
+    required this.api,
+    required this.httpRequestType,
+    this.body,
+    this.queryParameters,
+    this.onSendProgress,
+    this.isFromData = false,
+    required this.mapper,
+  });
 
-  CrudBaseParmas<T> copyWith({
+  CrudBaseParams<T> copyWith({
     String? api,
     HttpRequestType? httpRequestType,
     Map<String, dynamic>? body,
@@ -49,7 +49,7 @@ class CrudBaseParmas<T> {
     T Function(dynamic)? mapper,
     bool? isFromData,
   }) {
-    return CrudBaseParmas<T>(
+    return CrudBaseParams<T>(
       api: api ?? this.api,
       httpRequestType: httpRequestType ?? this.httpRequestType,
       body: body ?? this.body,

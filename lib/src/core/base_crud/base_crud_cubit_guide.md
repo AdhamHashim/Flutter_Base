@@ -7,12 +7,13 @@
 ### مكونات AsyncCubit
 
 #### AsyncState
+
 ```dart
 class AsyncState<T> extends Equatable {
   final BaseStatus status;
   final T data;
   final String? errorMessage;
-  
+
   bool get isInitial => status.isInitial;
   bool get isLoading => status.isLoading;
   bool get isLoadingMore => status.isLoadingMore;
@@ -22,6 +23,7 @@ class AsyncState<T> extends Equatable {
 ```
 
 **الحالات المدعومة:**
+
 - `BaseStatus.initial` - الحالة الأولية
 - `BaseStatus.loading` - أثناء التحميل الأول
 - `BaseStatus.loadingMore` - أثناء التحميل الإضافي (pagination)
@@ -29,11 +31,12 @@ class AsyncState<T> extends Equatable {
 - `BaseStatus.error` - حدث خطأ
 
 #### AsyncCubit Abstract Class
+
 ```dart
 abstract class AsyncCubit<T> extends Cubit<AsyncState<T>> {
   AsyncCubit(T initialData) : super(AsyncState.initial(data: initialData));
   late final BaseCrudUseCase baseCrudUseCase;
-  
+
   // وظائف مساعدة
   void setLoading();
   void setLoadingMore();
@@ -41,7 +44,7 @@ abstract class AsyncCubit<T> extends Cubit<AsyncState<T>> {
   void setError({String? errorMessage, bool showToast = false});
   void reset();
   void updateData(T data);
-  
+
   // الوظيفة الأساسية لتنفيذ العمليات
   Future<void> executeAsync({
     required Future<Result<T, Failure>> Function() operation,
@@ -53,15 +56,16 @@ abstract class AsyncCubit<T> extends Cubit<AsyncState<T>> {
 ### مثال عملي على AsyncCubit
 
 #### 1. إنشاء UserCubit
+
 ```dart
 class UserCubit extends AsyncCubit<List<User>> {
   UserCubit() : super([]); // البيانات الأولية قائمة فارغة
-  
+
   // جلب قائمة المستخدمين
   Future<void> getUsers() async {
     await executeAsync(
       operation: () => baseCrudUseCase<List<User>>(
-        CrudBaseParmas(
+        CrudBaseParams(
           api: "users",
           httpRequestType: HttpRequestType.get,
           mapper: (json) => (json as List)
@@ -75,14 +79,15 @@ class UserCubit extends AsyncCubit<List<User>> {
       },
     );
   }
-  
+
 }
 ```
 
 ## ملاحظة
- انت هنا ينفع تضيف اكتر من ميثود بس اتاكد انه كلهم هيبقوا نفس ال ruturn type ,
+
+انت هنا ينفع تضيف اكتر من ميثود بس اتاكد انه كلهم هيبقوا نفس ال ruturn type ,
 او انك متستخدمش executeAsync .. وتنادي بس baseCrudUseCase ومتعملش emit ,
-لو عايز بقي تعمل كيوبت اكثر تعقيدا ينفع تستخدم بس  baseCrudUseCase 
+لو عايز بقي تعمل كيوبت اكثر تعقيدا ينفع تستخدم بس baseCrudUseCase
 جواه وتعمل cubit وال state علي مزاجك
 
 ```dart
@@ -147,7 +152,9 @@ class UserCubit extends AsyncCubit<List<User>> {
     );
   }
 ```
+
 #### 2. استخدام UserCubit في UI
+
 ```dart
 class UsersPage extends StatelessWidget {
   @override
@@ -161,7 +168,7 @@ class UsersPage extends StatelessWidget {
             if (state.isLoading) {
               return Center(child: CircularProgressIndicator());
             }
-            
+
             if (state.isError) {
               return Center(
                 child: Column(
@@ -176,11 +183,11 @@ class UsersPage extends StatelessWidget {
                 ),
               );
             }
-            
+
             if (state.data.isEmpty) {
               return Center(child: Text('لا توجد بيانات'));
             }
-            
+
             return ListView.builder(
               itemCount: state.data.length,
               itemBuilder: (context, index) {
@@ -223,7 +230,7 @@ class UsersPage extends StatelessWidget {
 class UsersPageWithHelper extends BlocStatelessWidget<UserCubit> {
   @override
   UserCubit get create => UserCubit()..getUsers();
-  
+
   @override
   Widget buildContent(BuildContext context, UserCubit cubit) {
     return Scaffold(
@@ -243,6 +250,7 @@ class UsersPageWithHelper extends BlocStatelessWidget<UserCubit> {
 `StatusBuilder` هو widget ذكي بيخلي التعامل مع حالات AsyncState أسهل بكتير، بدل ما تكتب if/else كتير في كل مكان.
 
 #### كيفية عمل StatusBuilder
+
 ```dart
 class StatusBuilder<T> extends StatelessWidget {
   final AsyncState<T> data;
@@ -250,7 +258,7 @@ class StatusBuilder<T> extends StatelessWidget {
   final Widget Function(T data, BuildContext context) onSuccess;
   final Widget Function()? onFail;
   final Widget Function()? onLoading;
-  
+
   @override
   Widget build(BuildContext context) {
     return data.status.when(
@@ -265,13 +273,14 @@ class StatusBuilder<T> extends StatelessWidget {
 #### استخدام StatusBuilder في العملي
 
 **بدلاً من كده (الطريقة التقليدية):**
+
 ```dart
 BlocBuilder<UserCubit, AsyncState<List<User>>>(
   builder: (context, state) {
     if (state.isLoading) {
       return Center(child: CircularProgressIndicator());
     }
-    
+
     if (state.isError) {
       return Center(
         child: Column(
@@ -286,11 +295,11 @@ BlocBuilder<UserCubit, AsyncState<List<User>>>(
         ),
       );
     }
-    
+
     if (state.data.isEmpty) {
       return Center(child: Text('لا توجد بيانات'));
     }
-    
+
     return ListView.builder(
       itemCount: state.data.length,
       itemBuilder: (context, index) {
@@ -306,6 +315,7 @@ BlocBuilder<UserCubit, AsyncState<List<User>>>(
 ```
 
 **استخدم كده (مع StatusBuilder):**
+
 ```dart
 BlocBuilder<UserCubit, AsyncState<List<User>>>(
   builder: (context, state) {
@@ -315,7 +325,7 @@ BlocBuilder<UserCubit, AsyncState<List<User>>>(
         if (users.isEmpty) {
           return Center(child: Text('لا توجد بيانات'));
         }
-        
+
         return ListView.builder(
           itemCount: users.length,
           itemBuilder: (context, index) {
@@ -360,7 +370,7 @@ class ProductsPage extends StatelessWidget {
             return StatusBuilder<List<Product>>(
               data: state,
               errorMessage: state.errorMessage,
-              
+
               // في حالة النجاح
               onSuccess: (products, context) {
                 return RefreshIndicator(
@@ -370,7 +380,7 @@ class ProductsPage extends StatelessWidget {
                       : _buildProductsList(products),
                 );
               },
-              
+
               // في حالة التحميل (اختياري - يمكن تركه فارغ للاستخدام الافتراضي)
               onLoading: () => Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -380,7 +390,7 @@ class ProductsPage extends StatelessWidget {
                   Text('جاري تحميل المنتجات...'),
                 ],
               ),
-              
+
               // في حالة الخطأ (اختياري)
               onFail: () => Center(
                 child: Column(
@@ -408,7 +418,7 @@ class ProductsPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -421,7 +431,7 @@ class ProductsPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildProductsList(List<Product> products) {
     return ListView.builder(
       itemCount: products.length,
@@ -455,7 +465,7 @@ class ProductsPage extends StatelessWidget {
 class CenterErrorWidget extends StatelessWidget {
   const CenterErrorWidget({super.key, required this.message});
   final String message;
-  
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -497,11 +507,12 @@ StatusBuilder<String>(
 ### مكونات GetBaseEntityCubit
 
 #### الـ State
+
 ```dart
 class GetBaseEntityState<T extends BaseEntity> extends Equatable {
   const GetBaseEntityState({required this.dataState});
   final Async<List<T>> dataState;
-  
+
   GetBaseEntityState copyWith({Async<List<T>>? data}) {
     return GetBaseEntityState(dataState: data ?? this.dataState);
   }
@@ -509,33 +520,34 @@ class GetBaseEntityState<T extends BaseEntity> extends Equatable {
 ```
 
 #### الـ Cubit نفسه
+
 ```dart
 @Injectable()
 class GetBaseEntityCubit<T extends BaseEntity> extends Cubit<GetBaseEntityState> {
   GetBaseEntityCubit() : super(GetBaseEntityState(dataState: Async<List<T>>.initial()));
-  
+
   late final GetBaseEntityUseCase getBaseEntityseCase;
-  
+
   // جلب البيانات باستخدام Path Parameters
   Future<void> fGetBaseNameAndId({int? id, bool idIsRequired = false}) async {
     if (idIsRequired && id == null) return;
-    
+
     emit(state.copyWith(data: Async<List<T>>.loading()));
     final result = await getBaseEntityseCase<T>(
       GetBaseEntityParams(id: id, paramsType: ParamsType.path)
     );
-    
+
     result.when(
       (data) => emit(state.copyWith(data: Async<List<T>>.success(data))),
       (failure) => emit(state.copyWith(data: Async<List<T>>.failure(failure))),
     );
   }
-  
+
   // جلب البيانات باستخدام Query Parameters
   Future<void> fGetBaseNameAndIdWithQuery({required GetBaseEntityParams params}) async {
     emit(state.copyWith(data: Async<List<T>>.loading()));
     final result = await getBaseEntityseCase<T>(params);
-    
+
     result.when(
       (data) => emit(state.copyWith(data: Async<List<T>>.success(data))),
       (failure) => emit(state.copyWith(data: Async<List<T>>.failure(failure))),
@@ -547,12 +559,13 @@ class GetBaseEntityCubit<T extends BaseEntity> extends Cubit<GetBaseEntityState>
 ### إعداد النظام للعمل
 
 #### 1. إنشاء Entity
+
 ```dart
 class CategoryEntity extends BaseIdAndNameEntity {
   final String? description;
   final String? image;
   final bool isActive;
-  
+
   const CategoryEntity({
     required super.id,
     required super.name,
@@ -560,7 +573,7 @@ class CategoryEntity extends BaseIdAndNameEntity {
     this.image,
     this.isActive = true,
   });
-  
+
   factory CategoryEntity.fromJson(Map<String, dynamic> json) {
     return CategoryEntity(
       id: json['id'],
@@ -570,7 +583,7 @@ class CategoryEntity extends BaseIdAndNameEntity {
       isActive: json['is_active'] ?? true,
     );
   }
-  
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -584,11 +597,12 @@ class CategoryEntity extends BaseIdAndNameEntity {
 ```
 
 #### 2. تسجيل API Paths
+
 ```dart
 String getBaseIdAndNameEntityApi<T extends BaseEntity>(GetBaseEntityParams? params) {
   final Map<Type, String Function(GetBaseEntityParams?)> apiPaths = {
-    CategoryEntity: (params) => params?.id != null 
-        ? "branches/${params!.id}/categories" 
+    CategoryEntity: (params) => params?.id != null
+        ? "branches/${params!.id}/categories"
         : "categories",
     PaymentMethodEntity: (params) => "branches/${params!.id}/payMethods",
     MealEntity: (params) => "branches/${params!.id}/meals",
@@ -596,23 +610,24 @@ String getBaseIdAndNameEntityApi<T extends BaseEntity>(GetBaseEntityParams? para
     CityEntity: (params) => "regions/${params!.id}/cities",
     BranchEntity: (params) => "cities/${params!.id}/branches",
   };
-  
+
   if (T == BaseEntity) {
     throw UnsupportedError(
       'Cannot call API for the base class BaseEntity. Use a concrete subclass instead.'
     );
   }
-  
+
   final pathBuilder = apiPaths[T];
   if (pathBuilder == null) {
     throw UnsupportedError('API path for type $T is not defined in apiPaths map.');
   }
-  
+
   return pathBuilder(params);
 }
 ```
 
 #### 3. تسجيل JSON Mappers
+
 ```dart
 T baseIdAndNameEntityFromJson<T>(Map<String, dynamic> json) {
   if (T == CategoryEntity) {
@@ -628,7 +643,7 @@ T baseIdAndNameEntityFromJson<T>(Map<String, dynamic> json) {
   } else if (T == BranchEntity) {
     return BranchEntity.fromJson(json) as T;
   }
-  
+
   throw UnsupportedError('Type $T is not supported. Please add fromJson function');
 }
 ```
@@ -636,6 +651,7 @@ T baseIdAndNameEntityFromJson<T>(Map<String, dynamic> json) {
 ### أمثلة عملية للاستخدام
 
 #### مثال 1: قائمة الفئات البسيطة
+
 ```dart
 class CategoriesPage extends StatelessWidget {
   @override
@@ -650,7 +666,7 @@ class CategoriesPage extends StatelessWidget {
             if (state.dataState.isLoading) {
               return Center(child: CircularProgressIndicator());
             }
-            
+
             if (state.dataState.isFailure) {
               return Center(
                 child: Column(
@@ -666,34 +682,34 @@ class CategoriesPage extends StatelessWidget {
                 ),
               );
             }
-            
+
             if (state.dataState.isSuccess) {
               final categories = state.dataState.data!;
-              
+
               if (categories.isEmpty) {
                 return Center(child: Text('لا توجد فئات'));
               }
-              
+
               return ListView.builder(
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   final category = categories[index];
                   return ListTile(
-                    leading: category.image != null 
+                    leading: category.image != null
                         ? CircleAvatar(backgroundImage: NetworkImage(category.image!))
                         : CircleAvatar(child: Text(category.name[0])),
                     title: Text(category.name),
-                    subtitle: category.description != null 
+                    subtitle: category.description != null
                         ? Text(category.description!)
                         : null,
-                    trailing: category.isActive 
+                    trailing: category.isActive
                         ? Icon(Icons.check_circle, color: Colors.green)
                         : Icon(Icons.cancel, color: Colors.red),
                   );
                 },
               );
             }
-            
+
             return Container();
           },
         ),
@@ -704,12 +720,13 @@ class CategoriesPage extends StatelessWidget {
 ```
 
 #### مثال 2: فئات فرع معين مع Query Parameters
+
 ```dart
 class BranchCategoriesPage extends StatelessWidget {
   final int branchId;
-  
+
   const BranchCategoriesPage({required this.branchId});
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -800,6 +817,7 @@ class BranchCategoriesPage extends StatelessWidget {
 ```
 
 #### مثال 3: Dropdown للمدن والمناطق
+
 ```dart
 class CityRegionDropdowns extends StatefulWidget {
   @override
@@ -809,7 +827,7 @@ class CityRegionDropdowns extends StatefulWidget {
 class _CityRegionDropdownsState extends State<CityRegionDropdowns> {
   RegionEntity? selectedRegion;
   CityEntity? selectedCity;
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -827,7 +845,7 @@ class _CityRegionDropdownsState extends State<CityRegionDropdowns> {
                   onChanged: null,
                 );
               }
-              
+
               if (state.dataState.isSuccess) {
                 final regions = state.dataState.data!;
                 return DropdownButtonFormField<RegionEntity>(
@@ -847,7 +865,7 @@ class _CityRegionDropdownsState extends State<CityRegionDropdowns> {
                   },
                 );
               }
-              
+
               return DropdownButtonFormField<RegionEntity>(
                 decoration: InputDecoration(labelText: 'خطأ في تحميل المناطق'),
                 items: [],
@@ -856,9 +874,9 @@ class _CityRegionDropdownsState extends State<CityRegionDropdowns> {
             },
           ),
         ),
-        
+
         SizedBox(height: 16),
-        
+
         // Dropdown المدن
         if (selectedRegion != null)
           BlocProvider(
@@ -873,7 +891,7 @@ class _CityRegionDropdownsState extends State<CityRegionDropdowns> {
                     onChanged: null,
                   );
                 }
-                
+
                 if (state.dataState.isSuccess) {
                   final cities = state.dataState.data!;
                   return DropdownButtonFormField<CityEntity>(
@@ -892,7 +910,7 @@ class _CityRegionDropdownsState extends State<CityRegionDropdowns> {
                     },
                   );
                 }
-                
+
                 return DropdownButtonFormField<CityEntity>(
                   decoration: InputDecoration(labelText: 'خطأ في تحميل المدن'),
                   items: [],
@@ -910,6 +928,7 @@ class _CityRegionDropdownsState extends State<CityRegionDropdowns> {
 ### مميزات GetBaseEntityCubit
 
 #### 1. النمط الموحد
+
 ```dart
 // EX
 // نفس الطريقة لكل الـ entities
@@ -919,6 +938,7 @@ final citiesCubit = GetBaseEntityCubit<CityEntity>();
 ```
 
 #### 2. Generic Type Safety
+
 ```dart
 // EX
 // الـ Cubit بيضمن إن النوع صحيح في كل مرحلة
@@ -927,6 +947,7 @@ GetBaseEntityCubit<RegionEntity>   // هيرجع List<RegionEntity> بس
 ```
 
 #### 3. إدارة Parameters مرنة
+
 ```dart
 // Path Parameters
 cubit.fGetBaseNameAndId(id: 123);
@@ -942,6 +963,7 @@ cubit.fGetBaseNameAndIdWithQuery(
 ```
 
 #### 4. Custom Mappers
+
 ```dart
 // EX
 // يمكن تمرير mapper مخصوص
@@ -959,9 +981,9 @@ GetBaseEntityParams<CategoryEntity>(
 ## هيكل النظام (Architecture Flow)
 
 ```
-Presentation Layer (Cubit) 
+Presentation Layer (Cubit)
     ↓
-Domain Layer (Use Cases) 
+Domain Layer (Use Cases)
     ↓
 Domain Layer (Repository Interface)
     ↓
@@ -977,6 +999,7 @@ Network Service
 ### 1. Domain Layer (طبقة المنطق)
 
 #### BaseEntity
+
 ```dart
 class BaseEntity extends Equatable {
   const BaseEntity();
@@ -984,10 +1007,12 @@ class BaseEntity extends Equatable {
   List<Object?> get props => [];
 }
 ```
+
 - دي الكلاس الأساسي اللي كل الـ entities بتورث منه
 - بيستخدم `Equatable` عشان المقارنة بين الكائنات
 
 #### BaseIdAndNameEntity
+
 ```dart
 class BaseIdAndNameEntity extends BaseEntity {
   final int id;
@@ -995,17 +1020,19 @@ class BaseIdAndNameEntity extends BaseEntity {
   const BaseIdAndNameEntity({required this.id, required this.name});
 }
 ```
+
 - كلاس مخصوص للـ entities اللي بتحتوي على id و name بس
 - مفيد للـ dropdowns والقوائم البسيطة
 
 #### Async Class (إدارة حالات التحميل)
+
 ```dart
 class Async<T> extends Equatable {
   final T? data;
   final Failure? failure;
   final bool _successWithoutData;
   final bool? _loading;
-  
+
   bool get isLoading => _loading ?? false;
   bool get isSuccess => (_successWithoutData || data != null) && (failure == null);
   bool get isFailure => failure != null;
@@ -1014,6 +1041,7 @@ class Async<T> extends Equatable {
 ```
 
 **الحالات المختلفة:**
+
 - `Async.initial()` - الحالة الأولية
 - `Async.loading()` - أثناء التحميل
 - `Async.success(data)` - نجح وفيه بيانات
@@ -1023,11 +1051,12 @@ class Async<T> extends Equatable {
 ### 2. Use Cases (حالات الاستخدام)
 
 #### GetBaseEntityUseCase
+
 ```dart
 @Injectable()
 class GetBaseEntityUseCase {
   final BaseRepository repository;
-  
+
   Future<Result<List<T>, Failure>> call<T extends BaseEntity>(
       GetBaseEntityParams? param) async {
     return await repository.getBaseIdAndNameEntity<T>(param);
@@ -1036,6 +1065,7 @@ class GetBaseEntityUseCase {
 ```
 
 **معاملات البحث:**
+
 ```dart
 class GetBaseEntityParams<T extends BaseIdAndNameEntity> {
   final int? id;
@@ -1046,19 +1076,21 @@ class GetBaseEntityParams<T extends BaseIdAndNameEntity> {
 ```
 
 #### BaseCrudUseCase
+
 ```dart
 @Injectable()
 class BaseCrudUseCase {
   final BaseRepository repository;
-  
+
   Future<Result<T, Failure>> call<T extends CrudResponse>(
-      CrudBaseParmas param) async {
+      CrudBaseParams param) async {
     return await repository.crudCall<T>(param);
   }
 }
 ```
 
 **أنواع العمليات المدعومة:**
+
 ```dart
 enum CrudEnum {
   getAll(requestMethod: RequestMethod.get),
@@ -1073,35 +1105,38 @@ enum CrudEnum {
 ### 3. Data Layer (طبقة البيانات)
 
 #### BaseRemoteDataSource
+
 ```dart
 abstract class BaseRemoteDataSource {
   Future<List<T>> getData<T extends BaseEntity>(GetBaseEntityParams? param);
-  Future<T> crudCall<T extends CrudResponse>(CrudBaseParmas param);
+  Future<T> crudCall<T extends CrudResponse>(CrudBaseParams param);
 }
 ```
 
 #### BaseRepository
+
 ```dart
 abstract class BaseRepository {
   Future<Result<List<T>, Failure>> getBaseIdAndNameEntity<T extends BaseEntity>(
       GetBaseEntityParams? param);
   Future<Result<T, Failure>> crudCall<T extends CrudResponse>(
-      CrudBaseParmas params);
+      CrudBaseParams params);
 }
 ```
 
 ### 4. Presentation Layer (طبقة العرض)
 
 #### GetBaseEntityCubit
+
 ```dart
 @Injectable()
 class GetBaseEntityCubit<T extends BaseEntity> extends Cubit<GetBaseEntityState> {
   late final GetBaseEntityUseCase getBaseEntityseCase;
-  
+
   Future<void> fGetBaseNameAndId({int? id, bool idIsRequired = false}) async {
     // تنفيذ جلب البيانات باستخدام Path Parameters
   }
-  
+
   Future<void> fGetBaseNameAndIdWithQuery({
     required GetBaseEntityParams params
   }) async {
@@ -1113,38 +1148,45 @@ class GetBaseEntityCubit<T extends BaseEntity> extends Cubit<GetBaseEntityState>
 ## شرح الـ Generics في النظام
 
 ### 1. Generic في الـ Cubit
+
 ```dart
 GetBaseEntityCubit<CategoryEntity>
 ```
+
 - `T extends BaseEntity` معناها إن T لازم يكون من نوع BaseEntity أو يورث منه
 - ده بيخلي الـ Cubit يشتغل مع أي نوع من الـ entities
 
 ### 2. Generic في الـ Use Cases
+
 ```dart
 Future<Result<List<T>, Failure>> call<T extends BaseEntity>()
 ```
+
 - بيرجع قائمة من النوع T أو Failure
 - T مقيد بـ BaseEntity
 
 ### 3. Generic في الـ Repository
+
 ```dart
 Future<List<T>> getData<T extends BaseEntity>()
 ```
+
 - بيتعامل مع أي نوع من البيانات اللي بتورث من BaseEntity
 
 ## طرق الاستخدام العملي
 
 ### 1. إنشاء Entity جديد
+
 ```dart
 class CategoryEntity extends BaseIdAndNameEntity {
   final String? description;
-  
+
   const CategoryEntity({
     required super.id,
     required super.name,
     this.description,
   });
-  
+
   factory CategoryEntity.fromJson(Map<String, dynamic> json) {
     return CategoryEntity(
       id: json['id'],
@@ -1156,6 +1198,7 @@ class CategoryEntity extends BaseIdAndNameEntity {
 ```
 
 ### 2. تسجيل الـ API Path
+
 ```dart
 String getBaseIdAndNameEntityApi<T extends BaseEntity>(GetBaseEntityParams? params) {
   final Map<Type, String Function(GetBaseEntityParams?)> apiPaths = {
@@ -1164,7 +1207,7 @@ String getBaseIdAndNameEntityApi<T extends BaseEntity>(GetBaseEntityParams? para
     MealEntity: (_) => "branches/${params!.id}/meals",
     RegionEntity: (_) => "regions",
   };
-  
+
   final pathBuilder = apiPaths[T];
   if (pathBuilder == null) {
     throw UnsupportedError('API path for type $T is not defined');
@@ -1174,6 +1217,7 @@ String getBaseIdAndNameEntityApi<T extends BaseEntity>(GetBaseEntityParams? para
 ```
 
 ### 3. تسجيل الـ JSON Mapper
+
 ```dart
 T baseIdAndNameEntityFromJson<T>(Map<String, dynamic> json) {
   if (T == CategoryEntity) {
@@ -1181,12 +1225,13 @@ T baseIdAndNameEntityFromJson<T>(Map<String, dynamic> json) {
   } else if (T == PaymentMethodEntity) {
     return PaymentMethodEntity.fromJson(json) as T;
   }
-  
+
   throw UnsupportedError('Type $T is not supported');
 }
 ```
 
 ### 4. استخدام الـ Cubit في الـ UI
+
 ```dart
 // EX
 // في الـ Widget
@@ -1197,10 +1242,10 @@ BlocProvider(
       return FloatingActionButton(
         onPressed: () {
           final cubit = context.read<GetBaseEntityCubit<CategoryEntity>>();
-          
+
           // استخدام Path Parameters
           cubit.fGetBaseNameAndId(id: 39, idIsRequired: true);
-          
+
           // أو استخدام Query Parameters
           cubit.fGetBaseNameAndIdWithQuery(
             params: GetBaseEntityParams(
@@ -1228,30 +1273,36 @@ BlocProvider(
 ## مميزات النظام
 
 ### 1. قابلية إعادة الاستخدام
+
 - مرة واحدة تكتب الكود، تستخدمه مع أي entity
 - مش محتاج تكرر نفس الكود لكل نوع بيانات
 
 ### 2. Type Safety
+
 - الـ Generics بتضمن إن النوع صحيح في كل مرحلة
 - مش هتحصل على خطأ في وقت التشغيل بسبب النوع الغلط
 
 ### 3. سهولة الصيانة
+
 - لو عايز تغير حاجة في المنطق، هتغيرها في مكان واحد
 - الكود منظم ومفصول حسب المسئوليات
 
 ### 4. إدارة محكمة للحالات
+
 - الـ Async class بيدير كل حالات التطبيق بوضوح
 - سهل تتبع حالة التحميل والأخطاء
 
 ## نصائح للاستخدام
 
 ### 1. إضافة Entity جديد
+
 1. اعمل extend للـ BaseEntity أو BaseIdAndNameEntity
 2. سجل الـ API path في `getBaseIdAndNameEntityApi`
 3. سجل الـ JSON mapper في `baseIdAndNameEntityFromJson`
 4. استخدم الـ Cubit مع النوع الجديد
 
 ### 2. التعامل مع الأخطاء
+
 ```dart
 if (state.dataState.isFailure) {
   ScaffoldMessenger.of(context).showSnackBar(
@@ -1261,6 +1312,7 @@ if (state.dataState.isFailure) {
 ```
 
 ### 3. التحكم في التحميل
+
 ```dart
 if (state.dataState.isLoading) {
   return CircularProgressIndicator();
@@ -1269,22 +1321,23 @@ if (state.dataState.isLoading) {
 
 # injectable
 
-استخدمنا ال injectable package بدل من ال get it 
-هي مبنية عليها وبتعمل نفس كل حاجة بس الفرق انها مجرد بتعمل نوتاشن فوق الكلاسيس وبتعمل جينيرات للكود 
-بترن بس كوماند ال build runner مع كل حاجة ضفتها محتاج فيها 
+استخدمنا ال injectable package بدل من ال get it
+هي مبنية عليها وبتعمل نفس كل حاجة بس الفرق انها مجرد بتعمل نوتاشن فوق الكلاسيس وبتعمل جينيرات للكود
+بترن بس كوماند ال build runner مع كل حاجة ضفتها محتاج فيها
 يحصل inject
 
-هيطلعلك في الفايل الي اتعمله  الي معمولة جينيارت ايرورو في 
-GetBaseEntityUseCase<Genaric> 
+هيطلعلك في الفايل الي اتعمله الي معمولة جينيارت ايرورو في
+GetBaseEntityUseCase<Genaric>
 شيل <Genaric> وهتظبط
 
 #### pub dev
-[injectable](https://pub.dev/packages/injectable)
 
+[injectable](https://pub.dev/packages/injectable)
 
 ## الخلاصة
 
 النظام ده بيوفر foundation قوي للتعامل مع البيانات في التطبيق بطريقة منظمة وقابلة للصيانة. الـ Generics بتخلي الكود مرن وآمن في نفس الوقت، والـ Clean Architecture بتضمن إن كل جزء في النظام له مسئولية واضحة ومحددة.
 
 # Thanks
+
 Many thanks to Ahmed Salah for the inspiring ideas and great collaboration.

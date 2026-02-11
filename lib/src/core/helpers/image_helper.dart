@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../generated/locale_keys.g.dart';
+import '../../config/language/locale_keys.g.dart';
 import '../../config/res/config_imports.dart';
 import '../extensions/widgets/padding_extension.dart';
 import '../navigation/navigator.dart';
@@ -46,7 +45,7 @@ class ImageHelper {
             children: <Widget>[
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: Text(LocaleKeys.app_photo_library.tr()),
+                title: Text(LocaleKeys.photoLibrary),
                 onTap: () async {
                   final currentImage = await picker.pickImage(
                     source: ImageSource.gallery,
@@ -59,7 +58,7 @@ class ImageHelper {
               ),
               ListTile(
                 leading: const Icon(Icons.photo_camera),
-                title: Text(LocaleKeys.app_camera.tr()),
+                title: Text(LocaleKeys.camera),
                 onTap: () async {
                   final currentImage = await picker.pickImage(
                     source: ImageSource.camera,

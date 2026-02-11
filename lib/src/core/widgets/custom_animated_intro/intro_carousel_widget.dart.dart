@@ -62,7 +62,7 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
                   child: widget.children[_dragIndex! % length],
                 ),
           Positioned(
-            bottom: AppMargin.mH14,
+            bottom: AppMargin.mH18,
             right: AppMargin.mW12,
             left: AppMargin.mW12,
             child: ValueListenableBuilder(
@@ -70,9 +70,12 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
               builder: (context, value, child) {
                 return DefaultButton(
                   title: value % length == 2
-                      ? LocaleKeys.intro_startNow.tr()
-                      : LocaleKeys.intro_next.tr(),
-                  onTap: () => _animateToNextPage(),
+                      ? LocaleKeys.introStartnow
+                      : LocaleKeys.introNext,
+                  onTap: () => value % length == 2
+                      ? Go.to(const HomeScreen())
+                      // ? Go.to(const LoginScreen())
+                      : _animateToNextPage(),
                 );
               },
             ),

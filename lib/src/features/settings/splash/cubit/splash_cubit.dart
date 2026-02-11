@@ -21,21 +21,10 @@ Future<void> initUserData(BuildContext context) async {
     const Duration(milliseconds: ConstantManager.splashTimer),
   ).then((value) async {
     final result = await UserCubit.instance.init();
-    await setUpNotifications();
     if (result) {
-    } else {}
+      Go.to(const HomeScreen());
+    } else {
+      Go.to(const IntroScreen());
+    }
   });
-}
-
-Future<void> setUpNotifications() async {
-  _notificationNavigator();
-  await injector<NotificationService>().setupNotifications();
-}
-
-NotificationNavigator _notificationNavigator() {
-  return NotificationNavigator(
-    onNoInitialMessage: () {},
-    onRoutingMessage: (message) =>
-        NotificationRoutes.navigateByType(message.data),
-  );
 }

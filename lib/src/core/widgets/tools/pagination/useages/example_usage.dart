@@ -49,7 +49,7 @@
 // //   Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page) async {
 // //     // Replace with your actual API call
 // //     return await baseCrudUseCase.call(
-// //       CrudBaseParmas(
+// //       CrudBaseParams(
 // //         api: '/api/products?page=$page',
 // //         httpRequestType: HttpRequestType.get,
 // //         mapper: (json) => json, // Return raw JSON

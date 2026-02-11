@@ -1,11 +1,10 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of '../base_domain_imports.dart';
 
 String getBaseIdAndNameEntityApi<T extends BaseEntity>(
   GetBaseEntityParams? params,
 ) {
   final Map<Type, String Function(GetBaseEntityParams?)> apiPaths = {
-    CountryEntity: (_) => 'countries',
+    CountryEntity: (_) => "countries", //Api Key For Countries
   };
   if (T == BaseEntity) {
     throw UnsupportedError(
@@ -15,7 +14,7 @@ String getBaseIdAndNameEntityApi<T extends BaseEntity>(
 
   final pathBuilder = apiPaths[T];
   if (pathBuilder == null) {
-    log('Type passed: $T'); // Debugging output
+    log('Type passed: $T');
     throw UnsupportedError(
       'API path for type $T is not defined in apiPaths map.',
     );
@@ -23,38 +22,41 @@ String getBaseIdAndNameEntityApi<T extends BaseEntity>(
   return pathBuilder(params);
 }
 
-T baseIdAndNameEntityFromJson<T>(Map<String, dynamic> json) {
-  if (T == CountryEntity) {
-    return CountryEntity.fromJson(json) as T;
-  }
-  log('Type passed: $T'); // Debugging output
-  throw UnsupportedError(
-    'Type $T is not supported plaese add from json function',
-  );
-}
-
-class BaseEntity extends Equatable {
+abstract class BaseEntity extends Equatable {
   final int id;
 
   const BaseEntity({required this.id});
 
-  @override
-  List<Object?> get props => [id];
+  static final Map<Type, Function> _fromJsonFactories = {
+    CountryEntity: (json) => CountryEntity.fromJson(json),
+  };
+
+  static T fromJson<T extends BaseEntity>(Map<String, dynamic> json) {
+    final fromJsonFactory = _fromJsonFactories[T];
+
+    if (fromJsonFactory != null) {
+      return fromJsonFactory(json) as T;
+    } else {
+      log('Type passed: $T');
+      throw UnsupportedError(
+        'Type $T is not supported. Please add it to the _fromJsonFactories map in BaseEntity and perform a full app restart.',
+      );
+    }
+  }
 
   Map<String, dynamic> toJson() => {'id': id};
 
-  BaseEntity copyWith({int? id}) {
-    return BaseEntity(id: id ?? this.id);
-  }
+  @override
+  List<Object?> get props => [id];
 
-  factory BaseEntity.fromJson(Map<String, dynamic> json) =>
-      BaseEntity(id: json['id']);
+  BaseEntity copyWith({int? id});
 }
 
-class BaseIdAndNameEntity extends BaseEntity {
+abstract class BaseIdAndNameEntity extends BaseEntity {
   final String name;
 
   const BaseIdAndNameEntity({required super.id, required this.name});
+
   @override
   Map<String, dynamic> toJson() => {'id': id, 'name': name};
 
@@ -67,6 +69,10 @@ class BaseIdAndNameEntity extends BaseEntity {
 
   @override
   int get hashCode => id.hashCode;
+
   @override
   List<Object> get props => [id, name];
+
+  @override
+  BaseIdAndNameEntity copyWith({int? id, String? name});
 }

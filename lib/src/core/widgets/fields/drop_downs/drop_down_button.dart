@@ -1,9 +1,8 @@
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
+ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../generated/locale_keys.g.dart';
+ import '../../../../config/language/locale_keys.g.dart';
 import '../../../../config/res/assets.gen.dart';
 import '../../../../config/res/config_imports.dart';
 import '../../../extensions/context_extension.dart';
@@ -81,7 +80,7 @@ mixin CustomDropdownHelpers<T> {
           },
         ),
         Text(
-          "${LocaleKeys.app_select.tr()} $title",
+          "${LocaleKeys.please} $title",
           style: const TextStyle().setColor(const Color(0xff545454)).s12.medium,
         ),
       ],
@@ -129,7 +128,7 @@ mixin CustomDropdownHelpers<T> {
   /// Builds search field decoration
   InputDecoration _buildSearchFieldDecoration() {
     return InputDecoration(
-      hintText: LocaleKeys.app_search.tr(),
+      hintText: LocaleKeys.search,
       hintStyle: const TextStyle().setHintColor.s13.regular,
       border: InputBorder.none,
       prefixIcon: AppAssets.svg.baseSvg.search

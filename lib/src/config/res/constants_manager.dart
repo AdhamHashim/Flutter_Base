@@ -3,7 +3,7 @@ part of 'config_imports.dart';
 final GetIt injector = GetIt.instance;
 
 class ConstantManager {
-  static const String bundleId = 'com.aait.flutter_base';
+  static const String bundleId = 'com.aait.cleansolution';
   static const String appName = 'Flutter_Base';
   static const String fontFamily = 'Expo';
 

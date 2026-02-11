@@ -35,6 +35,10 @@ extension ContextExtension on BuildContext {
   bool get isMaterial => theme.platform == TargetPlatform.android;
 
   bool get isRight => Directionality.of(this) == TextDirection.rtl;
+
+  bool get isArabic => Languages.currentLanguage == Languages.arabic;
+
+  bool get isEnglish => Languages.currentLanguage == Languages.english;
 }
 
 extension LanguageExtension on Widget {

@@ -30,41 +30,43 @@ class DefaultScaffold extends StatelessWidget {
       canPop: false,
       child: Scaffold(
         backgroundColor: AppColors.scaffoldBackground,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(
-                vertical: AppPadding.pH12,
-                horizontal: AppPadding.pH12,
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: AppPadding.pH12,
+                  horizontal: AppPadding.pH12,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (showArrow) ...[
+                      ArrowWidget(onTap: onTap),
+                    ] else ...[
+                      const SizedBox.shrink(),
+                    ],
+                    if (headLineWidget == null) ...[
+                      Text(
+                        title,
+                        style: const TextStyle().setMainTextColor.s13.medium,
+                      ),
+                    ] else ...[
+                      headLineWidget!,
+                    ],
+                    if (trailing != null) ...[
+                      trailing!,
+                    ] else ...[
+                      SizedBox(height: AppSize.sH30, width: AppSize.sH30),
+                    ],
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (showArrow) ...[
-                    ArrowWidget(onTap: onTap),
-                  ] else ...[
-                    const SizedBox.shrink(),
-                  ],
-                  if (headLineWidget == null) ...[
-                    Text(
-                      title,
-                      style: const TextStyle().setMainTextColor.s13.medium,
-                    ),
-                  ] else ...[
-                    headLineWidget!,
-                  ],
-                  if (trailing != null) ...[
-                    trailing!,
-                  ] else ...[
-                    SizedBox(height: AppSize.sH30, width: AppSize.sH30),
-                  ],
-                ],
-              ),
-            ),
-            Expanded(child: body),
-          ],
+              Expanded(child: body),
+            ],
+          ),
         ),
       ),
     );

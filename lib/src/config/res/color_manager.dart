@@ -22,7 +22,7 @@ class AppColors {
   static const Color grey2 = Color(0xFFC7C7C7);
 
   static const LinearGradient gradient = LinearGradient(
-    colors: [Color(0xffFB3D46), Color(0xffF72E92)],
+    colors: [Color(0xFF1C1C1C), Color(0xFF292929)],
     begin: Alignment.bottomCenter,
     end: Alignment.topCenter,
   );

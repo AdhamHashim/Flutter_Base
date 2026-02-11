@@ -34,7 +34,5 @@ extension ErrorHandler<T> on Future<T> {
     }
   }
 
-  String _getErrorMessage(Object e) {
-    return kDebugMode ? e.toString() : 'An unexpected error occurred';
-  }
+  String _getErrorMessage(Object e) => e.toString();
 }

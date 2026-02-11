@@ -35,19 +35,19 @@
 
 1. [App in app store]()
 2. [App in google play]()
- 
 
 ## App Bundle :
 
-- com.aait.flutter_base
+-com.aait.cleansolution
 or
+
 - com.cs.flutter_base
 
 ## FireBase :
 
 1. FIREBASE_ACCOUNT_HOLDER
    - AAIT
-   or
+     or
    - CS
 2. PROJECT_NAME_IN_FIREBASE
    - Flutter_Base
@@ -68,14 +68,14 @@ or
 
 ## Image :
 
-![Logo](assets/svg/logo.svg)
+![Logo](assets/svg/app_svg/app_logo.png)
 
 ## Localization Generator:
 
 ### Run this Command to generate localization files
 
 ```bash
-flutter pub run easy_localization:generate -S assets/translations -f keys -o locale_keys.g.dart
+dart run generate/strings/main.dart
 ```
 
 ## Assets Generator:

@@ -56,27 +56,21 @@ class _IntroSectionWidgetState extends State<IntroSectionWidget> {
                 vertical: AppPadding.pH14,
                 horizontal: AppPadding.pW10,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: AppMargin.mH40,
-                    children: [
-                      _PointerWithSkipButtonWidget(
-                        pointerImagePath: widget.introDto.pointerImagePath!,
-                      ),
-                      _ContentWidget(
-                        title: widget.introDto.title,
-                        subTitle: widget.introDto.subtitle,
-                      ),
-                    ],
-                  ),
-                 
-                ],
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: AppMargin.mH40,
+                  children: [
+                    _PointerWithSkipButtonWidget(
+                      pointerImagePath: widget.introDto.pointerImagePath!,
+                    ),
+                    _ContentWidget(
+                      title: widget.introDto.title,
+                      subTitle: widget.introDto.subtitle,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -140,7 +134,7 @@ class _PointerWithSkipButtonWidget extends StatelessWidget {
               border: Border.all(color: AppColors.white.withAlpha(10)),
             ),
             child: Text(
-              LocaleKeys.intro_skip.tr(),
+              LocaleKeys.introSkip,
               style: context.textStyle.s11.setWhiteColor.regular,
             ),
           ),

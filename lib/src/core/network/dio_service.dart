@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import '../../../generated/locale_keys.g.dart';
+import '../../config/language/locale_keys.g.dart';
 import '../../config/language/languages.dart';
 import '../../config/res/config_imports.dart';
 import '../error/exceptions.dart';
@@ -16,6 +16,7 @@ import 'configuration_interceptor.dart';
 import 'extensions.dart';
 import 'network_request.dart';
 import 'network_service.dart';
+import 'un_authenticated_interceptor.dart';
 
 @LazySingleton(as: NetworkService)
 class DioService implements NetworkService {
@@ -47,6 +48,7 @@ class DioService implements NetworkService {
           maxWidth: 100,
         ),
       );
+      _dio.interceptors.add(UnAuthenticatedInterceptor.instance);
     }
   }
 
@@ -127,55 +129,47 @@ class DioService implements NetworkService {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        throw NoInternetConnectionException(LocaleKeys.app_check_internet.tr());
+        throw NoInternetConnectionException(LocaleKeys.checkInternet);
       case DioExceptionType.badResponse:
         switch (error.response!.statusCode) {
           case HttpStatus.badRequest:
             throw BadRequestException(
-              error.response?.data['message'] ??
-                  LocaleKeys.app_bad_request.tr(),
+              error.response?.data['message'] ?? LocaleKeys.badRequest,
             );
           case HttpStatus.unauthorized:
             throw UnauthorizedException(
-              error.response?.data['message'] ??
-                  LocaleKeys.app_bad_request.tr(),
+              error.response?.data['message'] ?? LocaleKeys.badRequest,
             );
           case HttpStatus.locked:
             throw BlockedException(
-              error.response?.data['message'] ??
-                  LocaleKeys.app_bad_request.tr(),
+              error.response?.data['message'] ?? LocaleKeys.badRequest,
             );
           case HttpStatus.forbidden:
             throw NeedActiveException(
-              error.response?.data['message'] ??
-                  LocaleKeys.app_bad_request.tr(),
+              error.response?.data['message'] ?? LocaleKeys.badRequest,
             );
           case HttpStatus.notFound:
-            throw NotFoundException(LocaleKeys.app_not_found.tr());
+            throw NotFoundException(LocaleKeys.notFound);
           case HttpStatus.conflict:
             throw ConflictException(
-              error.response?.data['message'] ??
-                  LocaleKeys.app_server_error.tr(),
+              error.response?.data['message'] ?? LocaleKeys.serverError,
             );
           case HttpStatus.internalServerError:
             throw InternalServerErrorException(
-              error.response?.data['message'] ??
-                  LocaleKeys.app_server_error.tr(),
+              error.response?.data['message'] ?? LocaleKeys.serverError,
             );
           default:
-            throw ServerException(LocaleKeys.app_server_error.tr());
+            throw ServerException(LocaleKeys.serverError);
         }
       case DioExceptionType.cancel:
-        throw ServerException(LocaleKeys.app_intenet_weakness.tr());
+        throw ServerException(LocaleKeys.intenetWeakness);
       case DioExceptionType.unknown:
         throw ServerException(
-          error.response?.data['message'] ??
-              LocaleKeys.app_exception_error.tr(),
+          error.response?.data['message'] ?? LocaleKeys.exceptionError,
         );
       default:
         throw ServerException(
-          error.response?.data['message'] ??
-              LocaleKeys.app_exception_error.tr(),
+          error.response?.data['message'] ?? LocaleKeys.exceptionError,
         );
     }
   }

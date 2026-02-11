@@ -1,4 +1,4 @@
-package com.aait.flutter_base
+package com.aait.cleansolution
 
 import io.flutter.embedding.android.FlutterActivity
 

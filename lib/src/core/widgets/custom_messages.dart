@@ -1,6 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../generated/locale_keys.g.dart';
+import '../../config/language/locale_keys.g.dart';
 import '../../config/res/config_imports.dart';
 import '../extensions/base_state.dart';
 import '../extensions/text_style_extensions.dart';
@@ -16,7 +15,7 @@ class MessageUtils {
       duration: const Duration(seconds: 2),
       content: Text(message, style: const TextStyle().setWhiteColor.s11.medium),
       action: SnackBarAction(
-        label: LocaleKeys.app_cancel.tr(context: context ?? Go.context),
+        label: LocaleKeys.cancel,
         textColor: AppColors.white,
         onPressed: () {
           ScaffoldMessenger.of(context ?? Go.context).clearSnackBars();

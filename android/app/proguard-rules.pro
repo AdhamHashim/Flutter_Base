@@ -12,6 +12,9 @@
 -dontwarn com.google.firebase.**
 -dontwarn com.google.android.gms.**
 
+# Play Core (deferred components / split install)
+-dontwarn com.google.android.play.core.**
+
 # Gson / JSON (if used by plugins)
 -keepattributes Signature
 -keepattributes *Annotation*

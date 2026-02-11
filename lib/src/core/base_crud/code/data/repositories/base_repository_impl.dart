@@ -7,14 +7,15 @@ class BaseRepositoryImpl implements BaseRepository {
   BaseRepositoryImpl({required this.baseRemoteDataSource});
   @override
   Future<Result<List<T>, Failure>> getBaseIdAndNameEntity<T extends BaseEntity>(
-      GetBaseEntityParams? param) async {
+    GetBaseEntityParams? param,
+  ) async {
     return await baseRemoteDataSource
         .getData<T>(param)
         .handleCallbackWithFailure();
   }
 
   @override
-  Future<Result<T, Failure>> crudCall<T>(CrudBaseParmas params) async {
+  Future<Result<T, Failure>> crudCall<T>(CrudBaseParams params) async {
     return await baseRemoteDataSource
         .crudCall<T>(params)
         .handleCallbackWithFailure();

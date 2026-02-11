@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../generated/locale_keys.g.dart';
+ import '../../config/language/locale_keys.g.dart';
 import '../../config/res/config_imports.dart';
 import 'widgets/sized_box_helper.dart';
 import 'text_style_extensions.dart';
@@ -141,15 +141,17 @@ class TimePicker {
     required Function(DateTime?) onSelectionChanged,
   }) {
     return showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (ctx) => SingleDatePickerBottomSheet(
-            initialDate: value,
-            minmumDate: minmumDate,
-            maximumDate: maximumDate,
-            actionText: actionText ?? LocaleKeys.app_confirm.tr(),
-            title: title,
-            onSelectionChanged: onSelectionChanged));
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => SingleDatePickerBottomSheet(
+        initialDate: value,
+        minmumDate: minmumDate,
+        maximumDate: maximumDate,
+        actionText: actionText ?? LocaleKeys.confirm,
+        title: title,
+        onSelectionChanged: onSelectionChanged,
+      ),
+    );
   }
 }
 
@@ -323,7 +325,7 @@ class _CupertinoTimePickerState extends State<CupertinoTimePicker> {
           ),
           SafeArea(
             child: LoadingButton(
-              title: LocaleKeys.app_confirm.tr(),
+              title: LocaleKeys.confirm,
               onTap: () async {
                 Go.back();
                 widget.onConfirm(currentDate);

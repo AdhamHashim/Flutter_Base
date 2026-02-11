@@ -19,6 +19,7 @@ class AppMargin {
   // VALUES FOR WIDTH
   static double mW2 = 2.0.w;
   static double mW4 = 4.0.w;
+  static double mW6 = 6.0.w;
   static double mW8 = 8.0.w;
   static double mW10 = 10.0.w;
   static double mW12 = 12.0.w;
@@ -40,6 +41,7 @@ class AppPadding {
   static double pH16 = 16.0.h;
   static double pH18 = 18.0.h;
   static double pH20 = 20.0.h;
+  static double pH35 = 35.0.h;
 
   // VALUES FOR WIDTH
   static double pW2 = 2.0.h;
@@ -57,6 +59,7 @@ class AppPadding {
 class AppSize {
   // VALUES FOR HEIGHT
   static double sH0 = 0.0.h;
+  static double sH1 = 1.0.h;
   static double sH2 = 2.0.h;
   static double sH4 = 4.0.h;
   static double sH6 = 6.0.h;
@@ -78,9 +81,11 @@ class AppSize {
   static double sH55 = 55.0.h;
   static double sH60 = 60.0.h;
   static double sH70 = 70.0.h;
+  static double sH85 = 85.0.h;
 
   // VALUES FOR WIDTH
   static double sW0 = 0.0.w;
+  static double sW1 = 1.0.w;
   static double sW2 = 2.0.w;
   static double sW4 = 4.0.w;
   static double sW6 = 6.0.w;

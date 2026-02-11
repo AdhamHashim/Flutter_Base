@@ -53,6 +53,7 @@ abstract class AsyncCubit<T> extends Cubit<AsyncState<T>> {
   Future<void> executeAsync({
     required Future<Result<T, Failure>> Function() operation,
     Function(T)? successEmitter,
+    bool showErrorToast = true,
   }) async {
     setLoading();
     final result = await operation();
@@ -64,10 +65,12 @@ abstract class AsyncCubit<T> extends Cubit<AsyncState<T>> {
         }
       },
       (failure) {
-        MessageUtils.showSnackBar(
-          message: failure.message,
-          baseStatus: BaseStatus.error,
-        );
+        if (showErrorToast) {
+          MessageUtils.showSnackBar(
+            message: failure.message,
+            baseStatus: BaseStatus.error,
+          );
+        }
         setError(errorMessage: failure.message);
       },
     );

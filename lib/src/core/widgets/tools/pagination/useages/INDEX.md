@@ -74,7 +74,7 @@ class ProductsCubit extends PaginatedCubit<ProductEntity> {
   @override
   Future<Result<Map, Failure>> fetchPageData(int page) async {
     return await baseCrudUseCase.call(
-      CrudBaseParmas(
+      CrudBaseParams(
         api: '/products?page=$page',
         httpRequestType: HttpRequestType.get,
         mapper: (json) => json,

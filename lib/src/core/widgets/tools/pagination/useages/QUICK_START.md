@@ -22,7 +22,7 @@ class VideosPaginatedCubit extends PaginatedCubit<VideoEntity> {
   @override
   Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page) async {
     return await baseCrudUseCase.call(
-      CrudBaseParmas(
+      CrudBaseParams(
         api: '/api/videos?page=$page',
         httpRequestType: HttpRequestType.get,
         mapper: (json) => json, // Return the full response
@@ -225,6 +225,7 @@ Your API must return this structure:
 ## Done! 🎉
 
 That's it! The widget will automatically:
+
 - ✅ Show loading skeleton on first load
 - ✅ Display your items using the itemBuilder
 - ✅ Load more items when user scrolls to 80% of the list
@@ -235,14 +236,17 @@ That's it! The widget will automatically:
 ## Troubleshooting
 
 ### Issue: Load more not working
+
 - Check that your API returns `next_page_url` with a value
 - Verify `loadMoreThreshold` is appropriate (default 0.8)
 
 ### Issue: Items not showing
+
 - Check your `parseItems()` method is correctly parsing the data
 - Verify your API response structure matches expected format
 
 ### Issue: Skeleton not showing
+
 - Make sure to provide `skeletonBuilder` parameter
 - Check that skeleton widget is properly constructed
 
