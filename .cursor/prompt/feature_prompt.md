@@ -21,6 +21,7 @@ All rules in `.cursor/rules/` are auto-applied. Ensure you've internalized:
 - `di-and-architecture.mdc` — injector<T>(), layering, ApiConstants
 - `search-field-debounce.mdc` — real TextField + rxdart debounce
 - `logging-and-debugging.mdc` — no print/debugPrint in final code
+- `accessibility.mdc` — tap targets ≥44, semantic labels for icon-only buttons (consider when building UI)
 
 ══════════════════════════════════════════════════════════════
 STEP 2 — AUDIT EXISTING CODE (إلزامي)
