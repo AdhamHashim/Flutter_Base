@@ -1,0 +1,84 @@
+---
+description: Dependency injection (DI), service locator, and high-level architecture rules for Flutter_Base.
+alwaysApply: true
+---
+
+## DI & Architecture — Flutter_Base
+
+### 1. Service Locator via injector<T>()
+
+- المشروع يستخدم:
+  - `get_it` + `injectable`.
+  - function موحدة: `injector<T>()` في `core/shared/service_locators/`.
+
+قواعد:
+- لا تستخدم `GetIt.instance` مباشرة في الكود اليومي؛ استخدم `injector<T>()`.
+- لا تنشئ instances يدوياً في الـ View لطبقات الـ domain/data (repositories, useCases).
+
+```dart
+// ✅ CORRECT — داخل screen
+return BlocProvider(
+  create: (_) => injector<MyFeatureCubit>()..fetchItems(),
+  child: const _MyFeatureBody(),
+);
+
+// ❌ WRONG
+final cubit = MyFeatureCubit(MyRepo(Dio()));
+```
+
+---
+
+### 2. injectable + build_runner
+
+- أي Cubit أو UseCase جديد:
+  - علّمه بـ `@injectable`.
+  - ثم شغل: `dart run build_runner build --delete-conflicting-outputs`.
+
+```dart
+@injectable
+class GetOrdersCubit extends AsyncCubit<List<OrderEntity>> {
+  GetOrdersCubit(this._useCase) : super([]);
+  final GetOrdersUseCase _useCase;
+}
+```
+
+---
+
+### 3. Layers Responsibility (باختصار)
+
+- **Presentation**:
+  - Widgets + Cubits.
+  - تتعامل مع `Entity` فقط (مش DTO / JSON).
+  - ما تعرفش حاجة عن Dio / HTTP.
+- **Domain**:
+  - UseCases + Repositories interfaces + Entities (ممكن مشتركة مع presentation).
+- **Data**:
+  - RemoteDatasource + mappers + DTOs + التعامل المباشر مع Dio.
+
+قاعدة:
+- أي كلاس يتعامل مع Dio أو HTTP:
+  - ما يدخلش presentation.
+- أي كلاس فيه `BuildContext`:
+  - ما يخرجش من presentation.
+
+---
+
+### 4. Where to Put What
+
+- Requests/Responses المشتركة:
+  - في `core/base_crud` أو `core/network`.
+- Endpoints:
+  - في `ApiConstants` فقط (`core/network/api_endpoints.dart`).
+- Models المخصوصة لكل feature:
+  - تحت `lib/src/features/{feature}/entity/`.
+
+---
+
+### 5. Checklist
+
+- [ ] جميع الـ Cubits و UseCases الجديدة معلّمة بـ `@injectable`.
+- [ ] كل Screen تستخدم `injector<MyCubit>()` داخل `BlocProvider`.
+- [ ] لا يوجد constructor manual لـ repositories / usecases داخل الـ UI.
+- [ ] HTTP / Dio غير مستخدم في أي ملف تحت `presentation/`.
+- [ ] `ApiConstants` هو المصدر الوحيد للـ endpoints.
+

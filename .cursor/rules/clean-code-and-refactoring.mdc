@@ -1,0 +1,179 @@
+---
+description: Clean code, refactoring, and maintainability rules for Flutter_Base.
+alwaysApply: true
+---
+
+## Clean Code & Refactoring
+
+### 1. Single Responsibility per Widget / Cubit
+
+- Widget:
+  - **Screen widget**: مسؤول عن `Scaffold` + `BlocProvider` + حقن body فقط.
+  - **Body widget**: مسؤول عن layout العام + توزيع الـ sections.
+  - **Card / Item widget**: مسؤول عن شكل عنصر واحد فقط.
+- Cubit:
+  - Cubit واحد لكل endpoint / سيناريو رئيسي.
+  - لا تدمج مسئوليات متعددة (مثلاً get + create + update + delete) في Cubit واحد لو المنطق كبير؛ افصلها إن احتجت.
+
+---
+
+### 2. Widget Splitting — SEPARATE FILES (NON-NEGOTIABLE)
+
+> **كل section أو component في الشاشة لازم يكون في ملف منفصل داخل `widgets/` — مش method في نفس الملف.**
+
+**القاعدة الأساسية:**
+- Body widget (`_FeatureBody`) = layout فقط (يجمع الـ sections).
+- كل section / card / component = ملف منفصل في `widgets/` مع `part of` في `view_imports.dart`.
+- **ممنوع** كتابة `Widget _buildHeader()` أو `Widget _buildCard()` كـ methods داخل الـ body.
+
+```
+lib/src/features/orders/presentation/
+├── widgets/
+│   ├── orders_body.dart              ← layout only — يجمع الـ sections
+│   ├── orders_header_widget.dart     ← ملف منفصل
+│   ├── orders_filter_bar_widget.dart ← ملف منفصل
+│   ├── orders_list_widget.dart       ← ملف منفصل
+│   └── order_card_widget.dart        ← ملف منفصل
+```
+
+```dart
+// ✅ CORRECT — body يجمع widgets منفصلة
+class _OrdersBody extends StatelessWidget {
+  const _OrdersBody();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        const _OrdersHeader().toSliver(),
+        const _OrdersFilterBar().toSliver(),
+        const _OrdersList(),
+      ],
+    );
+  }
+}
+
+// ❌ FORBIDDEN — كل حاجة في نفس الملف كـ methods
+class _OrdersBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [_buildHeader(), _buildFilters(), _buildList()]);
+  }
+
+  Widget _buildHeader() => Container(...); // 30+ سطر في نفس الملف!
+  Widget _buildFilters() => Row(...);      // 20+ سطر في نفس الملف!
+  Widget _buildList() => ListView(...);    // 40+ سطر في نفس الملف!
+}
+```
+
+**متى يجوز method بدل ملف منفصل:**
+- الـ section أقل من **10 أسطر** ومستخدم في مكان واحد فقط.
+- مثلاً: `SizedBox`, `Divider`, spacing بسيط.
+
+**Checklist:**
+- [ ] لا يوجد method في الـ body يرجع widget أكثر من 10 أسطر.
+- [ ] كل section / card في ملف منفصل داخل `widgets/`.
+- [ ] كل ملف widget مضاف كـ `part` في `view_imports.dart`.
+
+---
+
+### 3. No Duplicate Widgets — AUDIT PREVIOUS SCREENS (CRITICAL)
+
+> **قبل إنشاء أي widget — راجع الشاشات اللي اتعملت قبل كده في نفس الـ session والـ project.**
+> لو فيه card أو component بنفس التصميم أو تصميم قريب → **استدعيه بدل ما تكرره.**
+
+**القاعدة:**
+1. قبل ما تعمل أي widget جديد:
+   - افحص `lib/src/features/logic/app_shared/widgets/` — ممكن يكون موجود.
+   - افحص الـ features اللي اتبنت قبل كده (خصوصاً اللي في نفس الـ session).
+   - لو فيه widget بنفس الشكل أو شكل قريب جداً → **استخدمه مباشرة**.
+2. لو الـ widget مشترك بين شاشتين+:
+   - انقله إلى `app_shared/widgets/`.
+   - عدّل الشاشات القديمة لتستخدمه.
+3. لو فيه فروقات بسيطة → **أضف optional params** للـ widget الموجود بدل ما تكرره.
+4. **ممنوع** إنشاء نسخة جديدة من widget موجود بتصميم مطابق أو شبه مطابق.
+
+```dart
+// ✅ CORRECT — reuse existing shared card
+ProductCardWidget(product: item)
+
+// ✅ CORRECT — widget has minor differences → add optional params
+ProductCardWidget(product: item, showPrice: false, showRating: true)
+
+// ❌ FORBIDDEN — same card duplicated in each feature
+// features/home/widgets/home_product_card.dart        ← copy 1
+// features/search/widgets/search_product_card.dart    ← copy 2 (same design!)
+// features/favorites/widgets/fav_product_card.dart    ← copy 3 (same design!)
+```
+
+---
+
+### 4. Naming — Self-Documenting
+
+- ممنوع أسماء عامة مثل: `data`, `value`, `item1`, `temp`.
+- استخدم أسماء تُظهر **المعنى**:
+
+```dart
+// ✅ GOOD
+final List<OrderEntity> completedOrders;
+Future<void> fetchPendingOrders();
+
+// ❌ BAD
+final List<OrderEntity> data;
+Future<void> fetch();
+```
+
+---
+
+### 5. Comments Policy
+
+- التعليقات مسموحة فقط عندما:
+  - تشرح **سبب** أو **قيد** أو **trade-off** غير واضح من الكود.
+- ممنوع:
+  - تعليقات تشرح "ماذا" يفعل الكود (الكود نفسه يجب أن يشرح).
+
+```dart
+// ✅ GOOD
+// We keep last 3 search queries for UX; backend only supports single "search" param.
+
+// ❌ BAD
+// This method fetches data from API
+Future<void> fetchData() async { ... }
+```
+
+---
+
+### 6. Files & Folders Organization
+
+- اتبع الهيكل القياسي الموجود في `flutter-feature-development.mdc`.
+- لا تضف ملفات على مستوى الجذر بدون سبب قوي.
+- أي شيء مشترك بين أكثر من feature:
+  - models مشتركة → core/shared/models
+  - widgets مشتركة → core/widgets أو app_shared/widgets
+  - helpers/logic مشتركة → core/helpers أو core/extensions
+
+---
+
+### 7. Refactoring Before Adding New Logic
+
+لو لقيت كود:
+- مكرر أكثر من مرة.
+- أو `build()` معقد جداً.
+- أو Cubit يقوم بأكثر من دور.
+
+**خطوات:**
+1. استخرج الكود المكرر في helper/widget/cubit فرعي.
+2. عدّل الأماكن القديمة لتستخدم abstraction الجديد.
+3. بعدها أضف الـ feature الجديد فوق الكود النظيف.
+
+---
+
+### 8. Quick Checklist
+
+- [ ] `build()` في كل Widget قصير وواضح.
+- [ ] Cubits ذات مسؤولية واحدة قدر الإمكان.
+- [ ] لا يوجد كود مكرر بوضوح (نفس card في أكثر من شاشة).
+- [ ] أسماء الملفات/الكلاسات/المتغيرات واضحة وتعبر عن دورها.
+- [ ] لا يوجد تعليقات تشرح "ماذا" بل فقط "لماذا" عند الحاجة.
+- [ ] أي شيء مشترك حقيقي تم نقله إلى core/ أو app_shared/.
+

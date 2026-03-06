@@ -1,0 +1,152 @@
+---
+description: Search fields from Figma must be real TextFields with debounce, not static containers. Apply when any screen has a search bar, search field, or search input from Figma MCP.
+alwaysApply: false
+globs:
+  - "lib/src/features/**/widgets/**"
+  - "lib/src/features/**/cubits/**"
+---
+
+# Search Field — Real TextField + Debounce (MANDATORY)
+
+## ⚠️ CRITICAL RULE
+
+When converting Figma designs that contain a **search bar** (in headers, filters, or anywhere):
+- It MUST be a **real `DefaultTextField`** — NEVER a static `Container` with a `Text` widget
+- It MUST have **debounce** (500ms) using `rxdart` to avoid excessive API calls
+- It MUST be **wired to the data cubit** to update the view on search
+
+---
+
+## ❌ FORBIDDEN — Fake Search Bar
+
+```dart
+// ❌ NEVER do this — it's just a visual container, not interactive
+Widget _buildSearchBar() {
+  return Container(
+    height: AppSize.sH44,
+    decoration: BoxDecoration(color: AppColors.fill, borderRadius: ...),
+    child: Row(children: [
+      Expanded(child: Text(LocaleKeys.searchHint.tr(), style: ...)),
+      IconWidget(icon: AppAssets.svg.baseSvg.search.path),
+    ]),
+  );
+}
+```
+
+---
+
+## ✅ CORRECT — Real TextField + Debounce
+
+### 1. Search Field Widget
+```dart
+DefaultTextField(
+  title: LocaleKeys.searchHint.tr(),
+  controller: _searchController,
+  fillColor: AppColors.fill,
+  hasBorderColor: false,
+  borderRadius: BorderRadius.circular(AppCircular.r12),
+  action: TextInputAction.search,
+  prefixIcon: IconWidget(
+    icon: AppAssets.svg.baseSvg.search.path,
+    color: AppColors.hintText,
+    height: AppSize.sH20,
+  ).paddingAll(AppPadding.pH12),
+  onChanged: _onSearchChanged,
+)
+```
+
+### 2. Debounce Setup (in StatefulWidget)
+```dart
+final _searchController = TextEditingController();
+final _searchSubject = PublishSubject<String>();
+late final StreamSubscription<String> _searchSubscription;
+
+@override
+void initState() {
+  super.initState();
+  _searchSubscription = _searchSubject
+      .debounceTime(const Duration(milliseconds: 500))
+      .distinct()
+      .listen(_onSearch);
+}
+
+@override
+void dispose() {
+  _searchController.dispose();
+  _searchSubscription.cancel();
+  _searchSubject.close();
+  super.dispose();
+}
+
+void _onSearchChanged(String? query) => _searchSubject.add(query ?? '');
+
+void _onSearch(String query) {
+  context.read<MyCubit>().search(query);
+}
+```
+
+### 3. Cubit Search Support
+
+**PaginatedCubit:**
+```dart
+String _searchQuery = '';
+
+void search(String query) {
+  _searchQuery = query.trim();
+  fetchInitialData();
+}
+
+@override
+Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) async {
+  return await baseCrudUseCase.call(CrudBaseParams(
+    api: ApiConstants.myEndpoint,
+    httpRequestType: HttpRequestType.get,
+    queryParameters: {
+      ...?ConstantManager.paginateJson(page),
+      if (_searchQuery.isNotEmpty) 'search': _searchQuery,
+    },
+    mapper: (json) => json,
+  ));
+}
+```
+
+**AsyncCubit:**
+```dart
+Future<void> fetchItems({String search = ''}) async {
+  await executeAsync(
+    operation: () async => baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.myEndpoint,
+      httpRequestType: HttpRequestType.get,
+      queryParameters: {
+        if (search.isNotEmpty) 'search': search,
+      },
+      mapper: (json) => (json['data']['data'] as List)
+          .map((e) => MyEntity.fromJson(e)).toList(),
+    )),
+  );
+}
+```
+
+---
+
+## Required Imports (add to view_imports.dart)
+```dart
+import 'dart:async';
+import 'package:rxdart/rxdart.dart';
+```
+
+---
+
+## Pre-Delivery Checklist
+```
+□ Search bar uses DefaultTextField (NOT Container + Text)
+□ TextEditingController created & disposed properly
+□ PublishSubject for debounce created & closed in dispose
+□ StreamSubscription created in initState, cancelled in dispose
+□ debounceTime = 500ms + .distinct()
+□ Cubit has search() method or accepts search param
+□ Query passed as 'search' in queryParameters
+□ Widget is StatefulWidget (lifecycle management)
+□ Visual style matches Figma (fillColor, borderRadius, prefixIcon)
+□ dart:async and rxdart imported in view_imports.dart
+```

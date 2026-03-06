@@ -1,0 +1,109 @@
+# Skill: Figma → Flutter (Flutter_Base Architecture)
+
+## Purpose
+Convert Figma designs to Flutter code using Flutter_Base architecture.
+For design token values, see `design-tokens` skill.
+For widget patterns, see `flutter-patterns` skill.
+For coding standards, see `flutter-base-coding-standards.mdc`.
+
+---
+
+## Phase 1: Read Figma Node via MCP
+
+```
+1. get_node_info(nodeId)              → dimensions, fills, effects, layout
+2. scan_nodes_by_types(nodeId, types) → all child node IDs
+3. get_nodes_info([...ids])           → batch fetch max 10 at a time
+4. scan_text_nodes(nodeId)            → all text content + styles
+5. get_styles()                       → if design tokens needed
+```
+
+**Extract per node:**
+- `width`, `height` → `AppSize.sWXX` / `AppSize.sHXX`
+- `fills[0].color` (RGBA 0-1) → `AppColors.*`
+- `cornerRadius` → `AppCircular.rXX`
+- `padding*` → `AppPadding.pHXX` / `AppPadding.pWXX`
+- `itemSpacing` → `.szH` / `.szW`
+- `style.fontSize` → **reduce 1–2sp** then map to `FontSizeManager.sXX`
+- `layoutMode` → VERTICAL=Column, HORIZONTAL=Row, NONE=Stack
+
+---
+
+## Phase 2: Figma MCP Safety Checks
+
+### Screen-Level Padding Adjustment
+- Body padding ≤ 12px → keep as-is
+- Body padding > 12px → reduce by 2–4px (Figma 16 → 12 or 14)
+- Only screen body — not card-internal padding
+
+### RTL Section Verification (CRITICAL)
+- MCP sometimes returns sections mirrored from actual design
+- **ALWAYS cross-check with Figma screenshot**
+- Arabic text/filters must start from RIGHT
+- If MCP contradicts visual → trust the screenshot
+
+### Icon Background Check
+- Some AppAssets icons include their own background
+- Check before wrapping in Container with bg color
+- Has background → use `IconWidget` directly
+- Transparent → wrap in Container
+
+---
+
+## Phase 3: Mapping Workflow
+
+### Colors
+1. Read `color_manager.dart` FIRST
+2. Match Figma color by **purpose** (not just hex)
+3. Use existing AppColors when close match exists
+4. Only add new with **generic names** (never screen-prefixed)
+
+See `design-tokens` skill for full AppColors table.
+
+### Sizes & Spacing
+Map to nearest `AppSize` / `AppPadding` / `AppMargin` / `AppCircular` constant.
+See `design-tokens` skill for all available values.
+
+### Text Styles
+**Reduce font size by 1–2sp from Figma:**
+- Figma ≤ 12sp → reduce 1sp
+- Figma 13–18sp → reduce 1–2sp  
+- Figma ≥ 20sp → reduce 2sp
+
+```dart
+const TextStyle().setMainTextColor.s14.medium   // Figma 16sp title
+const TextStyle().setHintColor.s12.regular       // Figma 14sp hint
+```
+
+### Widget Mapping
+| Figma element | Flutter_Base widget |
+|---|---|
+| Screen with AppBar | `DefaultScaffold(title, body)` |
+| Button (filled) | `DefaultButton` or `LoadingButton` |
+| Image (network) | `CachedImage(url, width, height)` |
+| Icon | `IconWidget(icon: AppAssets.svg.xxx.path)` |
+| Text input | `CustomTextFiled(title, hint, controller)` |
+| Dropdown | `AppDropdown<T>` |
+| Shadow | `boxShadow: [AppColors.containerShadow]` |
+| Loading state | `AsyncBlocBuilder` with `skeletonBuilder` |
+
+---
+
+## Phase 4: Pixel Accuracy Checklist
+
+```
+□ Colors → AppColors reused by purpose (no raw Color(), no screen-prefixed names)
+□ Font → TextStyleEx chain, sizes reduced 1–2sp from Figma
+□ Spacing → AppSize/AppPadding/AppMargin (no raw numbers)
+□ Border radius → AppCircular.rXX
+□ Images → CachedImage (never Image.network)
+□ Icons → IconWidget + AppAssets (never Icons.*)
+□ Buttons → DefaultButton / LoadingButton
+□ Scaffold → DefaultScaffold (inner) / plain Scaffold (auth)
+□ API state → AsyncCubit + AsyncBlocBuilder
+□ Forms → FormMixin + CustomTextFiled + validateAndScroll()
+□ Body padding > 12px → reduced 2–4px
+□ Sections cross-checked with Figma screenshot
+□ Widget splitting → each section/card in a SEPARATE file (no _buildXxx methods in body)
+□ Similar widgets checked → reuse existing, moved to app_shared/ if 2+ features use it
+```
