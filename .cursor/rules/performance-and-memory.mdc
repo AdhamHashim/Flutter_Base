@@ -1,6 +1,6 @@
 ---
 description: Performance tuning + memory/lifecycle rules for Flutter_Base features. Always apply after basic feature structure is clear.
-alwaysApply: true
+globs: ["lib/**/*.dart"]
 ---
 
 ## Performance & Memory — Core Rules

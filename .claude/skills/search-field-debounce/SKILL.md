@@ -1,3 +1,8 @@
+---
+name: search-field-debounce
+description: Real search field with rxdart debounce pattern — never use fake Container+Text search bars.
+---
+
 # Skill: Search Field with Debounce
 
 ## When to Use
@@ -7,15 +12,118 @@
 
 ## What to Do
 
-> **See `search-field-debounce.mdc` for full implementation pattern and code.**
+### الـ Search Field Widget
+```dart
+// ✅ CORRECT — real TextField
+DefaultTextField(
+  title: LocaleKeys.searchHint.tr(),
+  controller: _searchController,
+  fillColor: AppColors.fill,
+  hasBorderColor: false,
+  borderRadius: BorderRadius.circular(AppCircular.r12),
+  action: TextInputAction.search,
+  prefixIcon: IconWidget(
+    icon: AppAssets.svg.baseSvg.search.path,
+    color: AppColors.hintText,
+    height: AppSize.sH20,
+  ).paddingAll(AppPadding.pH12),
+  onChanged: _onSearchChanged,
+)
 
-### Quick Rules:
-1. Search MUST be real `DefaultTextField` — never a static Container with Text
-2. Use `rxdart` `PublishSubject` + `debounceTime(500ms)` + `.distinct()`
-3. Screen MUST be `StatefulWidget` for controller + subscription lifecycle
-4. Dispose: `_searchController.dispose()`, `_searchSubscription.cancel()`, `_searchSubject.close()`
-5. For `PaginatedCubit` → add `search()` method that calls `fetchInitialData()`
-6. For `AsyncCubit` → add `search` parameter to `fetchItems()`
+// ❌ FORBIDDEN — fake search bar
+Container(
+  decoration: BoxDecoration(color: AppColors.fill),
+  child: Row(children: [Text(LocaleKeys.searchHint.tr()), Icon(...)]),
+)
+```
+
+### ViewController (recommended — keeps widget clean)
+```dart
+class MySearchViewController {
+  final searchController = TextEditingController();
+  final _searchSubject = PublishSubject<String>();
+  late final StreamSubscription<String> _searchSubscription;
+
+  void init(void Function(String) onSearch) {
+    _searchSubscription = _searchSubject
+        .debounceTime(const Duration(milliseconds: 500))
+        .distinct()
+        .listen(onSearch);
+  }
+
+  void onSearchChanged(String? query) => _searchSubject.add(query ?? '');
+
+  void dispose() {
+    searchController.dispose();
+    _searchSubscription.cancel();
+    _searchSubject.close();
+  }
+}
+```
+
+### Widget Usage (StatefulWidget)
+```dart
+late final _vc = MySearchViewController();
+
+@override
+void initState() {
+  super.initState();
+  _vc.init((query) => context.read<MyCubit>().search(query));
+}
+
+@override
+void dispose() {
+  _vc.dispose();
+  super.dispose();
+}
+
+// In build:
+DefaultTextField(
+  controller: _vc.searchController,
+  onChanged: _vc.onSearchChanged,
+  // ...
+)
+```
+
+### Cubit Search Support
+
+**PaginatedCubit:**
+```dart
+String _searchQuery = '';
+
+void search(String query) {
+  _searchQuery = query.trim();
+  fetchInitialData();
+}
+```
+
+**AsyncCubit:**
+```dart
+Future<void> fetchItems({String search = ''}) async {
+  await executeAsync(
+    operation: () async => baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.myEndpoint,
+      queryParameters: { if (search.isNotEmpty) 'search': search },
+      mapper: (json) => (json['data']['data'] as List)
+          .map((e) => MyEntity.fromJson(e)).toList(),
+    )),
+  );
+}
+```
+
+### Required Imports (in view_imports.dart)
+```dart
+import 'dart:async';
+import 'package:rxdart/rxdart.dart';
+```
+
+### Checklist
+- [ ] Search bar = `DefaultTextField` (NOT Container + Text)
+- [ ] `PublishSubject` + `debounceTime(500ms)` + `.distinct()`
+- [ ] Screen = `StatefulWidget` (lifecycle management)
+- [ ] Dispose: controller + subscription + subject
+- [ ] Cubit has `search()` method
+- [ ] `dart:async` و `rxdart` imported
 
 ## Output
 

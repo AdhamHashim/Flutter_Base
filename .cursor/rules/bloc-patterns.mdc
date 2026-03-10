@@ -1,6 +1,6 @@
 ---
-name: bloc-patterns
 description: AsyncCubit templates, CRUD local updates, AsyncBlocBuilder, PaginatedCubit, and BlocListener patterns for Flutter_Base.
+globs: ["lib/**/*.dart"]
 ---
 
 # Skill: BLoC/Cubit Patterns — Flutter_Base

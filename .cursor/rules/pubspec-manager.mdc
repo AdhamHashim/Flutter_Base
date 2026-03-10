@@ -1,6 +1,6 @@
 ---
-name: pubspec-manager
 description: Package detection, platform configuration, method channels, and dependency management for Flutter_Base.
+globs: ["lib/**/*.dart"]
 ---
 
 # Skill: pubspec.yaml Package Manager

@@ -1,6 +1,6 @@
 ---
-name: flutter-patterns
 description: Widget patterns, file structure, key widgets reference, and screen/body patterns for Flutter_Base.
+globs: ["lib/**/*.dart"]
 ---
 
 # Skill: Flutter_Base Widget Patterns
@@ -183,7 +183,7 @@ RefreshIndicator(
 - سهولة الاختبار والصيانة
 - تجنب setState — استخدم `ValueNotifier` + `ValueListenableBuilder`
 
-### ✅ CORRECT — ViewController class
+### CORRECT — ViewController class
 
 ```dart
 class ChatViewController {
@@ -204,7 +204,7 @@ class ChatViewController {
 }
 ```
 
-### ✅ CORRECT — View uses ViewController object
+### CORRECT — View uses ViewController object
 
 ```dart
 class _ChatInputState extends State<_ChatInput> {
@@ -240,10 +240,10 @@ class _ChatInputState extends State<_ChatInput> {
 }
 ```
 
-### ❌ FORBIDDEN — Controllers/logic directly in View
+### FORBIDDEN — Controllers/logic directly in View
 
 ```dart
-// ❌ WRONG — controllers, dispose, business logic scattered in view
+// WRONG — controllers, dispose, business logic scattered in view
 class _ChatInputState extends State<_ChatInput> {
   final _controller = TextEditingController();
   bool _isSending = false;
@@ -280,7 +280,7 @@ class _ChatInputState extends State<_ChatInput> {
 > **أي أيقونة داخل Container بـ background لازم تتلف في `Center` widget عشان حجمها ميبقاش بحجم الـ Container.**
 
 ```dart
-// ✅ CORRECT — Icon wrapped in Center inside Container
+// CORRECT — Icon wrapped in Center inside Container
 Container(
   width: AppSize.sH48,
   height: AppSize.sH48,
@@ -298,7 +298,7 @@ Container(
   ),
 )
 
-// ❌ WRONG — Icon without Center → stretches to Container size
+// WRONG — Icon without Center → stretches to Container size
 Container(
   width: AppSize.sH48,
   height: AppSize.sH48,

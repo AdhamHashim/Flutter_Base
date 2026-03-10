@@ -1,6 +1,6 @@
 ---
-description: Flutter_Base coding standards — colors, sizes, text styles, extensions, navigation. Always follow when writing Flutter code.
-alwaysApply: true
+name: coding-standards
+description: Master coding standards reference — colors, sizes, text styles, core widgets, extensions, helpers, forms, navigation, naming, entity safety, slivers, and platform config.
 ---
 
 # Flutter_Base — Coding Standards

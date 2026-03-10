@@ -3,39 +3,58 @@ name: logging-and-debugging
 description: Safe logging and debugging practices for Flutter_Base.
 ---
 
-# Skill: Logging & Debugging — Flutter_Base
+## Logging & Debugging
 
-## When to Use
+### 1. No `print` in Final Code
 
-- أثناء تتبع bug في feature معينة.
-- قبل تسليم الكود للتأكد من خلوه من `print` العشوائي.
+- **ممنوع** ترك `print()` أو `debugPrint()` في الكود النهائي (إلا في logger مركزي).
+- لو احتجت logging:
+  - استخدم `AppBlocObserver` أو logger موحد (عبر DI) وليس `print` في كل مكان.
 
-## What to Do
+---
 
-1. **مسح سريع للـ prints:**
-   - ابحث عن:
-     - `print(`
-     - `debugPrint(`
-   - أي واحدة ليست خلف `kDebugMode` أو داخل logger مركزي → تُحذف.
+### 2. Bloc / Cubit Observability
 
-2. **استخدام AppBlocObserver:**
-   - لو bug متعلق بالـ Cubit:
-     - راقب الـ logs الصادرة من `AppBlocObserver`.
-     - تجنّب تكرار نفس logging داخل كل cubit.
+- المشروع يحتوي على `AppBlocObserver` في `core/shared/bloc_observer.dart`.
+- استخدمه لـ:
+  - تتبع transitions.
+  - تتبع errors الصادرة من bloc/cubit.
 
-3. **Debug مؤقت:**
-   - لو تحتاج logging مؤقت:
+لا تضف logging داخل كل cubit إلا لو:
+- مؤقتة أثناء debug.
+- و يتم حذفها قبل الدمج.
+
+---
+
+### 3. Debug Utilities
+
+- أثناء التطوير:
+  - مسموح استخدام `debugPrint` مع `kDebugMode`.
 
 ```dart
 if (kDebugMode) {
-  debugPrint('GetOrdersCubit.fetchOrders page=$page search=$search');
+  debugPrint('OrdersCubit.fetchOrders → page=$page, search=$search');
 }
 ```
 
-   - وتأكد من إزالة هذا الكود قبل الدمج النهائي.
+- قبل التسليم:
+  - [ ] تأكد أن كل الـ debugPrint محذوف أو موضوع خلف flag واضح يمكن تعطيله.
 
-## Output
+---
 
-بعد استخدام هذا الـ skill:
-- اذكر للمستخدم إن كان هناك أي `print`/`debugPrint` تم حذفها أو تركها عن قصد مع توضيح السبب. 
+### 4. Error Logging
 
+- أخطاء الـ API:
+  - يتم تسجيلها في طبقة الـ repository / baseCrudUseCase (لو فيه logger).
+  - لا تكرر نفس الرسالة في كل cubit.
+- Exceptions غير متوقعة:
+  - التقطها في مكان واحد مركزي إن أمكن (runZonedGuarded / FlutterError.onError).
+
+---
+
+### 5. Checklist
+
+- [ ] لا يوجد `print()` في أي ملف.
+- [ ] لا يوجد `debugPrint()` غير محمي بـ `kDebugMode` أو مستخدم في مكان مركزي فقط.
+- [ ] أخطاء الـ bloc/cubit يمكن تتبعها عبر `AppBlocObserver`.
+- [ ] لا يوجد logging مكرر في كل cubit لنفس المعلومة.

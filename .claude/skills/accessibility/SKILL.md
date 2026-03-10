@@ -1,6 +1,6 @@
 ---
+name: accessibility
 description: Basic accessibility (a11y) rules for Flutter_Base — semantic labels, tap targets, and contrast.
-globs: ["lib/**/*.dart"]
 ---
 
 ## Accessibility (A11y) — Basics

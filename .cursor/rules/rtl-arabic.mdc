@@ -1,6 +1,6 @@
 ---
-name: rtl-arabic
 description: RTL Arabic rules, layout mirroring prevention, directional APIs, and localization for Flutter_Base.
+globs: ["lib/**/*.dart"]
 ---
 
 # Skill: RTL Arabic — Flutter_Base

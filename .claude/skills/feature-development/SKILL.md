@@ -1,6 +1,6 @@
 ---
-description: Flutter feature development workflow — Figma MCP + Postman MCP + full phase checklist. Follow every time a new feature or screen is created.
-alwaysApply: true
+name: feature-development
+description: Flutter feature development workflow — Figma MCP + Postman MCP + full phase checklist.
 ---
 
 # Flutter Feature Development — Full Workflow

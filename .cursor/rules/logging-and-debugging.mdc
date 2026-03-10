@@ -1,6 +1,6 @@
 ---
 description: Logging, debugging, and diagnostics rules for Flutter_Base.
-alwaysApply: true
+globs: ["lib/**/*.dart"]
 ---
 
 ## Logging & Debugging

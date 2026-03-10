@@ -1,38 +1,34 @@
 ---
-description: Dependency injection (DI), service locator, and high-level architecture rules for Flutter_Base.
-alwaysApply: true
+description: Keep DI usage and high-level layering consistent in Flutter_Base.
+globs: ["lib/**/*.dart"]
 ---
 
-## DI & Architecture — Flutter_Base
+# Skill: DI & Architecture — Flutter_Base
 
-### 1. Service Locator via injector<T>()
+## When to Use
 
-- المشروع يستخدم:
-  - `get_it` + `injectable`.
-  - function موحدة: `injector<T>()` في `core/shared/service_locators/`.
+- عند إضافة Cubit جديد، UseCase، أو Repository.
+- عند ملاحظة إنشاء يدوي لـ services داخل الـ UI.
 
-قواعد:
-- لا تستخدم `GetIt.instance` مباشرة في الكود اليومي؛ استخدم `injector<T>()`.
-- لا تنشئ instances يدوياً في الـ View لطبقات الـ domain/data (repositories, useCases).
+## What to Do
+
+### 1. Service Locator — `injector<T>()`
 
 ```dart
-// ✅ CORRECT — داخل screen
+// ✅ CORRECT — inside screen
 return BlocProvider(
   create: (_) => injector<MyFeatureCubit>()..fetchItems(),
   child: const _MyFeatureBody(),
 );
 
-// ❌ WRONG
+// ❌ WRONG — manual construction
 final cubit = MyFeatureCubit(MyRepo(Dio()));
 ```
 
----
+- استخدم `injector<T>()` فقط — لا تستخدم `GetIt.instance` مباشرة.
+- لا تنشئ instances يدوياً لـ repositories / useCases في الـ UI.
 
-### 2. injectable + build_runner
-
-- أي Cubit أو UseCase جديد:
-  - علّمه بـ `@injectable`.
-  - ثم شغل: `dart run build_runner build --delete-conflicting-outputs`.
+### 2. Injectable + build_runner
 
 ```dart
 @injectable
@@ -42,43 +38,57 @@ class GetOrdersCubit extends AsyncCubit<List<OrderEntity>> {
 }
 ```
 
----
+بعد إضافة أي Cubit أو UseCase:
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
 
-### 3. Layers Responsibility (باختصار)
+### 3. Layers Responsibility
 
-- **Presentation**:
-  - Widgets + Cubits.
-  - تتعامل مع `Entity` فقط (مش DTO / JSON).
-  - ما تعرفش حاجة عن Dio / HTTP.
-- **Domain**:
-  - UseCases + Repositories interfaces + Entities (ممكن مشتركة مع presentation).
-- **Data**:
-  - RemoteDatasource + mappers + DTOs + التعامل المباشر مع Dio.
+| Layer | مسؤول عن | يتعامل مع |
+|-------|---------|-----------|
+| **Presentation** | Widgets + Cubits | `Entity` فقط — لا يعرف Dio/HTTP |
+| **Domain** | UseCases + Repository interfaces + Entities | Business logic |
+| **Data** | RemoteDatasource + DTOs + Dio | API calls مباشرة |
 
-قاعدة:
-- أي كلاس يتعامل مع Dio أو HTTP:
-  - ما يدخلش presentation.
-- أي كلاس فيه `BuildContext`:
-  - ما يخرجش من presentation.
+**قواعد صارمة:**
+- أي كلاس فيه `Dio` أو `http.get` → لازم يكون في data layer فقط
+- أي كلاس فيه `BuildContext` → لازم يكون في presentation فقط
 
----
+### 4. Endpoints — `ApiConstants` فقط
 
-### 4. Where to Put What
+```dart
+// ✅ CORRECT
+api: ApiConstants.products,
 
-- Requests/Responses المشتركة:
-  - في `core/base_crud` أو `core/network`.
-- Endpoints:
-  - في `ApiConstants` فقط (`core/network/api_endpoints.dart`).
-- Models المخصوصة لكل feature:
-  - تحت `lib/src/features/{feature}/entity/`.
+// ❌ WRONG — hardcoded string
+api: '/api/v1/products',
+```
 
----
+كل الـ endpoints في `core/network/api_endpoints.dart`.
 
-### 5. Checklist
+### 5. Where to Put What
 
-- [ ] جميع الـ Cubits و UseCases الجديدة معلّمة بـ `@injectable`.
-- [ ] كل Screen تستخدم `injector<MyCubit>()` داخل `BlocProvider`.
-- [ ] لا يوجد constructor manual لـ repositories / usecases داخل الـ UI.
-- [ ] HTTP / Dio غير مستخدم في أي ملف تحت `presentation/`.
-- [ ] `ApiConstants` هو المصدر الوحيد للـ endpoints.
+| الملف | المكان |
+|-------|--------|
+| Cubits | `features/{name}/presentation/cubits/` |
+| Entities | `features/{name}/entity/` |
+| Endpoints | `core/network/api_endpoints.dart` (ApiConstants) |
+| Shared requests/responses | `core/base_crud` أو `core/network` |
+| Service locator | `core/shared/service_locators/` |
 
+### Checklist
+
+- [ ] كل Cubit/UseCase جديد معلّم بـ `@injectable`
+- [ ] كل Screen تستخدم `injector<MyCubit>()` داخل `BlocProvider`
+- [ ] لا يوجد constructor manual لـ repos/usecases في UI
+- [ ] HTTP/Dio غير مستخدم في presentation
+- [ ] `ApiConstants` هو المصدر الوحيد للـ endpoints
+- [ ] تم تشغيل `build_runner` بعد إضافة injectable جديد
+
+## Output
+
+بعد تشغيل هذا الـ skill:
+- لخّص أي Cubits تم تعديلها لتستخدم `injector`.
+- أماكن تم نقل `Dio` منها إلى data layer.
+- أي endpoints تم نقلها لـ `ApiConstants`.

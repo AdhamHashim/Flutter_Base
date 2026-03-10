@@ -1,44 +1,20 @@
 ---
-description: Search fields from Figma must be real TextFields with debounce, not static containers. Apply when any screen has a search bar, search field, or search input from Figma MCP.
-alwaysApply: false
-globs:
-  - "lib/src/features/**/widgets/**"
-  - "lib/src/features/**/cubits/**"
+description: Real search field with rxdart debounce pattern — never use fake Container+Text search bars.
+globs: ["lib/**/*.dart"]
 ---
 
-# Search Field — Real TextField + Debounce (MANDATORY)
+# Skill: Search Field with Debounce
 
-## ⚠️ CRITICAL RULE
+## When to Use
 
-When converting Figma designs that contain a **search bar** (in headers, filters, or anywhere):
-- It MUST be a **real `DefaultTextField`** — NEVER a static `Container` with a `Text` widget
-- It MUST have **debounce** (500ms) using `rxdart` to avoid excessive API calls
-- It MUST be **wired to the data cubit** to update the view on search
+- عند وجود search bar في أي شاشة (header search, filter search, etc.).
+- عند ملاحظة fake search bar (static Container + Text بدل TextField حقيقي).
 
----
+## What to Do
 
-## ❌ FORBIDDEN — Fake Search Bar
-
+### الـ Search Field Widget
 ```dart
-// ❌ NEVER do this — it's just a visual container, not interactive
-Widget _buildSearchBar() {
-  return Container(
-    height: AppSize.sH44,
-    decoration: BoxDecoration(color: AppColors.fill, borderRadius: ...),
-    child: Row(children: [
-      Expanded(child: Text(LocaleKeys.searchHint.tr(), style: ...)),
-      IconWidget(icon: AppAssets.svg.baseSvg.search.path),
-    ]),
-  );
-}
-```
-
----
-
-## ✅ CORRECT — Real TextField + Debounce
-
-### 1. Search Field Widget
-```dart
+// ✅ CORRECT — real TextField
 DefaultTextField(
   title: LocaleKeys.searchHint.tr(),
   controller: _searchController,
@@ -53,39 +29,63 @@ DefaultTextField(
   ).paddingAll(AppPadding.pH12),
   onChanged: _onSearchChanged,
 )
+
+// ❌ FORBIDDEN — fake search bar
+Container(
+  decoration: BoxDecoration(color: AppColors.fill),
+  child: Row(children: [Text(LocaleKeys.searchHint.tr()), Icon(...)]),
+)
 ```
 
-### 2. Debounce Setup (in StatefulWidget)
+### ViewController (recommended — keeps widget clean)
 ```dart
-final _searchController = TextEditingController();
-final _searchSubject = PublishSubject<String>();
-late final StreamSubscription<String> _searchSubscription;
+class MySearchViewController {
+  final searchController = TextEditingController();
+  final _searchSubject = PublishSubject<String>();
+  late final StreamSubscription<String> _searchSubscription;
+
+  void init(void Function(String) onSearch) {
+    _searchSubscription = _searchSubject
+        .debounceTime(const Duration(milliseconds: 500))
+        .distinct()
+        .listen(onSearch);
+  }
+
+  void onSearchChanged(String? query) => _searchSubject.add(query ?? '');
+
+  void dispose() {
+    searchController.dispose();
+    _searchSubscription.cancel();
+    _searchSubject.close();
+  }
+}
+```
+
+### Widget Usage (StatefulWidget)
+```dart
+late final _vc = MySearchViewController();
 
 @override
 void initState() {
   super.initState();
-  _searchSubscription = _searchSubject
-      .debounceTime(const Duration(milliseconds: 500))
-      .distinct()
-      .listen(_onSearch);
+  _vc.init((query) => context.read<MyCubit>().search(query));
 }
 
 @override
 void dispose() {
-  _searchController.dispose();
-  _searchSubscription.cancel();
-  _searchSubject.close();
+  _vc.dispose();
   super.dispose();
 }
 
-void _onSearchChanged(String? query) => _searchSubject.add(query ?? '');
-
-void _onSearch(String query) {
-  context.read<MyCubit>().search(query);
-}
+// In build:
+DefaultTextField(
+  controller: _vc.searchController,
+  onChanged: _vc.onSearchChanged,
+  // ...
+)
 ```
 
-### 3. Cubit Search Support
+### Cubit Search Support
 
 **PaginatedCubit:**
 ```dart
@@ -95,19 +95,6 @@ void search(String query) {
   _searchQuery = query.trim();
   fetchInitialData();
 }
-
-@override
-Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) async {
-  return await baseCrudUseCase.call(CrudBaseParams(
-    api: ApiConstants.myEndpoint,
-    httpRequestType: HttpRequestType.get,
-    queryParameters: {
-      ...?ConstantManager.paginateJson(page),
-      if (_searchQuery.isNotEmpty) 'search': _searchQuery,
-    },
-    mapper: (json) => json,
-  ));
-}
 ```
 
 **AsyncCubit:**
@@ -116,10 +103,7 @@ Future<void> fetchItems({String search = ''}) async {
   await executeAsync(
     operation: () async => baseCrudUseCase.call(CrudBaseParams(
       api: ApiConstants.myEndpoint,
-      httpRequestType: HttpRequestType.get,
-      queryParameters: {
-        if (search.isNotEmpty) 'search': search,
-      },
+      queryParameters: { if (search.isNotEmpty) 'search': search },
       mapper: (json) => (json['data']['data'] as List)
           .map((e) => MyEntity.fromJson(e)).toList(),
     )),
@@ -127,26 +111,21 @@ Future<void> fetchItems({String search = ''}) async {
 }
 ```
 
----
-
-## Required Imports (add to view_imports.dart)
+### Required Imports (in view_imports.dart)
 ```dart
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 ```
 
----
+### Checklist
+- [ ] Search bar = `DefaultTextField` (NOT Container + Text)
+- [ ] `PublishSubject` + `debounceTime(500ms)` + `.distinct()`
+- [ ] Screen = `StatefulWidget` (lifecycle management)
+- [ ] Dispose: controller + subscription + subject
+- [ ] Cubit has `search()` method
+- [ ] `dart:async` و `rxdart` imported
 
-## Pre-Delivery Checklist
-```
-□ Search bar uses DefaultTextField (NOT Container + Text)
-□ TextEditingController created & disposed properly
-□ PublishSubject for debounce created & closed in dispose
-□ StreamSubscription created in initState, cancelled in dispose
-□ debounceTime = 500ms + .distinct()
-□ Cubit has search() method or accepts search param
-□ Query passed as 'search' in queryParameters
-□ Widget is StatefulWidget (lifecycle management)
-□ Visual style matches Figma (fillColor, borderRadius, prefixIcon)
-□ dart:async and rxdart imported in view_imports.dart
-```
+## Output
+
+- أي search bars تم تحويلها من fake لـ real TextField.
+- أي debounce patterns تم إضافتها أو إصلاحها.

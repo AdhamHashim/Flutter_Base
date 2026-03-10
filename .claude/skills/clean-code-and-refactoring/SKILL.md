@@ -42,6 +42,23 @@ description: Keep Flutter_Base features clean, modular, and easy to change.
    - احذف التعليقات التي تشرح "ماذا" يفعل الكود.
    - اترك فقط التعليقات التي تشرح "لماذا" أو قيود خاصة.
 
+6. **Section Sub-Folders for Complex Screens:**
+   - لما الشاشة فيها widgets كتير (4+ sections)، اعمل sub-folder لكل مجموعة مرتبطة.
+   - كل folder يعبر عن الـ section (header/, categories/, products/).
+   - الـ body يفضل في `widgets/` مباشرة.
+   - ده بيخلي الكود أقرأ وأسهل في الصيانة.
+
+```
+widgets/
+├── feature_body.dart          ← layout only (stays at root)
+├── header/                    ← header group
+│   ├── header_widget.dart
+│   └── search_bar.dart
+├── products/                  ← products group
+│   ├── products_section.dart
+│   └── product_card.dart
+```
+
 ## Output
 
 عند استخدام هذا الـ skill، اعرض:

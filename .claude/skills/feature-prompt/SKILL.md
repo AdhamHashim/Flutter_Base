@@ -1,3 +1,10 @@
+---
+name: feature-prompt
+description: Full feature development workflow — fill in feature name, Figma link, and Postman link, then follow all phases from audit to verify.
+---
+
+# Feature Development Prompt
+
 Feature: [FEATURE_NAME]
 Figma Node: [FIGMA_URL]
 Postman Collection: [POSTMAN_URL] (or: لا يوجد حاليا)
@@ -7,25 +14,24 @@ Postman Collection: [POSTMAN_URL] (or: لا يوجد حاليا)
 Before writing ANY code, follow this exact order:
 
 ══════════════════════════════════════════════════════════════
-STEP 1 — READ RULES (إلزامي)
+STEP 1 — LOAD SKILLS (إلزامي)
 ══════════════════════════════════════════════════════════════
 
-All rules in `.cursor/rules/` are auto-applied in Cursor IDE. Ensure you've internalized:
-- `flutter-base-coding-standards.mdc` — colors, sizes, text styles, RTL, core widgets, entity safety, extensions, helpers
-- `flutter-feature-development.mdc` — full workflow, phases, cubit patterns, CRUD, checklist
-- `scaffold-statusbar.mdc` — 3 scaffold types + status bar rules
-- `clean-code-and-refactoring.mdc` — widget splitting (separate files!), shared reuse, naming
-- `figma-mcp-mapping.mdc` — Figma → Flutter token mapping
-- `design-tokens.mdc` — color/size/font/spacing token classes
-- `figma-to-flutter.mdc` — Figma MCP conversion workflow + safety checks
-- `performance-and-memory.mdc` — const, lists, slivers, dispose
-- `error-handling-and-resilience.mdc` — ErrorView, retries, fromJson safety
-- `di-and-architecture.mdc` — injector<T>(), layering, ApiConstants
-- `search-field-debounce.mdc` — real TextField + rxdart debounce
-- `logging-and-debugging.mdc` — no print/debugPrint in final code
-- `accessibility.mdc` — tap targets >=44, semantic labels for icon-only buttons (consider when building UI)
-- `bloc-patterns.mdc` — AsyncCubit, CRUD local updates, BlocListener
-- `rtl-arabic.mdc` — RTL rules, layout mirroring prevention
+All skills in `.claude/skills/` are available. Ensure you've internalized:
+- `coding-standards` — colors, sizes, text styles, RTL, core widgets, entity safety, extensions, helpers
+- `feature-development` — full workflow, phases, cubit patterns, CRUD, checklist
+- `scaffold-patterns` — 3 scaffold types + status bar rules
+- `clean-code-and-refactoring` — widget splitting (separate files!), shared reuse, naming
+- `design-tokens` — Figma → Flutter token mapping
+- `figma-to-flutter` — Figma MCP conversion workflow + safety checks
+- `performance-and-memory` — const, lists, slivers, dispose
+- `error-handling-and-resilience` — ErrorView, retries, fromJson safety
+- `di-and-architecture` — injector<T>(), layering, ApiConstants
+- `search-field-debounce` — real TextField + rxdart debounce
+- `logging-and-debugging` — no print/debugPrint in final code
+- `accessibility` — tap targets >=44, semantic labels for icon-only buttons (consider when building UI)
+- `bloc-patterns` — AsyncCubit, CRUD local updates, BlocListener
+- `rtl-arabic` — RTL rules, layout mirroring prevention
 
 ══════════════════════════════════════════════════════════════
 STEP 2 — AUDIT EXISTING CODE (إلزامي)
@@ -223,5 +229,5 @@ STEP 7 — VERIFY
 15. Forms: FormMixin + validateAndScroll() + ArabicNumbersFormatter + .toEnglishNumbers()
 16. Controllers/subscriptions disposed | No print()/debugPrint() in final code
 17. DI: @injectable + injector<T>() | Access modifiers: private _ for internal
-18. Pre-delivery checklist from `flutter-feature-development.mdc` PHASE 7 — all items passed
-19. Run post-feature-review — fix any critical/high issues found
+18. Pre-delivery checklist from `feature-development` skill PHASE 7 — all items passed
+19. Run `/post-feature-review` skill — fix any critical/high issues found

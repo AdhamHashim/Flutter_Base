@@ -1,6 +1,6 @@
 ---
 description: Figma MCP to Flutter_Base token mapping — colors, sizes, padding, radius, fonts. Use when reading Figma nodes via MCP.
-globs: lib/**/*.dart
+globs: ["lib/**/*.dart"]
 alwaysApply: false
 ---
 
@@ -212,13 +212,13 @@ Container(
 
 **Quick rule:** Figma <=12 → subtract 1. Figma 13-18 → subtract 1-2. Figma >=20 → subtract 2.
 
-| Figma weight | FontWeightManager / TextStyleEx |
-|-------------|-------------------------------|
-| 300 | `FontWeightManager.light` / `.light` |
-| 400 | `.regular` |
-| 500 | `FontWeightManager.regular` / `.medium` |
-| 600 | `.semiBold` |
-| 700 | `FontWeightManager.bold` / `.bold` |
+| Figma weight | FontWeightManager / TextStyleEx | Note |
+|-------------|-------------------------------|------|
+| 300 | `FontWeightManager.light` / `.light` | w300 |
+| 400 | `.regular` | w400 (TextStyleEx only) |
+| 500 | `FontWeightManager.regular` / `.medium` | w500 — ⚠️ FontWeightManager.regular = w500, not w400 |
+| 600 | `.semiBold` | w600 |
+| 700 | `FontWeightManager.bold` / `.bold` | w700 |
 
 **For non-standard px:** Use `SizedBox(height: 9.h)` directly with screenutil.
 

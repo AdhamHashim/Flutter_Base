@@ -1,6 +1,6 @@
 ---
-name: design-tokens
 description: Map Figma design values (colors, sizes, fonts, spacing) to Flutter_Base token classes.
+globs: ["lib/**/*.dart"]
 ---
 
 # Skill: Design Tokens — Flutter_Base
@@ -34,7 +34,7 @@ import 'package:flutterbase/src/config/res/config_imports.dart';
 
 ## Figma Color → AppColors Mapping
 
-### ⚠️ CRITICAL: Color Reuse Policy (READ BEFORE EVERY SCREEN)
+### CRITICAL: Color Reuse Policy (READ BEFORE EVERY SCREEN)
 
 > **ALWAYS reuse existing AppColors before adding new ones.**
 > The core colors (`main`, `primary`, `secondary`, `hintText`, `fill`, `border`, etc.) are shared across ALL screens.
@@ -55,14 +55,14 @@ Figma #F5F5F5 (light bg)      → USE AppColors.fill (#F9FAFB) — same purpose
 Figma #E5E7EB (divider)       → USE AppColors.grey1 (#DFDFDF) or AppColors.border — similar
 ```
 
-### ❌ FORBIDDEN — Screen-Prefixed Color Names:
+### FORBIDDEN — Screen-Prefixed Color Names:
 ```dart
-// ❌ NEVER name colors after a specific screen
+// NEVER name colors after a specific screen
 static const Color loginPrimary = Color(0xFF224D9B);
 static const Color cartBackground = Color(0xFFF5F5F5);
 static const Color profileDivider = Color(0xFFE5E7EB);
 
-// ✅ CORRECT — generic reusable names
+// CORRECT — generic reusable names
 static const Color accentBlue = Color(0xFF224D9B);    // if truly new
 static const Color lightBackground = Color(0xFFF5F5F5); // if truly new
 ```
@@ -225,16 +225,16 @@ fully round → AppCircular.infinity
 
 ## Figma Font Size → FontSizeManager Mapping
 
-### ⚠️ CRITICAL: Font Size Adjustment Rule
+### CRITICAL: Font Size Adjustment Rule
 
-> Figma font sizes MUST be reduced by **1–2sp** when converting to Flutter code.
+> Figma font sizes MUST be reduced by **1-2sp** when converting to Flutter code.
 > This compensates for rendering differences between Figma and Flutter (especially with Expo Arabic font + ScreenUtil `.sp`).
 > The result is better visual consistency with the original design.
 
 **Adjustment guideline:**
-- Figma ≤ 12sp → reduce by **1sp**
-- Figma 13–18sp → reduce by **1–2sp** (prefer 1sp for readability)
-- Figma ≥ 20sp → reduce by **2sp**
+- Figma <= 12sp → reduce by **1sp**
+- Figma 13-18sp → reduce by **1-2sp** (prefer 1sp for readability)
+- Figma >= 20sp → reduce by **2sp**
 
 ### Figma → Code Mapping Table
 
@@ -264,18 +264,18 @@ FontSizeManager.s6 / s8 / s10 / s11 / s12 / s13 / s14 / s15 / s16 / s18 / s20 / 
 ### Example
 ```dart
 // Figma: title 16sp bold
-// ✅ CORRECT — reduced to 14sp
+// CORRECT — reduced to 14sp
 const TextStyle().setMainTextColor.s14.bold
 
-// ❌ WRONG — used Figma value directly
+// WRONG — used Figma value directly
 const TextStyle().setMainTextColor.s16.bold
 
 // Figma: body 14sp regular
-// ✅ CORRECT — reduced to 13sp or 12sp
+// CORRECT — reduced to 13sp or 12sp
 const TextStyle().setHintColor.s13.regular
 
 // Figma: heading 22sp bold
-// ✅ CORRECT — reduced to 20sp
+// CORRECT — reduced to 20sp
 const TextStyle().setMainTextColor.s20.bold
 ```
 
@@ -347,7 +347,7 @@ If Figma uses a value not in the token map (e.g., 9px, 17px, 27px):
 |---|---|---|
 | `Validators` | `validators.dart` | `validateEmpty`, `validateEmail`, `validatePhone`, `validatePassword`, `validatePasswordConfirm`, `validateDropDown`, `noValidate` |
 | Input Formatters | `input_formatters.dart` | `PhoneNumberFormatter`, `EmailFormatter`, `NumberOnlyFormatter`, `TextOnlyFormatter`, `TextWithNumberFormatter`, `IntegerNumberFormatter`, `DecimalNumberFormatter`, `DateTimeFormatter`, `NoSpecialCharactersFormatter` |
-| `ArabicNumbersFormatter` | `arabic_numbers_formatter.dart` | Auto-converts ٠-٩ → 0-9 in text fields (MANDATORY for number/phone fields) |
+| `ArabicNumbersFormatter` | `arabic_numbers_formatter.dart` | Auto-converts 0-9 → 0-9 in text fields (MANDATORY for number/phone fields) |
 | `Helpers` | `helpers.dart` | `showByLang(ar, en)`, `getFcmToken()`, `changeStatusbarColor()`, `shareApp()`, `getDeviceType()` |
 | `ImageHelper` | `image_helper.dart` | Pick/crop single/multi images, camera, gallery, file picker |
 | `LauncherHelper` | `lancher_helper.dart` | Launch URL, WhatsApp, YouTube, Twitter, Instagram, Snapchat, TikTok, phone call, email |

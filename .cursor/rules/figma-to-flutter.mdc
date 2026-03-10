@@ -1,6 +1,6 @@
 ---
-name: figma-to-flutter
 description: Convert Figma designs to Flutter code using Flutter_Base architecture with safety checks and token mapping.
+globs: ["lib/**/*.dart"]
 ---
 
 # Skill: Figma → Flutter (Flutter_Base Architecture)
@@ -29,7 +29,7 @@ For coding standards, see `flutter-base-coding-standards.mdc`.
 - `cornerRadius` → `AppCircular.rXX`
 - `padding*` → `AppPadding.pHXX` / `AppPadding.pWXX`
 - `itemSpacing` → `.szH` / `.szW`
-- `style.fontSize` → **reduce 1–2sp** then map to `FontSizeManager.sXX`
+- `style.fontSize` → **reduce 1-2sp** then map to `FontSizeManager.sXX`
 - `layoutMode` → VERTICAL=Column, HORIZONTAL=Row, NONE=Stack
 
 ---
@@ -37,8 +37,8 @@ For coding standards, see `flutter-base-coding-standards.mdc`.
 ## Phase 2: Figma MCP Safety Checks
 
 ### Screen-Level Padding Adjustment
-- Body padding ≤ 12px → keep as-is
-- Body padding > 12px → reduce by 2–4px (Figma 16 → 12 or 14)
+- Body padding <= 12px → keep as-is
+- Body padding > 12px → reduce by 2-4px (Figma 16 → 12 or 14)
 - Only screen body — not card-internal padding
 
 ### RTL Section Verification (CRITICAL)
@@ -70,10 +70,10 @@ Map to nearest `AppSize` / `AppPadding` / `AppMargin` / `AppCircular` constant.
 See `design-tokens` skill for all available values.
 
 ### Text Styles
-**Reduce font size by 1–2sp from Figma:**
-- Figma ≤ 12sp → reduce 1sp
-- Figma 13–18sp → reduce 1–2sp  
-- Figma ≥ 20sp → reduce 2sp
+**Reduce font size by 1-2sp from Figma:**
+- Figma <= 12sp → reduce 1sp
+- Figma 13-18sp → reduce 1-2sp
+- Figma >= 20sp → reduce 2sp
 
 ```dart
 const TextStyle().setMainTextColor.s14.medium   // Figma 16sp title
@@ -98,18 +98,18 @@ const TextStyle().setHintColor.s12.regular       // Figma 14sp hint
 ## Phase 4: Pixel Accuracy Checklist
 
 ```
-□ Colors → AppColors reused by purpose (no raw Color(), no screen-prefixed names)
-□ Font → TextStyleEx chain, sizes reduced 1–2sp from Figma
-□ Spacing → AppSize/AppPadding/AppMargin (no raw numbers)
-□ Border radius → AppCircular.rXX
-□ Images → CachedImage (never Image.network)
-□ Icons → IconWidget + AppAssets (never Icons.*)
-□ Buttons → DefaultButton / LoadingButton
-□ Scaffold → DefaultScaffold (inner) / plain Scaffold (auth)
-□ API state → AsyncCubit + AsyncBlocBuilder
-□ Forms → FormMixin + CustomTextFiled + validateAndScroll()
-□ Body padding > 12px → reduced 2–4px
-□ Sections cross-checked with Figma screenshot
-□ Widget splitting → each section/card in a SEPARATE file (no _buildXxx methods in body)
-□ Similar widgets checked → reuse existing, moved to app_shared/ if 2+ features use it
+[] Colors → AppColors reused by purpose (no raw Color(), no screen-prefixed names)
+[] Font → TextStyleEx chain, sizes reduced 1-2sp from Figma
+[] Spacing → AppSize/AppPadding/AppMargin (no raw numbers)
+[] Border radius → AppCircular.rXX
+[] Images → CachedImage (never Image.network)
+[] Icons → IconWidget + AppAssets (never Icons.*)
+[] Buttons → DefaultButton / LoadingButton
+[] Scaffold → DefaultScaffold (inner) / plain Scaffold (auth)
+[] API state → AsyncCubit + AsyncBlocBuilder
+[] Forms → FormMixin + CustomTextFiled + validateAndScroll()
+[] Body padding > 12px → reduced 2-4px
+[] Sections cross-checked with Figma screenshot
+[] Widget splitting → each section/card in a SEPARATE file (no _buildXxx methods in body)
+[] Similar widgets checked → reuse existing, moved to app_shared/ if 2+ features use it
 ```

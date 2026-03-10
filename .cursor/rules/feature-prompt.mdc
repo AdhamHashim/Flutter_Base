@@ -1,3 +1,10 @@
+---
+description: Full feature development workflow — fill in feature name, Figma link, and Postman link, then follow all phases from audit to verify.
+globs: ["lib/**/*.dart"]
+---
+
+# Feature Development Prompt
+
 Feature: [FEATURE_NAME]
 Figma Node: [FIGMA_URL]
 Postman Collection: [POSTMAN_URL] (or: لا يوجد حاليا)
@@ -7,23 +14,22 @@ Postman Collection: [POSTMAN_URL] (or: لا يوجد حاليا)
 Before writing ANY code, follow this exact order:
 
 ══════════════════════════════════════════════════════════════
-STEP 1 — READ RULES (إلزامي)
+STEP 1 — LOAD RULES (إلزامي)
 ══════════════════════════════════════════════════════════════
 
-All rules in `.cursor/rules/` are auto-applied in Cursor IDE. Ensure you've internalized:
+All rules in `.cursor/rules/` are auto-applied. Ensure you've internalized:
 - `flutter-base-coding-standards.mdc` — colors, sizes, text styles, RTL, core widgets, entity safety, extensions, helpers
 - `flutter-feature-development.mdc` — full workflow, phases, cubit patterns, CRUD, checklist
 - `scaffold-statusbar.mdc` — 3 scaffold types + status bar rules
 - `clean-code-and-refactoring.mdc` — widget splitting (separate files!), shared reuse, naming
-- `figma-mcp-mapping.mdc` — Figma → Flutter token mapping
-- `design-tokens.mdc` — color/size/font/spacing token classes
+- `design-tokens.mdc` — Figma → Flutter token mapping
 - `figma-to-flutter.mdc` — Figma MCP conversion workflow + safety checks
 - `performance-and-memory.mdc` — const, lists, slivers, dispose
 - `error-handling-and-resilience.mdc` — ErrorView, retries, fromJson safety
 - `di-and-architecture.mdc` — injector<T>(), layering, ApiConstants
 - `search-field-debounce.mdc` — real TextField + rxdart debounce
 - `logging-and-debugging.mdc` — no print/debugPrint in final code
-- `accessibility.mdc` — tap targets >=44, semantic labels for icon-only buttons (consider when building UI)
+- `accessibility.mdc` — tap targets >=44, semantic labels for icon-only buttons
 - `bloc-patterns.mdc` — AsyncCubit, CRUD local updates, BlocListener
 - `rtl-arabic.mdc` — RTL rules, layout mirroring prevention
 
