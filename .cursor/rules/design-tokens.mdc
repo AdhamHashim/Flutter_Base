@@ -223,35 +223,78 @@ fully round → AppCircular.infinity
 
 ---
 
+## Icon Size Adjustment (Figma → Code) — CRITICAL
+
+> **الأيقونات بتتحط أكبر من التصميم لو مستخدمتش الحجم الصح من Figma.**
+> **لازم تقرأ حجم الأيقونة من Figma بدقة وتطبقه بالظبط — أو تقلله لو شكله كبير.**
+
+**Rules:**
+1. **اقرأ `width` و `height` من Figma MCP بدقة** — مش تقدر من شكلها
+2. **طبق الحجم بالظبط** — `IconWidget(height: AppSize.sHXX, width: AppSize.sWXX)`
+3. **لو الأيقونة شكلها كبير عن التصميم** → قلل 2-4px
+4. **لو الأيقونة جوا Container** → حجم الأيقونة ≠ حجم الـ Container. Container أكبر والأيقونة أصغر جواه
+
+```dart
+// CORRECT — icon size matches Figma exactly
+// Figma: icon 20x20 inside 40x40 container
+Container(
+  width: AppSize.sW40, height: AppSize.sH40,
+  decoration: BoxDecoration(color: AppColors.fill, borderRadius: BorderRadius.circular(AppCircular.r10)),
+  child: Center(
+    child: IconWidget(icon: AppAssets.svg.baseSvg.search.path, height: AppSize.sH20, width: AppSize.sW20),
+  ),
+)
+
+// CORRECT — standalone icon with exact Figma size
+IconWidget(icon: AppAssets.svg.baseSvg.notification.path, height: AppSize.sH24, width: AppSize.sW24)
+
+// WRONG — icon too large (used container size for icon)
+IconWidget(icon: AppAssets.svg.baseSvg.search.path, height: AppSize.sH40)  // ← should be sH20!
+
+// WRONG — guessed icon size instead of reading from Figma
+IconWidget(icon: ..., height: AppSize.sH30)  // Figma says 20 → should be sH20
+```
+
+**Quick icon size guide:**
+| Figma context | Typical icon size | Container size |
+|---|---|---|
+| Small inline icon (next to text) | 14-18px | No container |
+| Medium icon (card, list item) | 20-24px | 36-44px (if has bg) |
+| Large icon (feature/empty state) | 28-40px | 48-60px (if has bg) |
+
+---
+
 ## Figma Font Size → FontSizeManager Mapping
 
 ### CRITICAL: Font Size Adjustment Rule
 
-> Figma font sizes MUST be reduced by **1-2sp** when converting to Flutter code.
+> Figma font sizes need adjustment when converting to Flutter code.
 > This compensates for rendering differences between Figma and Flutter (especially with Expo Arabic font + ScreenUtil `.sp`).
-> The result is better visual consistency with the original design.
 
 **Adjustment guideline:**
-- Figma ≤ 13sp (10, 11, 12, 13) → **KEEP AS-IS** — لا تقلل
-- Figma 13-18sp → reduce by **1-2sp** (prefer 1sp for readability)
+- **Figma ≤ 13sp (10, 11, 12, 13) → KEEP AS-IS — لا تقلل.** النصوص الصغيرة تبقى زي ما هي.
+- Figma 14–18sp → reduce by **1–2sp** (prefer 1sp for readability)
 - Figma ≥ 20sp → reduce by **2sp**
 
 ### Figma → Code Mapping Table
 
 ```
-Figma fontSize → Code fontSize (adjusted)
-10sp → .s10 (keep as-is)
-11sp → .s11 (keep as-is)
-12sp → .s12 (keep as-is)
-13sp → .s13 (keep as-is)
-14sp → .s13 or .s12
-15sp → .s14 or .s13
-16sp → .s14 or .s15
-17sp → .s15 or .s16
-18sp → .s16 or .s17
-20sp → .s18
-22sp → .s20
-24sp → .s22
+Figma fontSize → Code fontSize (EXACT — no guessing)
+10sp → .s10  (keep)
+11sp → .s11  (keep)
+12sp → .s12  (keep)
+13sp → .s13  (keep)
+14sp → .s13  (reduce 1)
+15sp → .s13  (reduce 2)
+16sp → .s14  (reduce 2)
+17sp → .s15  (reduce 2)
+18sp → .s16  (reduce 2)
+20sp → .s18  (reduce 2)
+22sp → .s20  (reduce 2)
+24sp → .s22  (reduce 2)
+26sp → .s24  (reduce 2, use TextStyleEx .s24)
+28sp → .s26  (reduce 2, use TextStyleEx .s26)
+30sp → .s28  (reduce 2, use TextStyleEx .s28)
 ```
 
 ### Available FontSizeManager constants
@@ -283,12 +326,28 @@ const TextStyle().setMainTextColor.s20.bold
 
 ## Figma Font Weight → FontWeightManager / TextStyleEx
 
-```
-Figma weight 300 → FontWeightManager.light  / TextStyleEx: .light (w300)
-Figma weight 400 → TextStyleEx: .regular (w400)
-Figma weight 500 → FontWeightManager.regular / TextStyleEx: .medium (w500)
-Figma weight 600 → TextStyleEx: .semiBold (w600)
-Figma weight 700 → FontWeightManager.bold / TextStyleEx: .bold (w700)
+> **تنبيه: `FontWeightManager.regular` = w500 (مش w400). استخدم الجدول ده بالظبط:**
+
+| Figma weight | FontWeightManager | TextStyleEx | Flutter FontWeight |
+|---|---|---|---|
+| 300 | `FontWeightManager.light` | `.light` | `w300` |
+| 400 | — (use TextStyleEx) | `.regular` | `w400` |
+| 500 | `FontWeightManager.regular` | `.medium` | `w500` |
+| 600 | — (use TextStyleEx) | `.semiBold` | `w600` |
+| 700 | `FontWeightManager.bold` | `.bold` | `w700` |
+
+```dart
+// Figma weight 400 → .regular (w400)
+const TextStyle().setMainTextColor.s14.regular
+
+// Figma weight 500 → .medium (w500) — NOT .regular!
+const TextStyle().setMainTextColor.s14.medium
+
+// Figma weight 600 → .semiBold (w600)
+const TextStyle().setMainTextColor.s14.semiBold
+
+// Figma weight 700 → .bold (w700)
+const TextStyle().setMainTextColor.s14.bold
 ```
 
 ---

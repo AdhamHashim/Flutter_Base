@@ -53,6 +53,25 @@ For coding standards, see `flutter-base-coding-standards.mdc`.
 - Has background → use `IconWidget` directly
 - Transparent → wrap in Container
 
+### Figma Hidden Layers Warning (CRITICAL)
+
+> **الـ MCP ممكن ميرجعش hidden/invisible layers من Figma.**
+> **لازم تشيك الـ screenshot عشان conditional UI اللي بتكون مخفية في التصميم.**
+
+**ابحث عن:**
+- Error banners / validation messages (مخفية في الحالة الطبيعية)
+- Empty state designs (مخفية لما فيه data)
+- Loading overlays / shimmer states
+- Tooltip / popover content
+- Conditional badges / tags (مثلاً "New", "Sale")
+- Disabled state variations
+
+**Workflow:**
+1. اقرأ الـ nodes من MCP
+2. قارن مع الـ screenshot — لو شايف عنصر في الـ screenshot مش موجود في الـ MCP → hidden layer
+3. اسأل: "هل الشاشة دي ليها حالات تانية (empty, error, loading, disabled)؟"
+4. لو أيوه → ابني الـ conditional UI حتى لو الـ MCP مرجعهاش
+
 ---
 
 ## Phase 2.5: Text Extraction → lang.json (MANDATORY)

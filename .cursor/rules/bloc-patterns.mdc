@@ -71,6 +71,45 @@ mapper: (_) => state.data..removeWhere((e) => e.id == id)
 
 ---
 
+### CRUD Response Merge — Use API Response (CRITICAL)
+
+> **بعد الـ add/edit: استخدم الـ entity من response الـ API (اللي فيه id و server-generated fields).**
+> **متستخدمش الـ user input اللي كتبه المستخدم — السيرفر ممكن يضيف/يعدل fields.**
+
+```dart
+// ✅ CORRECT — use newItem FROM API response (has server-generated id, timestamps, etc.)
+result.when(
+  (newItem) => setSuccess(data: [newItem, ...state.data]),
+  (failure) => setError(errorMessage: failure.message, showToast: true),
+);
+
+// ❌ WRONG — using the params the user submitted (missing id, created_at, etc.)
+result.when(
+  (_) => setSuccess(data: [ItemEntity(name: params.name, ...), ...state.data]),
+  (failure) => ...,
+);
+```
+
+### Paginated CRUD — Add/Delete in PaginatedCubit
+
+> **الـ PaginatedCubit عنده list من عدة pages. لازم تتعامل مع الـ CRUD فيه بحذر.**
+
+```dart
+// Add to paginated list — insert at index 0
+(newItem) {
+  final currentItems = state.data;
+  setSuccess(data: [newItem, ...currentItems]);
+}
+
+// Delete from paginated list — remove by id
+(id) {
+  final currentItems = state.data.where((e) => e.id != id).toList();
+  setSuccess(data: currentItems);
+}
+```
+
+---
+
 ## AsyncBlocBuilder Usage
 
 ```dart

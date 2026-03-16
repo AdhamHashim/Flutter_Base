@@ -279,19 +279,22 @@ IconWidget(icon: ..., height: AppSize.sH30)  // Figma says 20 → should be sH20
 ### Figma → Code Mapping Table
 
 ```
-Figma fontSize → Code fontSize (adjusted)
-10sp → .s10 (keep as-is)
-11sp → .s11 (keep as-is)
-12sp → .s12 (keep as-is)
-13sp → .s13 (keep as-is)
-14sp → .s13 or .s12
-15sp → .s14 or .s13
-16sp → .s14 or .s15
-17sp → .s15 or .s16
-18sp → .s16 or .s17
-20sp → .s18
-22sp → .s20
-24sp → .s22
+Figma fontSize → Code fontSize (EXACT — no guessing)
+10sp → .s10  (keep)
+11sp → .s11  (keep)
+12sp → .s12  (keep)
+13sp → .s13  (keep)
+14sp → .s13  (reduce 1)
+15sp → .s13  (reduce 2)
+16sp → .s14  (reduce 2)
+17sp → .s15  (reduce 2)
+18sp → .s16  (reduce 2)
+20sp → .s18  (reduce 2)
+22sp → .s20  (reduce 2)
+24sp → .s22  (reduce 2)
+26sp → .s24  (reduce 2, use TextStyleEx .s24)
+28sp → .s26  (reduce 2, use TextStyleEx .s26)
+30sp → .s28  (reduce 2, use TextStyleEx .s28)
 ```
 
 ### Available FontSizeManager constants
@@ -323,12 +326,28 @@ const TextStyle().setMainTextColor.s20.bold
 
 ## Figma Font Weight → FontWeightManager / TextStyleEx
 
-```
-Figma weight 300 → FontWeightManager.light  / TextStyleEx: .light (w300)
-Figma weight 400 → TextStyleEx: .regular (w400)
-Figma weight 500 → FontWeightManager.regular / TextStyleEx: .medium (w500)
-Figma weight 600 → TextStyleEx: .semiBold (w600)
-Figma weight 700 → FontWeightManager.bold / TextStyleEx: .bold (w700)
+> **⚠️ تنبيه: `FontWeightManager.regular` = w500 (مش w400). استخدم الجدول ده بالظبط:**
+
+| Figma weight | FontWeightManager | TextStyleEx | Flutter FontWeight |
+|---|---|---|---|
+| 300 | `FontWeightManager.light` | `.light` | `w300` |
+| 400 | — (use TextStyleEx) | `.regular` | `w400` |
+| 500 | `FontWeightManager.regular` | `.medium` | `w500` |
+| 600 | — (use TextStyleEx) | `.semiBold` | `w600` |
+| 700 | `FontWeightManager.bold` | `.bold` | `w700` |
+
+```dart
+// Figma weight 400 → .regular (w400)
+const TextStyle().setMainTextColor.s14.regular
+
+// Figma weight 500 → .medium (w500) — NOT .regular!
+const TextStyle().setMainTextColor.s14.medium
+
+// Figma weight 600 → .semiBold (w600)
+const TextStyle().setMainTextColor.s14.semiBold
+
+// Figma weight 700 → .bold (w700)
+const TextStyle().setMainTextColor.s14.bold
 ```
 
 ---

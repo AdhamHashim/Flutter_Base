@@ -109,6 +109,9 @@ ErrorView(
 - مغطى بالتفصيل في `flutter-feature-development.mdc`:
   - `??` default لكل field.
   - `tryParse` بدل `parse`.
+  - **DateTime:** `DateTime.tryParse(json['date'] ?? '') ?? DateTime(2000)`
+  - **Enum:** `Status.values.firstWhere((e) => e.name == json['status'], orElse: () => Status.initial)`
+  - **Nested List:** `(json['items'] as List?)?.map((e) => e != null ? Entity.fromJson(e) : Entity.initial()).toList() ?? []`
 - الهدف هنا: **عدم رمي أي استثناء من fromJson** مهما كان شكل البيانات.
 
 ---

@@ -94,8 +94,11 @@ Icon → match AppAssets → add if not found
 1. **`factory initial()`** — MANDATORY for every entity (Skeletonizer + null-safety)
 2. **`fromJson` with `??` defaults** — String→`''`, int→`0`, double→`0.0`, bool→`false`, List→`[]`, Object→`.initial()`, nullable→no `??`
 3. **`tryParse` ONLY** — NEVER use `int.parse()` or `double.parse()` (crashes on bad data)
-4. **One cubit per endpoint** — never merge multiple services in one cubit
-5. **Check response** for pagination before starting
+4. **DateTime fields** → `DateTime.tryParse(json['date'] ?? '') ?? DateTime(2000)` — NEVER `DateTime.parse()`
+5. **Enum fields** → `Status.values.firstWhere((e) => e.name == json['status'], orElse: () => Status.initial)` — NEVER without `orElse`
+6. **Nested List<Entity>** → `(json['items'] as List?)?.map((e) => e != null ? Entity.fromJson(e) : Entity.initial()).toList() ?? []` — null-check each element
+7. **One cubit per endpoint** — never merge multiple services in one cubit
+8. **Check response** for pagination before starting
 
 ---
 
@@ -273,10 +276,10 @@ RefreshIndicator(
 
 // ✅ For screens with CustomScrollView
 RefreshIndicator(
-  onRefresh: () async {
-    await context.read<BannersCubit>().fetchBanners();
-    await context.read<CategoriesCubit>().fetchCategories();
-  },
+  onRefresh: () => Future.wait([
+    context.read<BannersCubit>().fetchBanners(),
+    context.read<CategoriesCubit>().fetchCategories(),
+  ]),
   child: CustomScrollView(
     physics: const AlwaysScrollableScrollPhysics(),
     slivers: [...],
@@ -313,6 +316,14 @@ AsyncBlocBuilder<BannersCubit, List<BannerEntity>>(
 ```
 
 **Rule:** `EmptyWidget` is for **full-screen empty states** (single-service screens). For sections within a multi-service screen, use `SizedBox.shrink()` to hide.
+
+**لو كل الـ sections فاضية؟** → اعرض `EmptyWidget` واحد على مستوى الشاشة كلها:
+```dart
+// Check if ALL sections are empty → show full-screen empty
+if (banners.isEmpty && categories.isEmpty && products.isEmpty) {
+  return EmptyWidget(title: LocaleKeys.noContent.tr());
+}
+```
 
 ---
 
@@ -386,6 +397,7 @@ Forms:
 
 Scroll & Performance:
 □ Multi-section → CustomScrollView + Slivers (no shrinkWrap) | RefreshIndicator on data screens
+□ Sliver sections: widget returns **Box** (Column, etc.) and parent uses `.toSliver()` once — never double-wrap (SliverToBoxAdapter expects RenderBox, not RenderSliver)
 □ Empty sections → SizedBox.shrink() | Heavy screens (4+ APIs) → compute()
 
 Widget Splitting (MANDATORY):

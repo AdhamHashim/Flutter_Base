@@ -277,6 +277,43 @@ class _ChatInputState extends State<_ChatInput> {
 
 ---
 
+## LoadingButton — Golden Path (Form Submits)
+
+> **كل form submit لازم يستخدم `LoadingButton` مش `DefaultButton`.**
+> **الـ LoadingButton بيعمل handle لحالة الـ loading تلقائياً — بيمنع double-tap وبيوري spinner.**
+
+```dart
+// ✅ CORRECT — LoadingButton with BlocListener for success/error
+BlocListener<SubmitCubit, AsyncState<bool>>(
+  listener: (context, state) {
+    if (state.isSuccess) {
+      MessageUtils.showSnackBar(message: LocaleKeys.success.tr(), baseStatus: BaseStatus.success);
+      Go.back();
+    }
+  },
+  child: LoadingButton(
+    title: LocaleKeys.submit.tr(),
+    onTap: () {
+      if (!params.validateAndScroll()) return;
+      context.read<SubmitCubit>().submit(params.toJson());
+    },
+    cubit: context.read<SubmitCubit>(),  // ← LoadingButton يعرف يعرض loading من الـ cubit
+  ),
+)
+```
+
+**LoadingButton بيعمل إيه تلقائياً:**
+- بيسمع على `cubit.state.isLoading` → يعرض spinner بدل النص
+- بيمنع tap تاني وهو loading
+- بيرجع للحالة الطبيعية لما الـ cubit يخلص (success أو error)
+
+**متى تستخدم DefaultButton بدل LoadingButton:**
+- أزرار navigation (مش API call)
+- أزرار cancel / back
+- أزرار filter / sort (مش async)
+
+---
+
 ## Icon Inside Container → Center Widget (MANDATORY)
 
 > **أي أيقونة داخل Container بـ background لازم تتلف في `Center` widget عشان حجمها ميبقاش بحجم الـ Container.**

@@ -31,20 +31,45 @@ STEP 1 — LOAD SKILLS (إلزامي)
 ══════════════════════════════════════════════════════════════
 
 All skills in `.claude/skills/` are available. Ensure you've internalized:
-- `coding-standards` — colors, sizes, text styles, RTL, core widgets, entity safety, extensions, helpers
+
+**Workflow & Entry Points:**
 - `feature-development` — full workflow, phases, cubit patterns, CRUD, checklist
-- `scaffold-patterns` — 3 scaffold types + status bar rules
-- `clean-code-and-refactoring` — widget splitting (separate files!), shared reuse, naming
+- `post-feature-review` — auto code review after completing any feature
+
+**Architecture & Patterns:**
+- `coding-standards` — colors, sizes, text styles, RTL, core widgets, entity safety, extensions, helpers, slivers
+- `bloc-patterns` — AsyncCubit, CRUD local updates, BlocListener, PaginatedCubit
+- `flutter-patterns` — Widget patterns, file structure, key widgets, screen/body patterns
+- `di-and-architecture` — injector<T>(), layering, ApiConstants
+- `bloc-provider-scoping` — where to provide cubits, single vs multi, shared vs isolated, decision tree
+
+**API & Data Flow:**
+- `api-pipeline` — Complete Postman → ApiConstants → Entity → CrudBaseParams → Cubit → UI pipeline
+- `form-api-pipeline` — Complete form → ViewController → Params → validation → API submit → success
+- `navigation-patterns` — Go.to() with arguments, back with result, refresh parent, tab navigation
+- `multi-screen-flow` — List/detail/edit/create patterns with data passing and screen linking
+
+**Figma & Design:**
 - `design-tokens` — Figma → Flutter token mapping
 - `figma-to-flutter` — Figma MCP conversion workflow + safety checks
-- `performance-and-memory` — const, lists, slivers, dispose
-- `error-handling-and-resilience` — ErrorView, retries, fromJson safety
-- `di-and-architecture` — injector<T>(), layering, ApiConstants
+- `figma-widget-mapping` — Comprehensive Figma element → Flutter widget mapping table
+- `figma-mcp-mapping` — Figma MCP token conversion cheatsheet
+- `figma-task-extractor` — Auto-generate tasks from Figma file
+
+**RTL & Localization:**
+- `rtl-arabic` — RTL rules, layout mirroring prevention, directional APIs
+
+**UI Patterns:**
+- `scaffold-patterns` — 3 scaffold types + status bar rules
 - `search-field-debounce` — real TextField + rxdart debounce
+
+**Quality & Standards:**
+- `clean-code-and-refactoring` — widget splitting (separate files!), shared reuse, naming
+- `error-handling-and-resilience` — ErrorView, retries, fromJson safety
+- `performance-and-memory` — const, lists, slivers, dispose
 - `logging-and-debugging` — no print/debugPrint in final code
+- `pubspec-manager` — package detection, platform config
 - `accessibility` — tap targets >=44, semantic labels for icon-only buttons (consider when building UI)
-- `bloc-patterns` — AsyncCubit, CRUD local updates, BlocListener
-- `rtl-arabic` — RTL rules, layout mirroring prevention
 
 ══════════════════════════════════════════════════════════════
 STEP 2 — AUDIT EXISTING CODE (إلزامي)
@@ -188,6 +213,7 @@ Scroll Performance:
 - shrinkWrap: true on nested lists = FORBIDDEN
 - Static → .toSliver() | Lists → SliverList.builder | Grids → SliverGrid.builder
 - Multi-API → AsyncSliverBlocBuilder per section
+- Sliver sections: widget returns Box (Column, etc.) and parent uses .toSliver() once — never double-wrap
 
 Body Widget Pattern:
 - RefreshIndicator MANDATORY on ALL data screens + AlwaysScrollableScrollPhysics
@@ -247,7 +273,7 @@ STEP 7 — VERIFY
 10. All network images → CachedImage | Search fields → real DefaultTextField + debounce
 11a. Card CONTENT verified RTL: titles RIGHT, icon+text rows correct order, every Column has CrossAxisAlignment.start
 11. CRUD: local updates only (no re-fetch) | RefreshIndicator on all data screens
-12. Multi-section → CustomScrollView + Slivers (no shrinkWrap nested lists)
+12. Multi-section → CustomScrollView + Slivers (no shrinkWrap nested lists) | Sliver sections: no double-wrap with .toSliver()
 13. Widget splitting: body = layout only, each section in separate file
 14. Widget reuse: no duplicate cards across features, shared moved to app_shared/
 15. Forms: FormMixin + validateAndScroll() + ArabicNumbersFormatter + .toEnglishNumbers()

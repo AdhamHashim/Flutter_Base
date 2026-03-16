@@ -56,42 +56,87 @@ Row first child  →  physical RIGHT
 Row last child   →  physical LEFT
 ```
 
-### ⚠️ Figma MCP Section Verification (CRITICAL)
+### Figma MCP Reading Direction — القاعدة الأهم (CRITICAL)
 
-> Figma MCP sometimes returns sections **mirrored/reversed** from the actual design.
-> This is the most common source of RTL bugs — images and lists appearing on the wrong side.
+> **ثق في الـ Figma MCP واقرأ البيانات منه بدقة — بس افهم إزاي بيقرأ.**
+> **الـ MCP بيقرأ الشاشة من الشمال لليمين (LTR) حتى لو التصميم عربي RTL.**
+> **يعني: آخر child في ترتيب الـ MCP = العنصر اللي على اليمين فعلياً في التصميم العربي.**
+> **لازم تعكس ترتيب الـ MCP في الكود عشان يطلع صح في RTL.**
 
-**MANDATORY for every section read from Figma MCP:**
-1. Cross-check MCP data with the actual **Figma screenshot**
-2. Verify Arabic text starts from the **RIGHT** (physical right = start in Flutter RTL)
-3. Verify horizontal lists/filter tabs start from the **RIGHT** (first item = "عرض الكل" or similar)
-4. Verify card images are on the correct side (match Figma visual, not just MCP coordinates)
-5. **If MCP data contradicts the visual → ALWAYS trust the screenshot**
+**المطلوب:** اقرأ الـ MCP بدقة، افهم كل node، لكن اعكس ترتيب الـ children الأفقية (Row) لأن Flutter RTL بيحط أول child على اليمين.
+
+**إيه اللي بيحصل بالظبط:**
+```
+التصميم العربي الحقيقي (RTL — اللي اليوزر بيشوفه):
+┌──────────────────────────────────┐
+│  [أيقونة]    عنوان الشاشة    [←] │   ← AppBar: أيقونة يمين، سهم شمال
+│──────────────────────────────────│
+│  [صورة المنتج]  │  اسم المنتج    │   ← Card: صورة يمين، نص شمال
+│                 │  وصف المنتج    │
+│──────────────────────────────────│
+│  عرض الكل  ⟩  قسم ١  ⟩  قسم ٢  │   ← Tabs: أول tab على اليمين
+└──────────────────────────────────┘
+
+الـ MCP بيقرأها كده (LTR — من الشمال لليمين):
+children: [backArrow, title, icon]                    ← الأيقونة آخر واحدة (بس هي يمين!)
+children: [textColumn, productImage]                   ← الصورة آخر واحدة (بس هي يمين!)
+children: [category2Tab, category1Tab, showAllTab]     ← "عرض الكل" آخر (بس هي يمين!)
+```
+
+**القاعدة الذهبية:**
+> **آخر child في ترتيب الـ MCP = أول child في كود الـ Row (لأنه هيتحط يمين في RTL).**
+> **أول child في ترتيب الـ MCP = آخر child في كود الـ Row (لأنه هيتحط شمال في RTL).**
+> **ببساطة: اعكس ترتيب الـ MCP الأفقي في الكود.**
+
+**MANDATORY لكل section أفقي (Row):**
+1. **اقرأ الـ MCP nodes بدقة** — اسماء الـ nodes، أنواعها، أحجامها، محتواها
+2. **حدد الترتيب الأفقي** — الـ MCP هيرجعه LTR (شمال → يمين)
+3. **اعكس الترتيب في الكود** — لأن Row في RTL بيحط أول child على اليمين
+4. **النصوص والمحتوى** → اقرأهم من الـ MCP بالظبط (مش محتاج تعكس المحتوى — بس الترتيب)
+5. **الـ MCP مصدرك الأساسي** — اقرأه بعناية، الأحجام والألوان والنصوص صح — بس الترتيب الأفقي بس هو اللي محتاج عكس
 
 ```dart
-// Figma screenshot: filter tabs → "عرض الكل" on RIGHT, categories flow LEFT
-// ✅ CORRECT — first child = physical RIGHT in RTL
+// الـ MCP رجع children بالترتيب: [category2Tab, category1Tab, showAllTab]
+// → آخر واحد (showAllTab) هو اللي على اليمين فعلياً
+// → اعكس الترتيب في الكود:
+
+// CORRECT — عكسنا ترتيب الـ MCP (آخر عنصر بقى أول child = يمين)
 Row(children: [showAllTab, category1Tab, category2Tab])
 
-// ❌ WRONG — MCP returned reversed order (common bug!)
+// WRONG — نسخت ترتيب الـ MCP من غير عكس
 Row(children: [category2Tab, category1Tab, showAllTab])
 
-// Figma screenshot: card with image on RIGHT, text on LEFT
-// ✅ CORRECT — image first (physical RIGHT in RTL Row)
+// الـ MCP رجع: [textColumn, productImage]
+// → productImage آخر واحد = هو اللي على اليمين فعلياً
+// → اعكس:
+
+// CORRECT — الصورة first child (يمين في RTL)
 Row(children: [CachedImage(...), Expanded(child: textColumn)])
 
-// ❌ WRONG — MCP reported image position incorrectly
+// WRONG — ترتيب الـ MCP من غير عكس
 Row(children: [Expanded(child: textColumn), CachedImage(...)])
 ```
 
-**Quick verification checklist per section:**
+**خطوات عملية لكل section:**
 ```
-□ Arabic text aligned to physical RIGHT (CrossAxisAlignment.start)
-□ Filter/tab lists: first tab on physical RIGHT
-□ Card images: match Figma screenshot position
-□ Row children order: RIGHT element is FIRST child
-□ Did NOT blindly follow MCP coordinates — verified against screenshot
+□ Step 1: اقرأ الـ MCP nodes بدقة — النصوص، الأحجام، الألوان (كلهم صح كما هم)
+□ Step 2: لكل Row/مجموعة أفقية → اعكس ترتيب الـ children
+□ Step 3: أول child في الكود = آخر child في الـ MCP (ده اللي على اليمين)
+□ Step 4: آخر child في الكود = أول child في الـ MCP (ده اللي على الشمال)
+□ Step 5: Column/عناصر رأسية → الترتيب صح كما هو (من فوق لتحت — مش محتاج عكس)
+□ Step 6: كل Column → CrossAxisAlignment.start (عشان النص يبدأ من اليمين)
+□ Step 7: لو المستخدم أدى screenshot → استخدمه للتأكيد. لو مأداش → اعتمد على الـ MCP مع عكس الترتيب الأفقي
 ```
+
+**ملخص — إيه بيتعكس وإيه لأ:**
+| البيانات | هل تعكسها؟ | السبب |
+|---|---|---|
+| ترتيب children الأفقي (Row) | نعم — اعكس | MCP بيقرأ LTR، Flutter RTL بيحط أول child يمين |
+| ترتيب children الرأسي (Column) | لا — خليه زي ما هو | من فوق لتحت واحد في LTR و RTL |
+| النصوص (content) | لا — خليها زي ما هي | النص العربي هو هو |
+| الأحجام (width/height) | لا — خليها زي ما هي | الأحجام مش بتتأثر بالاتجاه |
+| الألوان | لا — خليها زي ما هي | الألوان مش بتتأثر بالاتجاه |
+| padding start/end | نعم — اعكس | MCP left → Flutter end, MCP right → Flutter start |
 
 ### ⚠️ Card Content RTL — Line-by-Line Verification (CRITICAL)
 
@@ -420,6 +465,75 @@ Text(
 **متى لا تستخدمه:**
 - النص طبيعي ومعروض صح → لا تضيف Directionality
 - الـ screen-level RTL شغال → لا تكرره
+
+---
+
+## RTL Diagnostic Workflow (MANDATORY for Every Section)
+
+> **بدل ما تتعامل مع RTL كـ checklist عام — استخدم الخطوات دي لكل section:**
+
+**Step 1 — اقرأ الـ MCP nodes ورتبهم:**
+```
+MCP returns children: [nodeA, nodeB, nodeC]
+→ في RTL: nodeA = physical RIGHT, nodeC = physical LEFT
+```
+
+**Step 2 — قارن مع الـ screenshot:**
+```
+Screenshot يوري: صورة على اليمين، نص على الشمال
+MCP يقول: [textNode, imageNode]  ← معكوس!
+→ النتيجة: MCP mirrored → اعكس الترتيب في الكود
+```
+
+**Step 3 — اكتب الكود بناءً على الـ screenshot:**
+```dart
+// Screenshot: image RIGHT, text LEFT
+// ✅ Trust screenshot → image first child
+Row(children: [CachedImage(...), Expanded(child: textColumn)])
+```
+
+**Step 4 — تحقق من كل Row:**
+```
+لكل Row في الشاشة:
+1. مين أول child؟ → لازم يكون اللي على اليمين في الـ screenshot
+2. مين آخر child؟ → لازم يكون اللي على الشمال في الـ screenshot
+3. لو مش مطابق → اعكس الـ children order
+```
+
+---
+
+## Directionality Wrapper — Exceptions List (CRITICAL)
+
+> **الـ Directionality widget ممنوع على layouts — بس في widgets معينة بتحتاجه.**
+> **دي القائمة الكاملة:**
+
+| Widget | المشكلة | الحل |
+|---|---|---|
+| `DropdownButton` / `DropdownButtonFormField` items | النص جوا الـ items بيتعكس | `Directionality(textDirection: TextDirection.rtl, child: item)` |
+| `Slider` / `RangeSlider` labels | الـ labels بتظهر معكوسة | لف الـ Slider في `Directionality` |
+| `TabBar` tabs (لو فيها أرقام) | الأرقام بتتعكس | لف الـ Tab content في `Directionality` |
+| Third-party date/time pickers | المحتوى مش بيحترم RTL | لف الـ picker content في `Directionality` |
+| `showModalBottomSheet` content | المحتوى أحياناً LTR | لف الـ child في `Directionality` |
+| `AlertDialog` / `showDialog` content | المحتوى أحياناً LTR | لف الـ content في `Directionality` |
+
+```dart
+// ✅ CORRECT — Directionality on specific widget content
+DropdownButtonFormField<String>(
+  items: cities.map((c) => DropdownMenuItem(
+    value: c.id,
+    child: Directionality(
+      textDirection: TextDirection.rtl,
+      child: Text(c.name),
+    ),
+  )).toList(),
+)
+
+// ❌ WRONG — Directionality on entire screen layout
+Directionality(
+  textDirection: TextDirection.rtl,
+  child: Scaffold(body: ...),  // ← NEVER do this
+)
+```
 
 ---
 

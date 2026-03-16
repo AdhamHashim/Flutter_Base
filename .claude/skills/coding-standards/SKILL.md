@@ -1461,7 +1461,46 @@ class _MyScreenBody extends StatelessWidget {
 
 ---
 
-## 33. Extensions — READ & USE Before Writing Custom Logic (CRITICAL)
+## 33. Sliver vs Box — No Double-Wrap (CRITICAL)
+
+> **`SliverToBoxAdapter` expects a child of type `RenderBox`, NOT `RenderSliver`.**
+> If you wrap a widget that already returns a Sliver (e.g. `SliverToBoxAdapter`, `SliverList`) with `.toSliver()`, you get: *"expected a child of type RenderBox but received a child of type RenderSliverToBoxAdapter"*.
+
+**Rule:** For any widget used inside `CustomScrollView`'s `slivers` list, choose **one** of:
+
+| Approach | Widget returns | Parent usage |
+|----------|----------------|--------------|
+| **A** | Regular widget (Column, Container, etc.) | `MyWidget().toSliver()` |
+| **B** | Sliver (SliverToBoxAdapter, SliverList, etc.) | `MyWidget()` — **no** `.toSliver()` |
+
+```dart
+// ✅ CORRECT — section returns Box, parent wraps once
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Column(children: [...]);  // Box
+}
+// In body: _SectionWidget().toSliver()
+
+// ✅ CORRECT — section returns Sliver, parent does NOT wrap
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(child: Column(children: [...]));
+}
+// In body: _SectionWidget()   ← no .toSliver()
+
+// ❌ FORBIDDEN — double wrap
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(child: Column(children: [...]));
+}
+// In body: _SectionWidget().toSliver()   ← SliverToBoxAdapter(child: SliverToBoxAdapter(...)) → CRASH
+```
+
+**Recommendation:** Prefer **Approach A**: section widgets return normal widgets (Column, Row, etc.); the parent uses `.toSliver()` once. Avoid returning `SliverToBoxAdapter` from a child if that child is ever used with `.toSliver()`.
+
+---
+
+## 34. Extensions — READ & USE Before Writing Custom Logic (CRITICAL)
 
 > **قبل ما تكتب أي logic جديد — لازم تقرأ كل الـ extension files في `core/extensions/` وتستخدمها.**
 > ده بيشمل: `text_style_extensions`, `string_extension`, `context_extension`, `padding_extension`, `margin_extention`, `widget_extension`, `sized_box_helper`, `sliver_extension`, `seperator_helper`, `indexed_map`, `form_mixin`.

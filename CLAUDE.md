@@ -108,35 +108,55 @@ lib/src/features/{name}/
 
 Both `.claude/skills/` and `.cursor/rules/` contain the **same content and rules** — synced for equal power in Claude Code and Cursor IDE.
 
-### Skills (.claude/skills/) — 19 total
+### Skills (.claude/skills/) — 26 total
 Run `/skill-name` for detailed patterns:
+
+**Workflow & Entry Points:**
 - `feature-prompt` — **Start here**: full feature workflow prompt (fill in feature name + Figma + Postman)
-- `coding-standards` — Master reference (colors, sizes, text, widgets, extensions, forms, navigation, naming)
 - `feature-development` — Full 7-phase feature development workflow
+- `post-feature-review` — **Auto code review** after completing any feature
+
+**Architecture & Patterns:**
+- `coding-standards` — Master reference (colors, sizes, text, widgets, extensions, forms, navigation, naming, slivers)
 - `bloc-patterns` — AsyncCubit, CRUD local updates, BlocListener, PaginatedCubit
 - `flutter-patterns` — Widget patterns, file structure, key widgets, screen/body patterns
+- `di-and-architecture` — DI patterns, layer separation
+- `bloc-provider-scoping` — Where to provide cubits, single vs multi, shared vs isolated, decision tree
+
+**API & Data Flow:**
+- `api-pipeline` — Complete Postman → ApiConstants → Entity → CrudBaseParams → Cubit → UI pipeline
+- `form-api-pipeline` — Complete form → ViewController → Params → validation → API submit → success
+- `navigation-patterns` — Go.to() with arguments, back with result, refresh parent, tab navigation
+- `multi-screen-flow` — List/detail/edit/create patterns with data passing and screen linking
+
+**Figma & Design:**
 - `design-tokens` — Color/size/font/spacing mapping from Figma
 - `figma-to-flutter` — Figma→Flutter conversion workflow with safety checks
+- `figma-widget-mapping` — Comprehensive Figma element → Flutter widget mapping table
+- `figma-mcp-mapping` — Figma MCP token conversion cheatsheet
 - `figma-task-extractor` — Auto-generate tasks from Figma file
+
+**RTL & Localization:**
 - `rtl-arabic` — RTL rules, layout mirroring prevention, directional APIs
+
+**UI Patterns:**
 - `scaffold-patterns` — Scaffold types, status bar rules
 - `search-field-debounce` — Search field with rxdart debounce
-- `clean-code-and-refactoring` — Widget splitting, deduplication
-- `di-and-architecture` — DI patterns, layer separation
-- `error-handling-and-resilience` — Error states, retry patterns
+
+**Quality & Standards:**
+- `clean-code-and-refactoring` — Widget splitting, deduplication, const everywhere
+- `error-handling-and-resilience` — Error states, retry patterns, defensive coding
 - `logging-and-debugging` — No print, AppBlocObserver
 - `performance-and-memory` — Const, lists, dispose, lifecycle
 - `pubspec-manager` — Package detection, platform config
 - `accessibility` — Tap targets ≥44, semantic labels, contrast
-- `post-feature-review` — **Auto code review** after completing any feature
 
-### Cursor Rules (.cursor/rules/) — 20 total
+### Cursor Rules (.cursor/rules/) — 26 total
 Mirror of all skills above, plus:
 - `flutter-base-coding-standards.mdc` — Same as `coding-standards` skill
 - `flutter-feature-development.mdc` — Same as `feature-development` skill
 - `scaffold-statusbar.mdc` — Same as `scaffold-patterns` skill
-- `figma-mcp-mapping.mdc` — Figma MCP token mapping (supplementary to design-tokens)
-- `error-handling-and-resilience.mdc` — Same as skill
+- `error-handling-and-resilience.mdc` — **Always active** (alwaysApply: true)
 - `post-feature-review.mdc` — **Always active** (alwaysApply: true)
 
 ### Feature Prompt (.cursor/prompt/)

@@ -1268,3 +1268,42 @@ dio, firebase_core, firebase_messaging, cached_network_image, flutter_bloc,
 get_it, flutter_screenutil, skeletonizer, flutter_animate, lottie, flutter_svg,
 carousel_slider, dropdown_search, pinput, easy_localization, image_picker,
 flutter_html, video_player, rxdart, share_plus, url_launcher, injectable
+
+---
+
+## 29. Sliver vs Box — No Double-Wrap (CRITICAL)
+
+> **`SliverToBoxAdapter` expects a child of type `RenderBox`, NOT `RenderSliver`.**
+> If you wrap a widget that already returns a Sliver (e.g. `SliverToBoxAdapter`, `SliverList`) with `.toSliver()`, you get: *"expected a child of type RenderBox but received a child of type RenderSliverToBoxAdapter"*.
+
+**Rule:** For any widget used inside `CustomScrollView`'s `slivers` list, choose **one** of:
+
+| Approach | Widget returns | Parent usage |
+|----------|----------------|--------------|
+| **A** | Regular widget (Column, Container, etc.) | `MyWidget().toSliver()` |
+| **B** | Sliver (SliverToBoxAdapter, SliverList, etc.) | `MyWidget()` — **no** `.toSliver()` |
+
+```dart
+// CORRECT — section returns Box, parent wraps once
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Column(children: [...]);  // Box
+}
+// In body: _SectionWidget().toSliver()
+
+// CORRECT — section returns Sliver, parent does NOT wrap
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(child: Column(children: [...]));
+}
+// In body: _SectionWidget()   <- no .toSliver()
+
+// FORBIDDEN — double wrap
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(child: Column(children: [...]));
+}
+// In body: _SectionWidget().toSliver()   <- SliverToBoxAdapter(child: SliverToBoxAdapter(...)) -> CRASH
+```
+
+**Recommendation:** Prefer **Approach A**: section widgets return normal widgets (Column, Row, etc.); the parent uses `.toSliver()` once. Avoid returning `SliverToBoxAdapter` from a child if that child is ever used with `.toSliver()`.

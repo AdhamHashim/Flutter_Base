@@ -64,7 +64,44 @@ widgets/
    - لو optional parameter مش بيتبعت من أي caller → شيله.
    - Warning "A value for optional parameter 'X' isn't ever given" → شيل الـ parameter.
 
-8. **Helper Methods → Entity/Model NOT Widget (إلزامي):**
+8. **`const` Everywhere (إلزامي — NON-NEGOTIABLE):**
+   - **كل widget يقدر يكون `const` → لازم يكون `const`.**
+   - **كل constructor يقدر يكون `const` → لازم يكون `const`.**
+   - ده مش تحسين اختياري — ده performance requirement. Flutter بيعمل skip لـ rebuild لأي widget مع `const`.
+
+   ```dart
+   // CORRECT — const on every eligible widget
+   const _MyHeader();
+   const SizedBox(height: 8);
+   const EdgeInsetsDirectional.only(start: 16);
+   const TextStyle().setMainTextColor.s14.bold;
+
+   // CORRECT — const constructor
+   class _FeatureHeader extends StatelessWidget {
+     const _FeatureHeader();  // ← const constructor
+     @override
+     Widget build(BuildContext context) => ...;
+   }
+
+   // WRONG — missing const on eligible widget
+   SizedBox(height: 8);           // ← should be const SizedBox(height: 8)
+   _MyHeader();                    // ← should be const _MyHeader()
+   EdgeInsets.all(16);            // ← should be const EdgeInsets.all(16)
+
+   // WRONG — missing const constructor
+   class _FeatureHeader extends StatelessWidget {
+     _FeatureHeader();            // ← should be const _FeatureHeader()
+   }
+   ```
+
+   **Checklist for const:**
+   - [ ] كل StatelessWidget constructor → `const`
+   - [ ] كل `SizedBox`, `EdgeInsets`, `BorderRadius`, `BoxDecoration` بـ literal values → `const`
+   - [ ] كل widget call لـ private widgets → `const _WidgetName()`
+   - [ ] كل `TextStyle()` → `const TextStyle()`
+   - [ ] لو flutter analyze بيقول "Prefer const" → صلحه
+
+9. **Helper Methods → Entity/Model NOT Widget (إلزامي):**
    - أي function بتحول data (status → color, status → label, type → icon) → حطها في model/entity class.
    - Widget class = UI rendering فقط. يستدعي الـ model ويعرض النتيجة.
    - لو عندك switch/map بيحول status لـ color/text → اعمله class في `entity/` folder.
