@@ -82,9 +82,9 @@ BorderRadius.circular(8)
 
 ### ⚠️ Font Size Adjustment (Figma → Code)
 
-> When converting from Figma:
-> - **Figma ≤ 13sp (10, 11, 12, 13) → KEEP AS-IS — لا تقلل.** النصوص الصغيرة لازم تفضل زي ما هي.
-> - Figma 14–18sp → reduce by 1–2sp (e.g. Figma 16 → `.s14` or `.s15`)
+> When converting from Figma, **reduce font size by 1–2sp** for visual consistency.
+> - Figma ≤ 12sp → reduce by 1sp (e.g. Figma 12 → `.s11`)
+> - Figma 13–18sp → reduce by 1–2sp (e.g. Figma 16 → `.s14` or `.s15`)
 > - Figma ≥ 20sp → reduce by 2sp (e.g. Figma 22 → `.s20`)
 
 ```dart
@@ -92,9 +92,6 @@ BorderRadius.circular(8)
 Text('title', style: const TextStyle().setMainTextColor.s14.medium)
 Text('hint', style: const TextStyle().setHintColor.s12.regular)
 Text('error', style: const TextStyle().setErrorColor.s12.bold)
-
-// ✅ Figma 12sp small text → keep .s12 (don't reduce small text)
-Text('small', style: const TextStyle().setHintColor.s12.regular)
 
 // ✅ Figma 16sp title → code .s14
 Text('title', style: const TextStyle().setMainTextColor.s14.bold)
@@ -128,56 +125,32 @@ Text(title, style: const TextStyle().s24.bold)
 
 ---
 
-## 5. Spacing → .szH / .szW Extensions ONLY (NEVER SizedBox)
-
-> **في Column أو Row، استخدم `.szH` / `.szW` دايماً للـ spacing. ممنوع SizedBox.**
+## 5. Spacing → .szH / .szW Extensions
 
 ```dart
-// ✅ CORRECT — use spacing extensions
-Column(children: [
-  Text('Title'),
-  12.szH,    // SizedBox(height: 12.h)
-  Text('Subtitle'),
-  8.szH,
-])
+// ✅
+12.szH    // SizedBox(height: 12.h)
+16.szH
+8.szW
 
-Row(children: [
-  IconWidget(...),
-  8.szW,     // SizedBox(width: 8.w)
-  Text('Label'),
-])
-
-// ❌ FORBIDDEN — raw SizedBox for spacing
+// ❌
 SizedBox(height: 12)
-SizedBox(width: 8)
-const SizedBox(height: 16)
 ```
 
 ---
 
-## 6. Padding/Margin → Widget Extensions ONLY (NEVER Padding Widget)
-
-> **ممنوع استخدام `Padding(...)` widget مباشرة. استخدم الـ extensions دايماً.**
+## 6. Padding/Margin → Widget Extensions
 
 ```dart
-// ✅ CORRECT — use padding/margin extensions
+// ✅
 myWidget.paddingAll(AppPadding.pH16)
 myWidget.paddingSymmetric(horizontal: AppPadding.pW20)
 myWidget.paddingStart(AppPadding.pW16)   // RTL-safe
-myWidget.paddingEnd(AppPadding.pW16)     // RTL-safe
-myWidget.paddingOnly(top: AppPadding.pH8, bottom: AppPadding.pH8)
-myWidget.paddingOnlyDirectional(start: AppPadding.pW16)
 myWidget.marginAll(AppMargin.mH8)
-myWidget.marginStart(AppMargin.mW16)     // RTL-safe
 myWidget.onClick(onTap: () {})
 
-// ❌ FORBIDDEN — Padding widget directly
-Padding(
-  padding: EdgeInsets.symmetric(horizontal: AppPadding.pW20),
-  child: myWidget,
-)
-
-// ❌ FORBIDDEN — GestureDetector directly
+// ❌
+Padding(padding: EdgeInsets.all(16), child: myWidget)
 GestureDetector(onTap: fn, child: myWidget)
 ```
 
@@ -197,86 +170,16 @@ Navigator.push(context, MaterialPageRoute(builder: (_) => Screen()))
 
 ---
 
-## 8. Localization → lang.json + LocaleKeys (MANDATORY)
-
-> **⚠️ قاعدة أساسية: كل نص يظهر للمستخدم لازم يتضاف في `lang.json` أولاً ويُستخدم من `LocaleKeys` فقط — بدون أي استثناء.**
-
-### 8.0.1 — Format ملف lang.json
-
-```json
-// assets/translations/lang.json
-{
-  "key_name #$ English text": "Arabic text",
-  "feature_title #$ Feature Title": "عنوان الميزة"
-}
-```
-
-**Format القاعدة:** `"snake_case_key #$ English Text": "النص العربي"`
-- الـ key بـ `snake_case`
-- بعد `#$` → النص الإنجليزي
-- القيمة → النص العربي
-
-### 8.0.2 — Strings مع Parameters (Variables)
-
-```json
-{
-  "provider_welcome_back #$ Welcome back, {name}": "أهلا بعودتك، {name}"
-}
-```
+## 8. Localization → LocaleKeys ONLY
 
 ```dart
-Text(LocaleKeys.providerWelcomeBack(name: user.name))
-```
+// ✅
+Text(LocaleKeys.screenTitle.tr())
+DefaultScaffold(title: LocaleKeys.screenTitle.tr())
 
-### 8.0.3 — Generate بعد أي تعديل
-
-```bash
-dart run generate/strings/main.dart
-```
-
-يولّد: `en.json` + `ar.json` + `locale_keys.g.dart`
-
-### 8.0.4 — تسمية الـ Keys
-
-| القاعدة | مثال صح | مثال غلط |
-|---------|---------|----------|
-| `snake_case` دائماً | `my_reservations` | `myReservations` |
-| البداية باسم الـ feature | `complaints_title` | `title` |
-| وصفي ومحدد | `complaints_reason_label` | `label1` |
-
-### 8.0.5 — عند قراءة تصميم من Figma MCP
-
-```
-1. scan_text_nodes() → اجمع كل النصوص من التصميم
-2. أضف كل نص في lang.json (عناوين، أزرار، hints، placeholders، tabs، labels، رسائل خطأ)
-3. شغّل dart run generate/strings/main.dart
-4. استخدم LocaleKeys فقط في الكود — لا تتجاوز أي نص حتى لو كلمة واحدة
-```
-
-### 8.0.6 — أمثلة
-
-```dart
-// ✅ CORRECT
-Text(LocaleKeys.screenTitle)
-DefaultScaffold(title: LocaleKeys.myReservations)
-hint: LocaleKeys.searchForTeam
-EmptyWidget(title: LocaleKeys.noReservationsTitle, desc: LocaleKeys.noReservationsDesc)
-
-// ❌ FORBIDDEN — hardcoded text
+// ❌
 Text('العنوان')
 Text('Title')
-Text('OK')
-hint: 'ابحث هنا'
-```
-
-### 8.0.7 — Checklist
-
-```
-□ كل النصوص في lang.json بـ format "key #$ English": "عربي"
-□ كل key بـ snake_case ويبدأ باسم الـ feature
-□ تم تشغيل generate command
-□ كل widget يستخدم LocaleKeys — لا يوجد نص مباشر في dart files
-□ Parameters تستخدم {variableName} في lang.json
 ```
 
 ---
@@ -1124,14 +1027,7 @@ ProductCardWidget(product: item, showPrice: false, showRating: true)
 
 ## 22. ViewController Class Pattern (MANDATORY)
 
-> **⚠️ ممنوع نهائياً: أي Controller أو ValueNotifier أو AnimationController أو ScrollController أو FocusNode داخل الـ View مباشرة.**
-> **كل حاجة تتعلق بالـ UI state + handlers بتاعتها لازم تكون في class منفصل (ViewController). الـ View تستدعي الـ class بس.**
-
-### القاعدة الأساسية:
-- **ممنوع** وضع `TextEditingController`, `ValueNotifier`, `ScrollController`, `AnimationController`, `FocusNode` داخل الـ State أو الـ Widget
-- **ممنوع** استخدام `setState` للـ UI state — استخدم `ValueNotifier` + `ValueListenableBuilder`
-- **إلزامي** إنشاء class منفصل (ViewController) يحتوي: الـ controllers + الـ notifiers + الـ handlers
-- الـ View تستخدم **object واحد** من الـ ViewController وتنادي منه فقط
+> **Controllers, ValueNotifiers, AnimationControllers, params — كل حاجة تتعلق بالـ UI state لازم تكون في class منفصل (ViewController)، مش مباشرة في الـ View.**
 
 ```dart
 // ✅ CORRECT — Separate ViewController class
@@ -1152,7 +1048,7 @@ class ChatViewController {
   }
 }
 
-// ✅ View uses one ViewController object — يستدعي بس
+// ✅ View uses one ViewController object
 class _ChatInputState extends State<_ChatInput> {
   late final ChatViewController _vc = ChatViewController();
 
@@ -1166,24 +1062,23 @@ class _ChatInputState extends State<_ChatInput> {
       8.szW,
       ValueListenableBuilder<bool>(
         valueListenable: _vc.isSending,
-        builder: (_, sending, _) => _SendButton(onTap: () => _vc.onSend(context), isLoading: sending),
+        builder: (_, sending, __) => _SendButton(onTap: () => _vc.onSend(context), isLoading: sending),
       ),
     ]);
   }
 }
 
-// ❌ FORBIDDEN — controllers/notifiers في الـ View
+// ❌ FORBIDDEN — controllers/logic scattered in view
 class _ChatInputState extends State<_ChatInput> {
-  final _controller = TextEditingController();  // ❌ ممنوع — لازم في ViewController
-  bool _isSending = false;                        // ❌ ممنوع — استخدم ValueNotifier في ViewController
-  final ValueNotifier<int> _tabIndex = ValueNotifier(0);  // ❌ ممنوع — لازم في ViewController
-  void _onSend() { setState(() => ...); }        // ❌ ممنوع — استخدم ValueNotifier + handler في ViewController
+  final _controller = TextEditingController(); // ← should be in VC
+  bool _isSending = false;                      // ← should be ValueNotifier in VC
+  void _onSend() { setState(() => ...); }       // ← should be in VC
 }
 ```
 
 **Rules:**
-- كل `TextEditingController`, `ValueNotifier`, `ScrollController`, `FocusNode` → داخل ViewController **فقط**
-- كل UI logic function (onSend, onSearch, selectTab, etc.) → داخل ViewController
+- كل `TextEditingController`, `ValueNotifier`, `ScrollController`, `FocusNode` → داخل ViewController
+- كل UI logic function → داخل ViewController
 - استخدم `ValueNotifier` + `ValueListenableBuilder` بدل `setState`
 - الـ View تنادي `_vc.dispose()` في `dispose()`
 
@@ -1260,7 +1155,6 @@ widgets/
 | Maps | `google_maps_flutter` | ❌ Custom map |
 | Signature | `signature` | ❌ Custom gesture drawing |
 | WebView | `webview_flutter` | ❌ Custom browser |
-| Dotted border | `dotted_border` | ❌ Custom dashed paint |
 
 قبل ما تبني أي حاجة: ابحث pub.dev → تأكد إنه مستقر → أضفه للـ pubspec → `flutter pub get`.
 
@@ -1296,192 +1190,3 @@ dio, firebase_core, firebase_messaging, cached_network_image, flutter_bloc,
 get_it, flutter_screenutil, skeletonizer, flutter_animate, lottie, flutter_svg,
 carousel_slider, dropdown_search, pinput, easy_localization, image_picker,
 flutter_html, video_player, rxdart, share_plus, url_launcher, injectable
-
----
-
-## 29. Clean Code — Remove Unused Imports & Parameters (MANDATORY)
-
-> **كل ملف لازم يكون نظيف — لا imports مش مستخدمة ولا parameters مش مستخدمة.**
-
-```dart
-// ❌ FORBIDDEN — unused import
-import 'package:flutter/foundation.dart'; // ← not used anywhere in file
-
-// ❌ FORBIDDEN — unused optional parameter warning
-class MyWidget extends StatelessWidget {
-  final String? subtitle;  // ← never passed by any caller → REMOVE IT
-  const MyWidget({super.key, this.subtitle});
-}
-// Warning: "A value for optional parameter 'subtitle' isn't ever given."
-
-// ✅ CORRECT — only declare parameters that are actually used
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
-}
-```
-
-**Rules:**
-- بعد كل feature → شغّل `flutter analyze` وشيل كل unused imports
-- لو parameter مش بيتبعت من أي caller → شيله
-- لو parameter هيتحتاج في المستقبل → أضفه لما تحتاجه فعلاً، مش من الأول
-
----
-
-## 30. const — Add to EVERY Widget That Can Be const (MANDATORY)
-
-> **أي widget أو constructor ممكن يبقى const → لازم يبقى const.**
-
-```dart
-// ✅ CORRECT
-const _MyBody()
-const SizedBox.shrink()
-const EdgeInsets.all(0)
-children: const [Divider()]
-
-// ❌ WRONG — missing const
-_MyBody()           // ← can be const, add it!
-SizedBox.shrink()   // ← can be const, add it!
-```
-
-**Quick rule:** لو Flutter analyzer بيقولك "Prefer const" → أضفها. دي بتقلل rebuilds وبتحسن performance.
-
----
-
-## 31. Models & Enums → Entity Folder ONLY (NEVER Inside Widgets)
-
-> **أي model, enum, helper class خاص بالـ feature لازم يكون في `entity/` folder — مش جوا widget class.**
-
-```dart
-// ✅ CORRECT — status model in entity folder
-// entity/transaction_status_model.dart
-class TransactionStatusModel {
-  final String key;
-  final String label;
-  final Color bgColor;
-  final Color textColor;
-
-  const TransactionStatusModel({
-    required this.key, required this.label,
-    required this.bgColor, required this.textColor,
-  });
-
-  static TransactionStatusModel fromStatus(String status) {
-    switch (status) {
-      case 'paid':
-        return TransactionStatusModel(
-          key: status, label: LocaleKeys.paid.tr(),
-          bgColor: AppColors.danger.withValues(alpha: 0.1),
-          textColor: AppColors.danger,
-        );
-      case 'completed':
-        return TransactionStatusModel(
-          key: status, label: LocaleKeys.completed.tr(),
-          bgColor: AppColors.green10,
-          textColor: AppColors.green,
-        );
-      default:
-        return TransactionStatusModel(
-          key: status, label: status,
-          bgColor: AppColors.grey1,
-          textColor: AppColors.hintText,
-        );
-    }
-  }
-}
-
-// ✅ Usage in widget — clean and simple
-final statusModel = TransactionStatusModel.fromStatus(transaction.status);
-Text(statusModel.label, style: const TextStyle().setColor(statusModel.textColor).s12.medium)
-
-// ❌ FORBIDDEN — helper methods scattered inside widget class
-class _TransactionCard extends StatelessWidget {
-  String _statusKey(String status) { ... }      // ← move to model!
-  Color _statusBgColor(String status) { ... }   // ← move to model!
-  Color _statusTextColor(String status) { ... } // ← move to model!
-}
-```
-
-**Rules:**
-- كل logic خاص بتحويل data (status → color, status → label) → model/entity
-- Widget = UI فقط، يستدعي الـ model ويعرض النتيجة
-- لو الـ model مشترك بين أكثر من feature → `app_shared/entity/`
-
----
-
-## 32. Dropdown & Small Widgets — Isolate API Calls (CRITICAL)
-
-> **لما يكون فيه dropdown أو widget صغير في الشاشة بيجيب data من API — لازم يكون الـ BlocBuilder/Listener عليه هو بس، مش على كل الشاشة.**
-> **لو الـ service فشلت، الـ dropdown بس هو اللي يتأثر — الشاشة باقيها تشتغل عادي.**
-
-```dart
-// ✅ CORRECT — isolated API call inside the dropdown widget itself
-class _CityDropdown extends StatelessWidget {
-  const _CityDropdown({required this.onChanged});
-  final ValueChanged<CityEntity?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => injector<GetCitiesCubit>()..fetchCities(),
-      child: AsyncBlocBuilder<GetCitiesCubit, List<CityEntity>>(
-        builder: (ctx, cities) => AppDropdown<CityEntity>(
-          items: cities,
-          label: LocaleKeys.city.tr(),
-          itemAsString: (c) => c.name,
-          onChanged: onChanged,
-        ),
-        skeletonBuilder: (_) => AppDropdown<CityEntity>(
-          items: const [], label: LocaleKeys.city.tr(), isLoading: true,
-        ),
-      ),
-    );
-  }
-}
-
-// ❌ FORBIDDEN — wrapping entire screen with BlocBuilder for a small dropdown
-class _MyScreenBody extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return AsyncBlocBuilder<GetCitiesCubit, List<CityEntity>>(  // ← if this fails, ENTIRE screen stops!
-      builder: (ctx, cities) => Column(children: [
-        _HeaderWidget(),
-        _FormWidget(),
-        AppDropdown(items: cities, ...),  // ← only this needs the data
-        _SubmitButton(),
-      ]),
-    );
-  }
-}
-```
-
-**Rules:**
-- Dropdown / chip / small data widget بيجيب data من API → يكون عنده `BlocProvider` + `AsyncBlocBuilder` خاص بيه
-- لو الـ service فشلت → الـ widget ده بس يعرض error، باقي الشاشة تشتغل عادي
-- ده بيمنع إن failure في service واحدة صغيرة يوقف الشاشة كلها
-
----
-
-## 33. Extensions — READ & USE Before Writing Custom Logic (CRITICAL)
-
-> **قبل ما تكتب أي logic جديد — لازم تقرأ كل الـ extension files في `core/extensions/` وتستخدمها.**
-> ده بيشمل: `text_style_extensions`, `string_extension`, `context_extension`, `padding_extension`, `margin_extention`, `widget_extension`, `sized_box_helper`, `sliver_extension`, `seperator_helper`, `indexed_map`, `form_mixin`.
-
-**Full path:** `lib/src/core/extensions/`
-
-```dart
-// ✅ CORRECT — using existing extensions
-myWidget.paddingAll(AppPadding.pH16)        // from padding_extension.dart
-myWidget.marginStart(AppMargin.mW12)        // from margin_extention.dart
-myWidget.onClick(onTap: () => Go.to(...))   // from widget_extension.dart
-12.szH                                       // from sized_box_helper.dart
-widget.toSliver()                            // from sliver_extension.dart
-widgets.joinWith(8.szH)                      // from seperator_helper.dart
-list.indexedMap((i, item) => ...)            // from indexed_map.dart
-'٠١٢٣'.toEnglishNumbers()                   // from string_extension.dart
-
-// ❌ WRONG — writing custom logic that already exists as extension
-SizedBox(height: 12.h)                       // use 12.szH
-Padding(padding: EdgeInsets.all(16), ...)    // use .paddingAll()
-GestureDetector(onTap: fn, child: widget)    // use .onClick()
-SliverToBoxAdapter(child: widget)            // use .toSliver()
-```

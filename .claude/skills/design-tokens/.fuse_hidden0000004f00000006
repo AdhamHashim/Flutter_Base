@@ -223,47 +223,6 @@ fully round → AppCircular.infinity
 
 ---
 
-## ⚠️ Icon Size Adjustment (Figma → Code) — CRITICAL
-
-> **الأيقونات بتتحط أكبر من التصميم لو مستخدمتش الحجم الصح من Figma.**
-> **لازم تقرأ حجم الأيقونة من Figma بدقة وتطبقه بالظبط — أو تقلله لو شكله كبير.**
-
-**Rules:**
-1. **اقرأ `width` و `height` من Figma MCP بدقة** — مش تقدر من شكلها
-2. **طبق الحجم بالظبط** — `IconWidget(height: AppSize.sHXX, width: AppSize.sWXX)`
-3. **لو الأيقونة شكلها كبير عن التصميم** → قلل 2-4px
-4. **لو الأيقونة جوا Container** → حجم الأيقونة ≠ حجم الـ Container. Container أكبر والأيقونة أصغر جواه
-
-```dart
-// ✅ CORRECT — icon size matches Figma exactly
-// Figma: icon 20x20 inside 40x40 container
-Container(
-  width: AppSize.sW40, height: AppSize.sH40,
-  decoration: BoxDecoration(color: AppColors.fill, borderRadius: BorderRadius.circular(AppCircular.r10)),
-  child: Center(
-    child: IconWidget(icon: AppAssets.svg.baseSvg.search.path, height: AppSize.sH20, width: AppSize.sW20),
-  ),
-)
-
-// ✅ CORRECT — standalone icon with exact Figma size
-IconWidget(icon: AppAssets.svg.baseSvg.notification.path, height: AppSize.sH24, width: AppSize.sW24)
-
-// ❌ WRONG — icon too large (used container size for icon)
-IconWidget(icon: AppAssets.svg.baseSvg.search.path, height: AppSize.sH40)  // ← should be sH20!
-
-// ❌ WRONG — guessed icon size instead of reading from Figma
-IconWidget(icon: ..., height: AppSize.sH30)  // Figma says 20 → should be sH20
-```
-
-**Quick icon size guide:**
-| Figma context | Typical icon size | Container size |
-|---|---|---|
-| Small inline icon (next to text) | 14-18px | No container |
-| Medium icon (card, list item) | 20-24px | 36-44px (if has bg) |
-| Large icon (feature/empty state) | 28-40px | 48-60px (if has bg) |
-
----
-
 ## Figma Font Size → FontSizeManager Mapping
 
 ### ⚠️ CRITICAL: Font Size Adjustment Rule

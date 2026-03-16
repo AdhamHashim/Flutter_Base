@@ -59,17 +59,6 @@ widgets/
 │   └── product_card.dart
 ```
 
-7. **Remove Unused Imports & Parameters (إلزامي):**
-   - شغّل `flutter analyze` وشيل كل unused imports.
-   - لو optional parameter مش بيتبعت من أي caller → شيله.
-   - Warning "A value for optional parameter 'X' isn't ever given" → شيل الـ parameter.
-
-8. **Helper Methods → Entity/Model NOT Widget (إلزامي):**
-   - أي function بتحول data (status → color, status → label, type → icon) → حطها في model/entity class.
-   - Widget class = UI rendering فقط. يستدعي الـ model ويعرض النتيجة.
-   - لو عندك switch/map بيحول status لـ color/text → اعمله class في `entity/` folder.
-   - ممنوع functions زي `_statusColor()`, `_statusLabel()` جوا widget.
-
 ## Output
 
 عند استخدام هذا الـ skill، اعرض:

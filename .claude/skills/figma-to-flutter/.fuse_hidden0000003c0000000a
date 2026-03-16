@@ -55,34 +55,6 @@ For coding standards, see `flutter-base-coding-standards.mdc`.
 
 ---
 
-## Phase 2.5: Text Extraction → lang.json (MANDATORY)
-
-> **⚠️ قبل كتابة أي كود — لازم تجمع كل النصوص من التصميم وتضيفها في `lang.json`.**
-
-### Steps:
-1. استخدم `scan_text_nodes(nodeId)` لاستخراج كل النصوص من التصميم
-2. لكل نص ظاهر (عناوين، أزرار، labels، hints، placeholders، tabs، رسائل خطأ، empty states):
-   - أنشئ key بـ `snake_case` يبدأ باسم الـ feature
-   - أضفه في `assets/translations/lang.json` بالـ format: `"key #$ English": "عربي"`
-3. شغّل: `dart run generate/strings/main.dart`
-4. في الكود استخدم `LocaleKeys.keyName` فقط — **ممنوع أي نص مباشر**
-
-### Format:
-```json
-{
-  "feature_screen_title #$ Screen Title": "عنوان الشاشة",
-  "feature_search_hint #$ Search here...": "ابحث هنا...",
-  "feature_submit_btn #$ Submit": "إرسال"
-}
-```
-
-### ⚠️ لا تتجاوز أي نص:
-- حتى "OK", "لا", "نعم" → لازم من `LocaleKeys`
-- Placeholders, tab labels, chip labels, filter names → كلهم من `LocaleKeys`
-- لو النص موجود مسبقاً في `lang.json` → استخدمه، لا تكرره
-
----
-
 ## Phase 3: Mapping Workflow
 
 ### Colors
@@ -98,9 +70,9 @@ Map to nearest `AppSize` / `AppPadding` / `AppMargin` / `AppCircular` constant.
 See `design-tokens` skill for all available values.
 
 ### Text Styles
-**Font size adjustment from Figma:**
-- **Figma ≤ 13sp (10, 11, 12, 13) → KEEP AS-IS — لا تقلل**
-- Figma 14–18sp → reduce 1–2sp
+**Reduce font size by 1–2sp from Figma:**
+- Figma ≤ 12sp → reduce 1sp
+- Figma 13–18sp → reduce 1–2sp  
 - Figma ≥ 20sp → reduce 2sp
 
 ```dart
@@ -127,21 +99,17 @@ const TextStyle().setHintColor.s12.regular       // Figma 14sp hint
 
 ```
 □ Colors → AppColors reused by purpose (no raw Color(), no screen-prefixed names)
-□ Font → TextStyleEx chain, ≤13sp keep as-is, 14+ reduced from Figma
+□ Font → TextStyleEx chain, sizes reduced 1–2sp from Figma
 □ Spacing → AppSize/AppPadding/AppMargin (no raw numbers)
 □ Border radius → AppCircular.rXX
 □ Images → CachedImage (never Image.network)
-□ Icons → IconWidget + AppAssets (never Icons.*), SIZE matches Figma exactly (read width/height)
-□ Icon size ≠ Container size → icon is SMALLER than its container (e.g. 20px icon in 40px container)
+□ Icons → IconWidget + AppAssets (never Icons.*)
 □ Buttons → DefaultButton / LoadingButton
 □ Scaffold → DefaultScaffold (inner) / plain Scaffold (auth)
 □ API state → AsyncCubit + AsyncBlocBuilder
 □ Forms → FormMixin + CustomTextFiled + validateAndScroll()
 □ Body padding > 12px → reduced 2–4px
 □ Sections cross-checked with Figma screenshot
-□ Card CONTENT RTL → every title, subtitle, icon+text row verified RIGHT-aligned inside cards
 □ Widget splitting → each section/card in a SEPARATE file (no _buildXxx methods in body)
 □ Similar widgets checked → reuse existing, moved to app_shared/ if 2+ features use it
-□ ALL text from Figma added to lang.json BEFORE coding — zero hardcoded strings
-□ LocaleKeys used for every Text/hint/label/title/button — no raw Arabic/English
 ```

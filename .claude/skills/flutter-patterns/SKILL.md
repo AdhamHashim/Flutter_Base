@@ -176,7 +176,8 @@ RefreshIndicator(
 
 ## ViewController Class Pattern (MANDATORY)
 
-> **Controllers, ValueNotifiers, AnimationControllers, params — كل حاجة تتعلق بالـ UI state لازم تكون في class منفصل (ViewController)، مش مباشرة في الـ View.**
+> **⚠️ ممنوع نهائياً: أي Controller أو ValueNotifier داخل الـ View مباشرة.**
+> **كل حاجة تتعلق بالـ UI state + handlers بتاعتها لازم تكون في ViewController class. الـ View تستدعي الـ class بس.**
 
 ### Why?
 - الـ View تبقى نظيفة — layout فقط
@@ -266,9 +267,10 @@ class _ChatInputState extends State<_ChatInput> {
 ```
 
 ### ViewController Rules:
+- **ممنوع** وضع Controller أو ValueNotifier داخل الـ View/State — لازم في ViewController فقط
 - **كل** `TextEditingController`, `ValueNotifier`, `AnimationController`, `ScrollController`, `FocusNode` → داخل الـ ViewController
-- **كل** function متعلقة بالـ UI logic (onSend, onSearch, onFilter) → داخل الـ ViewController
-- الـ View تستخدم **object واحد** من الـ ViewController وتنادي functions و variables منه
+- **كل** function متعلقة بالـ UI logic (onSend, onSearch, selectTab, onFilter) → داخل الـ ViewController
+- الـ View تستخدم **object واحد** من الـ ViewController وتنادي منه بس — `_vc.xxx`
 - استخدم `ValueNotifier` + `ValueListenableBuilder` بدل `setState`
 - الـ ViewController يعمل `dispose()` لكل الـ controllers/notifiers
 - الـ View تنادي `_vc.dispose()` في `dispose()` بتاعها

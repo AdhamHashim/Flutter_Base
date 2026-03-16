@@ -232,18 +232,18 @@ fully round → AppCircular.infinity
 > The result is better visual consistency with the original design.
 
 **Adjustment guideline:**
-- Figma <= 12sp → reduce by **1sp**
+- Figma ≤ 13sp (10, 11, 12, 13) → **KEEP AS-IS** — لا تقلل
 - Figma 13-18sp → reduce by **1-2sp** (prefer 1sp for readability)
-- Figma >= 20sp → reduce by **2sp**
+- Figma ≥ 20sp → reduce by **2sp**
 
 ### Figma → Code Mapping Table
 
 ```
 Figma fontSize → Code fontSize (adjusted)
-10sp → .s8  or .s10 (keep if small enough)
-11sp → .s10
-12sp → .s11
-13sp → .s12
+10sp → .s10 (keep as-is)
+11sp → .s11 (keep as-is)
+12sp → .s12 (keep as-is)
+13sp → .s13 (keep as-is)
 14sp → .s13 or .s12
 15sp → .s14 or .s13
 16sp → .s14 or .s15
@@ -347,7 +347,7 @@ If Figma uses a value not in the token map (e.g., 9px, 17px, 27px):
 |---|---|---|
 | `Validators` | `validators.dart` | `validateEmpty`, `validateEmail`, `validatePhone`, `validatePassword`, `validatePasswordConfirm`, `validateDropDown`, `noValidate` |
 | Input Formatters | `input_formatters.dart` | `PhoneNumberFormatter`, `EmailFormatter`, `NumberOnlyFormatter`, `TextOnlyFormatter`, `TextWithNumberFormatter`, `IntegerNumberFormatter`, `DecimalNumberFormatter`, `DateTimeFormatter`, `NoSpecialCharactersFormatter` |
-| `ArabicNumbersFormatter` | `arabic_numbers_formatter.dart` | Auto-converts 0-9 → 0-9 in text fields (MANDATORY for number/phone fields) |
+| `ArabicNumbersFormatter` | `arabic_numbers_formatter.dart` | Auto-converts ٠-٩ → 0-9 in text fields (MANDATORY for number/phone fields) |
 | `Helpers` | `helpers.dart` | `showByLang(ar, en)`, `getFcmToken()`, `changeStatusbarColor()`, `shareApp()`, `getDeviceType()` |
 | `ImageHelper` | `image_helper.dart` | Pick/crop single/multi images, camera, gallery, file picker |
 | `LauncherHelper` | `lancher_helper.dart` | Launch URL, WhatsApp, YouTube, Twitter, Instagram, Snapchat, TikTok, phone call, email |

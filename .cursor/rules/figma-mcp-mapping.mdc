@@ -197,10 +197,10 @@ Container(
 
 | Figma size | Code size (adjusted) | TextStyleEx |
 |---|---|---|
-| 10 | 8-10 | `.s8` or `.s10` |
-| 11 | 10 | `.s10` |
-| 12 | 11 | `.s11` |
-| 13 | 12 | `.s12` |
+| 10 | 10 (keep) | `.s10` |
+| 11 | 11 (keep) | `.s11` |
+| 12 | 12 (keep) | `.s12` |
+| 13 | 13 (keep) | `.s13` |
 | 14 | 13 or 12 | `.s13` or `.s12` |
 | 15 | 14 or 13 | `.s14` or `.s13` |
 | 16 | 14 or 15 | `.s14` or `.s15` |
@@ -210,7 +210,7 @@ Container(
 | 22 | 20 | `.s20` |
 | 24 | 22 | `.s22` |
 
-**Quick rule:** Figma <=12 → subtract 1. Figma 13-18 → subtract 1-2. Figma >=20 → subtract 2.
+**Quick rule:** Figma ≤13 → keep as-is. Figma 14-18 → subtract 1-2. Figma >=20 → subtract 2.
 
 | Figma weight | FontWeightManager / TextStyleEx | Note |
 |-------------|-------------------------------|------|

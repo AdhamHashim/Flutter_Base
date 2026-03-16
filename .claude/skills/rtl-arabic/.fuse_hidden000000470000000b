@@ -93,75 +93,6 @@ Row(children: [Expanded(child: textColumn), CachedImage(...)])
 □ Did NOT blindly follow MCP coordinates — verified against screenshot
 ```
 
-### ⚠️ Card Content RTL — Line-by-Line Verification (CRITICAL)
-
-> **مش كفاية إن الكارد نفسه يكون في المكان الصح — المحتوى جوا الكارد لازم يكون RTL صح برده.**
-> **ده أكتر حاجة بتطلع غلط — الكارد يبان صح بس جواه النصوص والأيقونات معكوسة.**
-
-**لكل كارد أو component في الشاشة، راجع كل سطر:**
-
-1. **العنوان (Title):** لازم يبقى على **اليمين** — `CrossAxisAlignment.start`
-2. **الوصف/النص الفرعي:** لازم يبقى على **اليمين** — `CrossAxisAlignment.start`
-3. **أيقونة + نص جنب بعض (Row):** الأيقونة على **اليمين** = first child، النص على **الشمال** = second child
-4. **صورة + نص (Row):** طابق الـ Figma بالظبط — لو الصورة يمين في Figma → first child
-5. **أزرار/أكشن:** لو على الشمال في Figma → `CrossAxisAlignment.end` أو last child في Row
-6. **Badge/Tag:** موقعها يطابق الـ Figma — `PositionedDirectional(start:)` لليمين أو `PositionedDirectional(end:)` للشمال
-
-```dart
-// ✅ CORRECT — Card with image RIGHT, text LEFT (matching Figma)
-class _ItemCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Image on RIGHT (first child = physical RIGHT in RTL)
-        CachedImage(url: item.image, width: AppSize.sW60, height: AppSize.sH60),
-        12.szW,
-        // Text column on LEFT (second child)
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,  // ← text starts from RIGHT
-            children: [
-              Text(item.name, style: const TextStyle().setMainTextColor.s14.semiBold),
-              4.szH,
-              Text(item.category, style: const TextStyle().setHintColor.s12.regular),
-            ],
-          ),
-        ),
-        // Action icon on far LEFT (last child)
-        IconWidget(icon: AppAssets.svg.baseSvg.arrowLeft.path, height: AppSize.sH16),
-      ],
-    );
-  }
-}
-
-// ❌ WRONG — Card structure correct but content inside Column is not RTL
-Column(
-  // crossAxisAlignment missing → text may center instead of aligning RIGHT
-  children: [
-    Text(item.name),    // ← will be centered, not RIGHT-aligned!
-    Text(item.desc),
-  ],
-)
-
-// ❌ WRONG — Icon and text in wrong order inside card
-Row(children: [
-  Text('الاسم'),             // ← text on RIGHT (wrong — icon should be first)
-  IconWidget(icon: ...),     // ← icon on LEFT
-])
-// Should be: Row(children: [IconWidget(...), 8.szW, Text('الاسم')])
-```
-
-**الـ Checklist لكل كارد:**
-```
-□ Title/subtitle → CrossAxisAlignment.start (يمين)
-□ Icon + Text rows → Icon first child (يمين)، Text second (شمال) — حسب التصميم
-□ Image position → يطابق Figma بالظبط (يمين أو شمال)
-□ Action buttons/arrows → last child في Row (شمال) أو حسب التصميم
-□ كل Column جوا الكارد فيها CrossAxisAlignment.start
-□ Padding directional (paddingStart/End) مش paddingLeft/Right
-```
-
 ---
 
 ## RTL Rules for Flutter_Base
@@ -316,21 +247,14 @@ Text('مرحباً')
 Text('Hello')
 ```
 
-### Rule 10 — Add ALL Strings to Translation Files (NO EXCEPTIONS)
-
-> **كل نص متوقع في الشاشة لازم يتضاف في `lang.json` ويستخدم من `LocaleKeys`.**
-> **ممنوع تنسى أي نص — حتى labels, hints, button text, error messages, placeholders.**
+### Rule 10 — Add Strings to Translation Files
 
 ```json
 // assets/translations/lang.json (then run generate)
 {
   "feature_name": {
     "title": "عنوان الشاشة",
-    "button_submit": "إرسال",
-    "hint_search": "ابحث هنا...",
-    "error_empty": "هذا الحقل مطلوب",
-    "status_paid": "مدفوع",
-    "status_completed": "مكتمل"
+    "button_submit": "إرسال"
   }
 }
 ```
@@ -339,59 +263,9 @@ Text('Hello')
 dart run generate/strings/main.dart
 ```
 
-**ممنوع:**
-```dart
-// ❌ FORBIDDEN — hardcoded text
-Text('مدفوع')
-Text('إرسال')
-hint: 'ابحث هنا'
-
-// ✅ CORRECT — always from LocaleKeys
-Text(LocaleKeys.featureName_statusPaid.tr())
-Text(LocaleKeys.featureName_buttonSubmit.tr())
-hint: LocaleKeys.featureName_hintSearch.tr()
-```
-
 ---
 
-## Rule 11 — AppBar, BottomSheet, Dialog RTL (CRITICAL)
-
-> **محتوى الـ AppBar, BottomSheet, Dialog, Modal أحياناً مبيحترمش الـ RTL ومحتاج تظبيطه يدوي.**
-
-```dart
-// ✅ CORRECT — Force RTL on dialog/bottom sheet content
-showDefaultBottomSheet(
-  child: Directionality(
-    textDirection: TextDirection.rtl,
-    child: _MySheetContent(),
-  ),
-);
-
-// ✅ CORRECT — Force RTL on dialog content
-showCustomDialog(
-  context,
-  child: Directionality(
-    textDirection: TextDirection.rtl,
-    child: _MyDialogContent(),
-  ),
-);
-
-// ✅ CORRECT — AppBar actions/title RTL fix if needed
-DefaultScaffold(
-  title: LocaleKeys.myTitle.tr(),
-  // DefaultScaffold already handles RTL — but if custom AppBar:
-  body: const _MyBody(),
-)
-```
-
-**متى تستخدم Directionality:**
-- محتوى bottom sheet / dialog / modal مش بيتعرض RTL صح
-- عناصر AppBar مش في المكان الصح
-- **على مستوى الـ content widget فقط — مش الشاشة كلها**
-
----
-
-## Rule 12 — Text Directionality Inside Components (CRITICAL)
+## Rule 11 — Text Directionality Inside Components (CRITICAL)
 
 > **نص داخل components أحياناً بيتعكس من اليمين للشمال. لازم تتأكد أن النص بيظهر صح.**
 

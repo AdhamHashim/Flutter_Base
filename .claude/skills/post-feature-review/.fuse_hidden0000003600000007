@@ -75,13 +75,10 @@ description: Automatic code review after completing any feature — finds and fi
 - [ ] `PaginatedCubit<T>` لـ paginated lists
 - [ ] CRUD: local update (insert at 0 / copyWith / removeWhere)
 
-### 3.2 ViewController Pattern (MANDATORY — ممنوع خرقها)
-- [ ] **ممنوع** وضع Controller أو ValueNotifier داخل الـ View/State — لازم في ViewController class
-- [ ] UI controllers/notifiers (TextEditingController, ValueNotifier, ScrollController, etc.) في `ViewController` class منفصل فقط
-- [ ] كل handlers (onSend, selectTab, onSearch) داخل ViewController
-- [ ] الـ View تستدعي الـ ViewController object بس — `_vc.xxx`
+### 3.2 ViewController Pattern
+- [ ] UI controllers/notifiers في `ViewController` class منفصل
 - [ ] `ValueNotifier` + `ValueListenableBuilder` بدل `setState`
-- [ ] ViewController يعمل dispose لكل الـ controllers/notifiers
+- [ ] ViewController يعمل dispose لكل الـ controllers
 
 ### 3.3 BlocListener Usage
 - [ ] Navigation بعد success → `BlocListener` مش داخل `builder`
@@ -115,18 +112,6 @@ description: Automatic code review after completing any feature — finds and fi
 - [ ] `MessageUtils.showSnackBar` لـ messages
 
 ### 4.4 Scaffold & Status Bar
-- [ ] Inner screen → `DefaultScaffold`
-- [ ] Auth screen → `Scaffold` + `SafeArea` + manual status bar
-- [ ] Status bar color matches header (dark header → light icons)
-
-### 4.5 Clean Code Quality
-- [ ] لا يوجد unused imports — تم تشغيل `flutter analyze`
-- [ ] لا يوجد unused optional parameters — "A value for optional parameter isn't ever given" = 0
-- [ ] `const` مضاف على كل widget/constructor ممكن يكون const
-- [ ] Spacing: `.szH`/`.szW` فقط — لا يوجد `SizedBox(height:)` أو `SizedBox(width:)`
-- [ ] Padding: `.paddingAll()`, `.paddingStart()` extensions — لا يوجد `Padding(...)` widget
-- [ ] Helper methods (status→color, status→label) في entity/model — مش جوا widget class
-- [ ] Dropdown/small widget API: `BlocBuilder` على الـ widget نفسه — مش wrapping كل الشاشة
 - [ ] Inner screen → `DefaultScaffold`
 - [ ] Auth screen → `Scaffold` + `SafeArea` + manual status bar
 - [ ] Status bar color matches header (dark header → light icons)

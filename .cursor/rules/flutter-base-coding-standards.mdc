@@ -170,16 +170,86 @@ Navigator.push(context, MaterialPageRoute(builder: (_) => Screen()))
 
 ---
 
-## 8. Localization → LocaleKeys ONLY
+## 8. Localization → lang.json + LocaleKeys (MANDATORY)
+
+> **⚠️ قاعدة أساسية: كل نص يظهر للمستخدم لازم يتضاف في `lang.json` أولاً ويُستخدم من `LocaleKeys` فقط — بدون أي استثناء.**
+
+### 8.0.1 — Format ملف lang.json
+
+```json
+// assets/translations/lang.json
+{
+  "key_name #$ English text": "Arabic text",
+  "feature_title #$ Feature Title": "عنوان الميزة"
+}
+```
+
+**Format القاعدة:** `"snake_case_key #$ English Text": "النص العربي"`
+- الـ key بـ `snake_case`
+- بعد `#$` → النص الإنجليزي
+- القيمة → النص العربي
+
+### 8.0.2 — Strings مع Parameters (Variables)
+
+```json
+{
+  "provider_welcome_back #$ Welcome back, {name}": "أهلا بعودتك، {name}"
+}
+```
 
 ```dart
-// ✅
-Text(LocaleKeys.screenTitle.tr())
-DefaultScaffold(title: LocaleKeys.screenTitle.tr())
+Text(LocaleKeys.providerWelcomeBack(name: user.name))
+```
 
-// ❌
+### 8.0.3 — Generate بعد أي تعديل
+
+```bash
+dart run generate/strings/main.dart
+```
+
+يولّد: `en.json` + `ar.json` + `locale_keys.g.dart`
+
+### 8.0.4 — تسمية الـ Keys
+
+| القاعدة | مثال صح | مثال غلط |
+|---------|---------|----------|
+| `snake_case` دائماً | `my_reservations` | `myReservations` |
+| البداية باسم الـ feature | `complaints_title` | `title` |
+| وصفي ومحدد | `complaints_reason_label` | `label1` |
+
+### 8.0.5 — عند قراءة تصميم من Figma MCP
+
+```
+1. scan_text_nodes() → اجمع كل النصوص من التصميم
+2. أضف كل نص في lang.json (عناوين، أزرار، hints، placeholders، tabs، labels، رسائل خطأ)
+3. شغّل dart run generate/strings/main.dart
+4. استخدم LocaleKeys فقط في الكود — لا تتجاوز أي نص حتى لو كلمة واحدة
+```
+
+### 8.0.6 — أمثلة
+
+```dart
+// ✅ CORRECT
+Text(LocaleKeys.screenTitle)
+DefaultScaffold(title: LocaleKeys.myReservations)
+hint: LocaleKeys.searchForTeam
+EmptyWidget(title: LocaleKeys.noReservationsTitle, desc: LocaleKeys.noReservationsDesc)
+
+// ❌ FORBIDDEN — hardcoded text
 Text('العنوان')
 Text('Title')
+Text('OK')
+hint: 'ابحث هنا'
+```
+
+### 8.0.7 — Checklist
+
+```
+□ كل النصوص في lang.json بـ format "key #$ English": "عربي"
+□ كل key بـ snake_case ويبدأ باسم الـ feature
+□ تم تشغيل generate command
+□ كل widget يستخدم LocaleKeys — لا يوجد نص مباشر في dart files
+□ Parameters تستخدم {variableName} في lang.json
 ```
 
 ---
@@ -1027,7 +1097,14 @@ ProductCardWidget(product: item, showPrice: false, showRating: true)
 
 ## 22. ViewController Class Pattern (MANDATORY)
 
-> **Controllers, ValueNotifiers, AnimationControllers, params — كل حاجة تتعلق بالـ UI state لازم تكون في class منفصل (ViewController)، مش مباشرة في الـ View.**
+> **⚠️ ممنوع نهائياً: أي Controller أو ValueNotifier أو AnimationController أو ScrollController أو FocusNode داخل الـ View مباشرة.**
+> **كل حاجة تتعلق بالـ UI state + handlers بتاعتها لازم تكون في class منفصل (ViewController). الـ View تستدعي الـ class بس.**
+
+### القاعدة الأساسية:
+- **ممنوع** وضع `TextEditingController`, `ValueNotifier`, `ScrollController`, `AnimationController`, `FocusNode` داخل الـ State أو الـ Widget
+- **ممنوع** استخدام `setState` للـ UI state — استخدم `ValueNotifier` + `ValueListenableBuilder`
+- **إلزامي** إنشاء class منفصل (ViewController) يحتوي: الـ controllers + الـ notifiers + الـ handlers
+- الـ View تستخدم **object واحد** من الـ ViewController وتنادي منه فقط
 
 ```dart
 // ✅ CORRECT — Separate ViewController class
@@ -1048,7 +1125,7 @@ class ChatViewController {
   }
 }
 
-// ✅ View uses one ViewController object
+// ✅ View uses one ViewController object — يستدعي بس
 class _ChatInputState extends State<_ChatInput> {
   late final ChatViewController _vc = ChatViewController();
 
@@ -1062,23 +1139,24 @@ class _ChatInputState extends State<_ChatInput> {
       8.szW,
       ValueListenableBuilder<bool>(
         valueListenable: _vc.isSending,
-        builder: (_, sending, __) => _SendButton(onTap: () => _vc.onSend(context), isLoading: sending),
+        builder: (_, sending, _) => _SendButton(onTap: () => _vc.onSend(context), isLoading: sending),
       ),
     ]);
   }
 }
 
-// ❌ FORBIDDEN — controllers/logic scattered in view
+// ❌ FORBIDDEN — controllers/notifiers في الـ View
 class _ChatInputState extends State<_ChatInput> {
-  final _controller = TextEditingController(); // ← should be in VC
-  bool _isSending = false;                      // ← should be ValueNotifier in VC
-  void _onSend() { setState(() => ...); }       // ← should be in VC
+  final _controller = TextEditingController();  // ❌ ممنوع — لازم في ViewController
+  bool _isSending = false;                        // ❌ ممنوع — استخدم ValueNotifier في ViewController
+  final ValueNotifier<int> _tabIndex = ValueNotifier(0);  // ❌ ممنوع — لازم في ViewController
+  void _onSend() { setState(() => ...); }        // ❌ ممنوع — استخدم ValueNotifier + handler في ViewController
 }
 ```
 
 **Rules:**
-- كل `TextEditingController`, `ValueNotifier`, `ScrollController`, `FocusNode` → داخل ViewController
-- كل UI logic function → داخل ViewController
+- كل `TextEditingController`, `ValueNotifier`, `ScrollController`, `FocusNode` → داخل ViewController **فقط**
+- كل UI logic function (onSend, onSearch, selectTab, etc.) → داخل ViewController
 - استخدم `ValueNotifier` + `ValueListenableBuilder` بدل `setState`
 - الـ View تنادي `_vc.dispose()` في `dispose()`
 
@@ -1162,7 +1240,7 @@ widgets/
 
 ## 27. RTL — Text Inside Components Mirroring Fix
 
-> **نص داخل components أحياناً بيتعكس. لو النص بيظهر معكوس داخل widget معقد → استخدم `textDirection`.**
+> **نص داخل components أحياناً بيتعكس من اليمين للشمال. لو النص بيظهر معكوس داخل widget معقد → استخدم `textDirection`.**
 
 ```dart
 // ✅ Fix reversed text inside complex components

@@ -144,6 +144,42 @@ PaginatedListWidget<ItemEntity>(
 
 ---
 
+## Dropdown & Small Widget API — Isolate BlocBuilder (CRITICAL)
+
+> **لما dropdown أو widget صغير بيجيب data من API → الـ BlocBuilder يكون عليه هو بس.**
+> **لو الـ service فشلت → الـ widget ده بس يتأثر — باقي الشاشة تشتغل عادي.**
+
+```dart
+// ✅ CORRECT — isolated BlocProvider inside the dropdown widget
+class _CityDropdown extends StatelessWidget {
+  const _CityDropdown({required this.onChanged});
+  final ValueChanged<CityEntity?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => injector<GetCitiesCubit>()..fetchCities(),
+      child: AsyncBlocBuilder<GetCitiesCubit, List<CityEntity>>(
+        builder: (ctx, cities) => AppDropdown<CityEntity>(
+          items: cities, label: LocaleKeys.city.tr(),
+          itemAsString: (c) => c.name, onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+}
+
+// ❌ FORBIDDEN — wrapping entire screen with BlocBuilder for a dropdown
+AsyncBlocBuilder<GetCitiesCubit, List<CityEntity>>(
+  builder: (ctx, cities) => Column(children: [
+    _Header(), _Form(), AppDropdown(items: cities), _SubmitButton(),
+  ]),
+)
+// ← if cities API fails, ENTIRE screen stops!
+```
+
+---
+
 ## Figma State Mapping
 
 ```

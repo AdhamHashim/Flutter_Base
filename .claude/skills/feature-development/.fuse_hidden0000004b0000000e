@@ -10,7 +10,7 @@ description: Flutter feature development workflow — Figma MCP + Postman MCP + 
 ### Figma MCP:
 - Raw numbers (16, 20) → convert to `AppSize`/`AppPadding`/`AppCircular`
 - **Colors → read `color_manager.dart` FIRST, reuse existing AppColors by purpose** (e.g. dark text → `AppColors.primary`, grey text → `AppColors.hintText`, light bg → `AppColors.fill`). Only add truly new colors with **generic names** — NEVER screen-prefixed (`loginPrimary` ❌)
-- **Font sizes → Figma ≤13sp keep as-is, Figma 14-18sp reduce by 1–2sp, Figma ≥20sp reduce by 2sp** (Figma 12 → `.s12`, Figma 16 → `.s14`, Figma 22 → `.s20`)
+- **Font sizes → reduce by 1–2sp** (Figma 16 → `.s14`, Figma 14 → `.s13`, Figma 22 → `.s20`)
 - **Screen-level body padding > 12px → reduce by 2–4px** (Figma 16 → 12 or 14, Figma 20 → 16). ≤ 12px → keep as-is.
 - **RTL Section Verification** — Figma MCP sometimes returns sections mirrored. ALWAYS cross-check with the visual screenshot. Verify: Arabic text starts from RIGHT, horizontal lists/filters start from RIGHT, card images match Figma visual position. Trust screenshot over raw MCP data.
 - **Icon background check** — some AppAssets icons already include their background. Check before wrapping in Container. If icon has built-in bg → use directly. If transparent → add Container bg.
@@ -85,8 +85,6 @@ Icon → match AppAssets → add if not found
 ---
 
 ## PHASE 3 — API / Entity Rules
-
-> **⚠️ If UI_ONLY mode → SKIP this phase entirely.** Create entities with static/dummy data. No API calls. No Postman.
 
 > **See `flutter-base-coding-standards.mdc` section 8.5 for full entity template, fromJson type table, and tryParse rules.**
 
@@ -364,7 +362,7 @@ Text('عنوان الصفحة')
 ```
 Design & Tokens:
 □ No raw Color(), Icons.*, SizedBox(N), TextStyle() — use AppColors, AppAssets, AppSize, TextStyleEx
-□ Font sizes ≤13sp kept as-is, 14+ reduced 1–2sp from Figma | Screen body padding > 12px reduced 2–4px
+□ Font sizes reduced 1–2sp from Figma | Screen body padding > 12px reduced 2–4px
 □ All text uses LocaleKeys.xxx.tr() | Design matches Figma 100%
 
 Entity & API:
@@ -391,15 +389,6 @@ Scroll & Performance:
 Widget Splitting (MANDATORY):
 □ Body = layout only — no _buildXxx() methods returning 10+ lines
 □ Every section/card in SEPARATE file | Each added as part in view_imports.dart
-
-Clean Code (MANDATORY):
-□ No unused imports | No unused optional parameters
-□ const on every widget/constructor that can be const
-□ Spacing: .szH/.szW only (no SizedBox) | Padding: extensions only (no Padding widget)
-□ Models/enums in entity/ folder (no helper methods in widget classes)
-□ Dropdown/small widget API → isolated BlocBuilder (not wrapping whole screen)
-□ All text from LocaleKeys — no hardcoded Arabic/English strings
-□ AppBar/BottomSheet/Dialog content checked for RTL correctness
 
 Shared Widget Reuse (CRITICAL):
 □ Searched app_shared/ + existing features before creating new widget

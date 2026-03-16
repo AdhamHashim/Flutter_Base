@@ -8,19 +8,6 @@ description: Full feature development workflow — fill in feature name, Figma l
 Feature: [FEATURE_NAME]
 Figma Node: [FIGMA_URL]
 Postman Collection: [POSTMAN_URL] (or: لا يوجد حاليا)
-Mode: [UI_ONLY / UI_AND_API]
-
----
-
-## ⚠️ FIRST — ASK THE USER: UI Only or UI + API?
-
-> **قبل ما تبدأ أي شغل — لازم تسأل المستخدم:**
-> **"عاوز تصميم UI بس ولا UI + API مع بعض؟"**
->
-> - **UI Only** → اعمل الشاشات بـ dummy/static data، بدون API calls، بدون Postman. الـ cubits تبقى فاضية أو بـ mock data.
-> - **UI + API** → الـ workflow الكامل مع Postman + cubits + API integration.
->
-> **لو المستخدم مش عنده API حالياً → اشتغل UI Only. ممنوع تخترع API endpoints وهمية لأنها هتخلي التطبيق يقف.**
 
 ---
 
@@ -86,8 +73,8 @@ Color Reuse Rule (إلزامي):
 - Truly new → add with GENERIC name (never screen-prefixed like loginPrimary)
 
 Font Size Adjustment (إلزامي):
-- Figma ≤ 13sp (10, 11, 12, 13) → KEEP AS-IS — لا تقلل النصوص الصغيرة
-- Figma 14-18sp → reduce by 1-2sp | Figma >= 20sp → reduce by 2sp
+- Figma <= 12sp → reduce by 1sp | Figma 13-18sp → reduce by 1-2sp | Figma >= 20sp → reduce by 2sp
+- NEVER use Figma font size directly in code
 
 RTL Conversion (إلزامي):
 - Figma RIGHT = Flutter "start" → CrossAxisAlignment.start, AlignmentDirectional.centerStart, PositionedDirectional(start:), paddingStart
@@ -96,12 +83,9 @@ RTL Conversion (إلزامي):
 - NEVER: Positioned(left:/right:), Align(centerLeft/Right), EdgeInsets.only(left/right:), TextAlign.left, Directionality on layouts (exception: single Text widget fix inside complex components)
 
 ══════════════════════════════════════════════════════════════
-STEP 4 — READ API (via Postman MCP) — SKIP IF UI_ONLY MODE
+STEP 4 — READ API (via Postman MCP)
 ══════════════════════════════════════════════════════════════
 
-**If UI_ONLY mode:** Skip this step entirely. Create entities with dummy/static data only.
-
-**If UI_AND_API mode:**
 - Read full request/response schema
 - Check pagination → PaginatedCubit + PaginatedListWidget if yes
 - Check actions (delete/update/toggle) → plan local state update (NEVER re-fetch):
@@ -194,11 +178,10 @@ Body Widget Pattern:
 - Empty sections in multi-section → SizedBox.shrink() (NOT EmptyWidget)
 - Skeleton: Entity.initial() for Skeletonizer
 
-ViewController Pattern (إلزامي — ممنوع خرقها):
-- **ممنوع** وضع Controller أو ValueNotifier داخل الـ View — لازم في ViewController class
-- All TextEditingController, ValueNotifier, AnimationController, ScrollController, FocusNode → inside ViewController class ONLY
-- All UI logic functions (onSend, onSearch, selectTab, onFilter) → inside ViewController
-- View uses ONE ViewController object → يستدعيه بس (_vc.xxx)
+ViewController Pattern (إلزامي):
+- All TextEditingController, ValueNotifier, AnimationController, ScrollController, FocusNode → inside ViewController class
+- All UI logic functions (onSend, onSearch, onFilter) → inside ViewController
+- View uses ONE ViewController object → calls its functions/variables
 - Use ValueNotifier + ValueListenableBuilder instead of setState
 - ViewController provides dispose() for all controllers/notifiers
 - View calls _vc.dispose() in its dispose()
@@ -220,16 +203,10 @@ RTL (every screen):
 Values:
 - Colors: AppColors only — reuse by purpose first, generic names only
 - Sizes: AppSize/AppPadding/AppMargin/AppCircular — never raw numbers
-- Text: const TextStyle().setMainTextColor.s14.medium — font ≤13sp keep as-is, 14+ reduce per rule
-- Spacing: 12.szH, 16.szW — NEVER SizedBox(height/width:) | Text: LocaleKeys.xxx.tr() only
-- Padding: .paddingAll(), .paddingStart() extensions — NEVER Padding(...) widget
-- Margin: .marginAll(), .marginStart() extensions
-- const: add to EVERY widget/constructor that can be const
+- Text: const TextStyle().setMainTextColor.s14.medium — font reduced per rule
+- Spacing: 12.szH, 16.szW | Text: LocaleKeys.xxx.tr() only
 - Navigation: Go.to/back/off/offAll — never Navigator.push
-- API: ApiConstants.xxx — never raw URL strings (skip if UI_ONLY)
-- Models: status/color/label mappers in entity/ — NEVER helper methods inside widget
-- Imports: delete ALL unused imports | Parameters: remove unused optional params
-- Dropdown API: isolate BlocBuilder on the dropdown itself, not wrapping whole screen
+- API: ApiConstants.xxx — never raw URL strings
 
 ══════════════════════════════════════════════════════════════
 STEP 7 — VERIFY
@@ -242,10 +219,9 @@ STEP 7 — VERIFY
 5. No raw Color(), Icons.*, SizedBox(N), hardcoded text — all from AppColors/AppAssets/AppSize/LocaleKeys
 6. Every entity: factory initial() + fromJson with ?? + tryParse only
 7. Scaffold correct per screen + status bar synced
-8. Font sizes ≤13sp kept as-is, 14+ reduced from Figma | Screen body padding > 12px reduced 2-4px
-9. Colors reused by purpose | Icon backgrounds checked (no double-bg) | Icon SIZES match Figma exactly
+8. Font sizes reduced from Figma | Screen body padding > 12px reduced 2-4px
+9. Colors reused by purpose | Icon backgrounds checked (no double-bg)
 10. All network images → CachedImage | Search fields → real DefaultTextField + debounce
-11a. Card CONTENT verified RTL: titles RIGHT, icon+text rows correct order, every Column has CrossAxisAlignment.start
 11. CRUD: local updates only (no re-fetch) | RefreshIndicator on all data screens
 12. Multi-section → CustomScrollView + Slivers (no shrinkWrap nested lists)
 13. Widget splitting: body = layout only, each section in separate file

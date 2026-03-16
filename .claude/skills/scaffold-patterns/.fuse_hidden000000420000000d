@@ -108,33 +108,6 @@ When navigating between screens with different status bar colors, each screen mu
 
 ---
 
-## Rule 5: AppBar, BottomSheet, Dialog — RTL Check (MANDATORY)
-
-> **محتوى الـ AppBar, BottomSheet, Dialog أحياناً مبيحترمش RTL. لازم تتأكد إن المحتوى RTL صح.**
-
-```dart
-// ✅ Bottom sheet with RTL content
-showDefaultBottomSheet(
-  child: Directionality(
-    textDirection: TextDirection.rtl,
-    child: _MySheetContent(),
-  ),
-);
-
-// ✅ Dialog with RTL content
-showCustomDialog(
-  context,
-  child: Directionality(
-    textDirection: TextDirection.rtl,
-    child: _MyDialogContent(),
-  ),
-);
-```
-
-**Note:** `DefaultScaffold` handles AppBar RTL automatically. Only use `Directionality` wrapping for bottom sheets, dialogs, and modals where content appears reversed.
-
----
-
 ## Quick Forbidden List
 
 ```dart

@@ -72,16 +72,37 @@ lib/src/features/{name}/
 - Network errors: `ErrorView(error, onRetry)` with retry button
 
 ### Design Token Conversion (Figma → Code)
-- Font size: Figma ≤12sp → reduce 1sp, 13–18sp → reduce 1–2sp, ≥20sp → reduce 2sp
+- Font size: Figma ≤13sp → **keep as-is**, 14–18sp → reduce 1–2sp, ≥20sp → reduce 2sp
 - Font weight: may need to reduce if looks heavier than design
 - Body padding > 12px: reduce by 2-4px
 - Colors: match `AppColors` by purpose, not exact hex
 - Sizes: `AppSize`, `AppPadding`, `AppMargin`, `AppCircular` only
 
+### Clean Code Rules
+- Spacing: `.szH`/`.szW` extensions ONLY — never raw `SizedBox`
+- Padding: `.paddingAll()`, `.paddingStart()` extensions — never `Padding(...)` widget
+- `const` on every widget/constructor that can be const
+- Delete unused imports + remove unused optional parameters
+- Models/enums/helpers (status→color, status→label) → `entity/` folder, not inside widget class
+- Dropdown/small widget API → isolate `BlocBuilder` on the widget itself, not entire screen
+- **All text → `lang.json` first, then `LocaleKeys` in code — MANDATORY:**
+  - Format: `"snake_key #$ English": "عربي"` in `assets/translations/lang.json`
+  - Generate: `dart run generate/strings/main.dart` after any change
+  - Figma MCP: extract ALL text nodes → add to `lang.json` → use `LocaleKeys` only
+  - Zero hardcoded strings — even "OK", "لا", placeholders, tab labels
+- AppBar/BottomSheet/Dialog → check RTL with `Directionality` wrapper if content reversed
+- Dotted borders → use `dotted_border` package
+
+### UI-Only Mode
+- Before starting any feature → ask: "UI Only or UI + API?"
+- UI Only → dummy data, no API calls, no Postman
+- UI + API → full workflow with API integration
+- Never create fake API endpoints — they crash the app
+
 ### Platform Configuration
 - Camera, gallery, microphone, maps → add Android/iOS config files
 - Prefer method channels over `permission_handler` package
-- Use existing packages (e.g. `flutter_rating_bar`) instead of building from scratch
+- Use existing packages (e.g. `flutter_rating_bar`, `dotted_border`) instead of building from scratch
 
 ## Skills & Rules (Synced)
 

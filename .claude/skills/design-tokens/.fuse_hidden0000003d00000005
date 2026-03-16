@@ -223,67 +223,27 @@ fully round → AppCircular.infinity
 
 ---
 
-## ⚠️ Icon Size Adjustment (Figma → Code) — CRITICAL
-
-> **الأيقونات بتتحط أكبر من التصميم لو مستخدمتش الحجم الصح من Figma.**
-> **لازم تقرأ حجم الأيقونة من Figma بدقة وتطبقه بالظبط — أو تقلله لو شكله كبير.**
-
-**Rules:**
-1. **اقرأ `width` و `height` من Figma MCP بدقة** — مش تقدر من شكلها
-2. **طبق الحجم بالظبط** — `IconWidget(height: AppSize.sHXX, width: AppSize.sWXX)`
-3. **لو الأيقونة شكلها كبير عن التصميم** → قلل 2-4px
-4. **لو الأيقونة جوا Container** → حجم الأيقونة ≠ حجم الـ Container. Container أكبر والأيقونة أصغر جواه
-
-```dart
-// ✅ CORRECT — icon size matches Figma exactly
-// Figma: icon 20x20 inside 40x40 container
-Container(
-  width: AppSize.sW40, height: AppSize.sH40,
-  decoration: BoxDecoration(color: AppColors.fill, borderRadius: BorderRadius.circular(AppCircular.r10)),
-  child: Center(
-    child: IconWidget(icon: AppAssets.svg.baseSvg.search.path, height: AppSize.sH20, width: AppSize.sW20),
-  ),
-)
-
-// ✅ CORRECT — standalone icon with exact Figma size
-IconWidget(icon: AppAssets.svg.baseSvg.notification.path, height: AppSize.sH24, width: AppSize.sW24)
-
-// ❌ WRONG — icon too large (used container size for icon)
-IconWidget(icon: AppAssets.svg.baseSvg.search.path, height: AppSize.sH40)  // ← should be sH20!
-
-// ❌ WRONG — guessed icon size instead of reading from Figma
-IconWidget(icon: ..., height: AppSize.sH30)  // Figma says 20 → should be sH20
-```
-
-**Quick icon size guide:**
-| Figma context | Typical icon size | Container size |
-|---|---|---|
-| Small inline icon (next to text) | 14-18px | No container |
-| Medium icon (card, list item) | 20-24px | 36-44px (if has bg) |
-| Large icon (feature/empty state) | 28-40px | 48-60px (if has bg) |
-
----
-
 ## Figma Font Size → FontSizeManager Mapping
 
 ### ⚠️ CRITICAL: Font Size Adjustment Rule
 
-> Figma font sizes need adjustment when converting to Flutter code.
+> Figma font sizes MUST be reduced by **1–2sp** when converting to Flutter code.
 > This compensates for rendering differences between Figma and Flutter (especially with Expo Arabic font + ScreenUtil `.sp`).
+> The result is better visual consistency with the original design.
 
 **Adjustment guideline:**
-- **Figma ≤ 13sp (10, 11, 12, 13) → KEEP AS-IS — لا تقلل.** النصوص الصغيرة تبقى زي ما هي.
-- Figma 14–18sp → reduce by **1–2sp** (prefer 1sp for readability)
+- Figma ≤ 12sp → reduce by **1sp**
+- Figma 13–18sp → reduce by **1–2sp** (prefer 1sp for readability)
 - Figma ≥ 20sp → reduce by **2sp**
 
 ### Figma → Code Mapping Table
 
 ```
 Figma fontSize → Code fontSize (adjusted)
-10sp → .s10 (keep as-is)
-11sp → .s11 (keep as-is)
-12sp → .s12 (keep as-is)
-13sp → .s13 (keep as-is)
+10sp → .s8  or .s10 (keep if small enough)
+11sp → .s10
+12sp → .s11
+13sp → .s12
 14sp → .s13 or .s12
 15sp → .s14 or .s13
 16sp → .s14 or .s15

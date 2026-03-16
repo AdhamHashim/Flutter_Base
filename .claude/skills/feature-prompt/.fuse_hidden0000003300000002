@@ -194,11 +194,10 @@ Body Widget Pattern:
 - Empty sections in multi-section → SizedBox.shrink() (NOT EmptyWidget)
 - Skeleton: Entity.initial() for Skeletonizer
 
-ViewController Pattern (إلزامي — ممنوع خرقها):
-- **ممنوع** وضع Controller أو ValueNotifier داخل الـ View — لازم في ViewController class
-- All TextEditingController, ValueNotifier, AnimationController, ScrollController, FocusNode → inside ViewController class ONLY
-- All UI logic functions (onSend, onSearch, selectTab, onFilter) → inside ViewController
-- View uses ONE ViewController object → يستدعيه بس (_vc.xxx)
+ViewController Pattern (إلزامي):
+- All TextEditingController, ValueNotifier, AnimationController, ScrollController, FocusNode → inside ViewController class
+- All UI logic functions (onSend, onSearch, onFilter) → inside ViewController
+- View uses ONE ViewController object → calls its functions/variables
 - Use ValueNotifier + ValueListenableBuilder instead of setState
 - ViewController provides dispose() for all controllers/notifiers
 - View calls _vc.dispose() in its dispose()
@@ -242,10 +241,9 @@ STEP 7 — VERIFY
 5. No raw Color(), Icons.*, SizedBox(N), hardcoded text — all from AppColors/AppAssets/AppSize/LocaleKeys
 6. Every entity: factory initial() + fromJson with ?? + tryParse only
 7. Scaffold correct per screen + status bar synced
-8. Font sizes ≤13sp kept as-is, 14+ reduced from Figma | Screen body padding > 12px reduced 2-4px
-9. Colors reused by purpose | Icon backgrounds checked (no double-bg) | Icon SIZES match Figma exactly
+8. Font sizes reduced from Figma | Screen body padding > 12px reduced 2-4px
+9. Colors reused by purpose | Icon backgrounds checked (no double-bg)
 10. All network images → CachedImage | Search fields → real DefaultTextField + debounce
-11a. Card CONTENT verified RTL: titles RIGHT, icon+text rows correct order, every Column has CrossAxisAlignment.start
 11. CRUD: local updates only (no re-fetch) | RefreshIndicator on all data screens
 12. Multi-section → CustomScrollView + Slivers (no shrinkWrap nested lists)
 13. Widget splitting: body = layout only, each section in separate file
