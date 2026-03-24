@@ -1,0 +1,260 @@
+---
+description: Auto-generate API contracts (Postman Collection JSON) from Figma screens — unified entities, pagination, multi-step forms, file upload, and mock data support.
+globs: postman/**/*.json, lib/src/core/network/**/*.dart, lib/src/features/**/entity/**/*.dart
+---
+
+# Rule: API Design — Figma Screen → Postman Collection + Flutter Integration
+
+## When to Use
+
+- عند قراءة أي شاشة من Figma وتحتاج تصمم الـ API ليها
+- عند إضافة endpoints جديدة لأي feature
+- عند إنشاء Postman Collection للـ backend team
+- عند ربط الـ API بالـ Flutter code (cubits + entities + ApiConstants)
+
+---
+
+## The Pipeline (6 Steps)
+
+```
+Figma Screen
+    ↓
+Step 1: Analyze UI → identify required services
+    ↓
+Step 2: Design endpoints (naming, method, pagination, entities)
+    ↓
+Step 3: Generate Postman Collection JSON (per feature group)
+    ↓
+Step 4: Add to ApiConstants
+    ↓
+Step 5: Create Entity + Cubit (with mock support)
+    ↓
+Step 6: Connect to UI (mock-first, then real API)
+```
+
+---
+
+## Step 1: Analyze UI — Service Extraction Rules
+
+> **لكل شاشة من Figma، حلل الـ UI واستخرج الـ services المطلوبة بالقواعد دي:**
+
+### Rule 1: Multi-Section Screen → Separate Service Per Section
+
+```
+شاشة فيها: Banners + Categories + Products
+    ↓
+GET /banners          ← service 1
+GET /categories       ← service 2
+GET /products         ← service 3
+
+❌ FORBIDDEN: GET /home-data (كل حاجة في service واحدة)
+```
+
+### Rule 2: List Screens → Pagination Required
+
+```
+أي شاشة فيها list (products, orders, notifications)
+    ↓
+GET /products?page=1&per_page=10
+    ↓
+Response يشمل: data[] + pagination object
+```
+
+### Rule 3: Multi-Step Forms → Validate Per Step + Final Create
+
+```
+فورم على 3 صفحات:
+    ↓
+POST /products/validate-step-1    ← validates page 1 fields
+POST /products/validate-step-2    ← validates page 2 fields
+POST /products/validate-step-3    ← validates page 3 fields
+POST /products                    ← final create (all data)
+```
+
+### Rule 4: File Uploads → Separate Upload Service
+
+```
+أي شاشة فيها رفع صور/ملفات:
+    ↓
+POST /upload-file    ← generic, returns file ID/URL
+    ↓
+ثم تبعت الـ file_id في الـ create/edit service
+
+❌ FORBIDDEN: ارفع الصورة مع باقي الداتا في نفس الـ service
+```
+
+### Rule 5: CRUD Operations → 5 Standard Services
+
+```
+Feature: Products
+    ↓
+GET    /products              ← list (paginated)
+GET    /products/{id}         ← detail (same entity structure)
+POST   /products              ← create
+PUT    /products/{id}         ← update
+DELETE /products/{id}         ← delete
+```
+
+### Rule 6: Unified Entities (CRITICAL)
+
+> **الـ Entity واحدة في كل مكان. الـ product entity في list = نفسها في detail = نفسها جوا order.**
+
+```json
+// GET /products → returns list of ProductEntity
+// GET /products/{id} → returns single ProductEntity (same structure, more fields allowed)
+// GET /orders/{id} → order.product = ProductEntity (same structure)
+
+// ❌ FORBIDDEN: Different response shapes for same entity
+```
+
+---
+
+## Step 2: Endpoint Naming Convention
+
+### URL Structure
+
+```
+{prefix}/{resource}                    ← list/create
+{prefix}/{resource}/{id}               ← detail/update/delete
+{prefix}/{resource}/{action}           ← custom action
+{prefix}/{resource}/validate-step-{n}  ← multi-step validation
+
+prefix for user features:    user/
+prefix for public features:  (none)
+prefix for auth:             user/auth/
+```
+
+### Naming Rules
+
+| Rule | Example ✅ | Example ❌ |
+|------|-----------|-----------|
+| Short, descriptive | `/products` | `/get-all-products-list` |
+| Plural for collections | `/products` | `/product` |
+| Kebab-case | `/upload-file` | `/uploadFile` |
+| Resource-first | `/products/{id}` | `/get-product-by-id/{id}` |
+| Action as suffix | `/products/validate-step-1` | `/validate-product-step-1` |
+
+---
+
+## Step 3: Postman Collection JSON Structure
+
+### File Location
+
+```
+postman/
+├── _environment.json                    ← base URL + token variables
+├── auth.postman_collection.json         ← login, register, verify, forget password
+├── {feature}.postman_collection.json    ← per feature group
+├── settings.postman_collection.json     ← profile, notifications, password
+├── shared.postman_collection.json       ← upload-file, countries, cities
+└── _entities.md                         ← entity reference (unified shapes)
+```
+
+### Unified Response Format
+
+```json
+// Success (with data)
+{
+  "status": "success",
+  "code": 200,
+  "message": "تم جلب البيانات بنجاح",
+  "data": { ... }
+}
+
+// Success (paginated list)
+{
+  "status": "success",
+  "code": 200,
+  "message": "تم جلب البيانات بنجاح",
+  "data": {
+    "data": [ ... ],
+    "pagination": {
+      "current_page": 1,
+      "last_page": 5,
+      "per_page": 10,
+      "total": 47
+    }
+  }
+}
+
+// Error — validation
+{
+  "status": "fail",
+  "code": 422,
+  "message": "بيانات غير صالحة",
+  "errors": { "field": ["message"] }
+}
+```
+
+### Standard Error Codes
+
+| Code | Usage | Message Example |
+|------|-------|----------------|
+| 200 | Success | تمت العملية بنجاح |
+| 401 | Unauthorized | بيانات الدخول غير صحيحة |
+| 403 | Forbidden | ليس لديك صلاحية |
+| 404 | Not Found | العنصر غير موجود |
+| 409 | Conflict | البيانات موجودة مسبقاً |
+| 422 | Validation Error | بيانات غير صالحة |
+| 429 | Rate Limited | يرجى الانتظار قبل المحاولة |
+| 500 | Server Error | حدث خطأ في السيرفر |
+
+---
+
+## Step 4: Add to ApiConstants
+
+```dart
+class ApiConstants {
+  static const String uploadFile = 'upload-file';
+  static const String products = 'user/products';
+  static String productDetail(String id) => 'user/products/$id';
+  static String deleteProduct(String id) => 'user/products/$id';
+  static const String validateProductStep1 = 'user/products/validate-step-1';
+}
+```
+
+---
+
+## Step 5: Entity + Cubit (with Mock Support)
+
+```dart
+// Entity — factory initial() + safe fromJson
+class ProductEntity {
+  factory ProductEntity.initial() => ...;
+  factory ProductEntity.fromJson(Map<String, dynamic> json) => ProductEntity(
+    id: json['id']?.toString() ?? '',
+    name: json['name']?.toString() ?? '',
+    price: (json['price'] as num?)?.toDouble() ?? 0.0,
+  );
+}
+
+// Cubit — mock check at top
+@injectable
+class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
+  Future<void> fetchProducts() async {
+    if (MockConfig.useMock) {
+      setLoading();
+      await MockConfig.simulateDelay();
+      setSuccess(data: ProductMock.list);
+      return;
+    }
+    await executeAsync(...);
+  }
+}
+```
+
+---
+
+## Postman Collection Generation Checklist
+
+- [ ] كل endpoint له اسم واضح وقصير
+- [ ] الـ URL structure متسقة (`{prefix}/{resource}`)
+- [ ] كل list endpoint فيه pagination
+- [ ] Entities موحدة (نفس الـ shape في list و detail و nested)
+- [ ] Multi-section screens → service لكل section
+- [ ] Multi-step forms → validate per step + final create
+- [ ] File uploads → separate `upload-file` service
+- [ ] Response format موحد (`{status, code, message, data?}`)
+- [ ] Mock data file created لكل entity
+- [ ] ApiConstants updated
+- [ ] Cubit has mock support via `MockConfig.useMock`

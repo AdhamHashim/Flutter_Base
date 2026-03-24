@@ -17,10 +17,14 @@ Mode: [UI_ONLY / UI_AND_API]
 > **قبل ما تبدأ أي شغل — لازم تسأل المستخدم:**
 > **"عاوز تصميم UI بس ولا UI + API مع بعض؟"**
 >
-> - **UI Only** → اعمل الشاشات بـ dummy/static data، بدون API calls، بدون Postman. الـ cubits تبقى فاضية أو بـ mock data.
-> - **UI + API** → الـ workflow الكامل مع Postman + cubits + API integration.
+> - **UI Only** → اعمل الشاشات بـ static data مباشرة في الـ widgets، بدون cubits، بدون API calls، بدون Postman. لا تحتاج MockConfig.
+> - **UI + API** → الـ workflow الكامل: Postman Collection (أو auto-generate من Figma) + cubits مع `MockConfig.useMock` + mock data files + API integration.
 >
 > **لو المستخدم مش عنده API حالياً → اشتغل UI Only. ممنوع تخترع API endpoints وهمية لأنها هتخلي التطبيق يقف.**
+>
+> **الفرق بين UI Only و Mock Mode:**
+> - **UI Only** = مفيش cubits أصلاً — data ثابتة في الـ widget مباشرة
+> - **Mock Mode** (`--dart-define=USE_MOCK=true`) = cubits موجودة بس بتسحب من mock files بدل الـ API — ده لـ UI+API mode بس
 
 ---
 
@@ -45,6 +49,8 @@ All skills in `.claude/skills/` are available. Ensure you've internalized:
 
 **API & Data Flow:**
 - `api-pipeline` — Complete Postman → ApiConstants → Entity → CrudBaseParams → Cubit → UI pipeline
+- `api-design` — Auto-generate Postman Collection JSON from Figma screens (unified entities, pagination, multi-step forms, file upload)
+- `mock-data` — Mock data switching system via `--dart-define=USE_MOCK=true/false`, unified across all cubits
 - `form-api-pipeline` — Complete form → ViewController → Params → validation → API submit → success
 - `navigation-patterns` — Go.to() with arguments, back with result, refresh parent, tab navigation
 - `multi-screen-flow` — List/detail/edit/create patterns with data passing and screen linking
@@ -121,13 +127,44 @@ RTL Conversion (إلزامي):
 - NEVER: Positioned(left:/right:), Align(centerLeft/Right), EdgeInsets.only(left/right:), TextAlign.left, Directionality on layouts (exception: single Text widget fix inside complex components)
 
 ══════════════════════════════════════════════════════════════
-STEP 4 — READ API (via Postman MCP) — SKIP IF UI_ONLY MODE
+STEP 4 — DESIGN API (if no Postman yet) — SKIP IF UI_ONLY MODE
+══════════════════════════════════════════════════════════════
+
+**If UI_ONLY mode:** Skip this step entirely.
+
+**If Postman Collection already exists:** Skip to Step 5.
+
+**If NO Postman Collection yet — auto-generate from Figma using `api-design` skill:**
+
+1. Analyze the Figma screens → extract required services using extraction rules:
+   - Multi-section screen → separate service per section
+   - List screens → pagination required
+   - Multi-step forms → validate-step-{n} per step + final create
+   - File uploads → separate `upload-file` service
+   - CRUD → 5 standard services (list/detail/create/update/delete)
+
+2. Design endpoints (naming, method, URL structure, entities)
+
+3. Generate Postman Collection JSON in `postman/{feature}.postman_collection.json`:
+   - Unified response format: `{status, code, message, data?}`
+   - Arabic messages for all responses
+   - Success + Error response examples for every endpoint
+   - Unified entities (same shape everywhere)
+
+4. Create mock data files using `mock-data` skill:
+   - `entity/{feature}_mock.dart` with realistic Arabic data
+   - 8-15 items in lists
+   - All entity fields populated
+   - Cubit checks `MockConfig.useMock` before API call
+
+══════════════════════════════════════════════════════════════
+STEP 5 — READ API (via Postman MCP) — SKIP IF UI_ONLY MODE
 ══════════════════════════════════════════════════════════════
 
 **If UI_ONLY mode:** Skip this step entirely. Create entities with dummy/static data only.
 
 **If UI_AND_API mode:**
-- Read full request/response schema
+- Read full request/response schema (from Postman Collection or generated JSON)
 - Check pagination → PaginatedCubit + PaginatedListWidget if yes
 - Check actions (delete/update/toggle) → plan local state update (NEVER re-fetch):
   - Add: insert at index 0 → setSuccess(data: [newItem, ...state.data])
@@ -137,7 +174,7 @@ STEP 4 — READ API (via Postman MCP) — SKIP IF UI_ONLY MODE
 - Entity safety: factory initial(), fromJson with ?? defaults, tryParse only (never parse)
 
 ══════════════════════════════════════════════════════════════
-STEP 5 — PLAN BEFORE CODING (انتظر الموافقة)
+STEP 6 — PLAN BEFORE CODING (انتظر الموافقة)
 ══════════════════════════════════════════════════════════════
 
 Show me:
@@ -154,7 +191,7 @@ Show me:
 Wait for my approval before writing code.
 
 ══════════════════════════════════════════════════════════════
-STEP 6 — IMPLEMENT
+STEP 7 — IMPLEMENT
 ══════════════════════════════════════════════════════════════
 
 Structure:
@@ -258,7 +295,7 @@ Values:
 - Dropdown API: isolate BlocBuilder on the dropdown itself, not wrapping whole screen
 
 ══════════════════════════════════════════════════════════════
-STEP 7 — VERIFY
+STEP 8 — VERIFY
 ══════════════════════════════════════════════════════════════
 
 1. Run: `flutter analyze` — zero errors/warnings
@@ -271,13 +308,14 @@ STEP 7 — VERIFY
 8. Font sizes ≤13sp kept as-is, 14+ reduced from Figma | Screen body padding > 12px reduced 2-4px
 9. Colors reused by purpose | Icon backgrounds checked (no double-bg) | Icon SIZES match Figma exactly
 10. All network images → CachedImage | Search fields → real DefaultTextField + debounce
-11a. Card CONTENT verified RTL: titles RIGHT, icon+text rows correct order, every Column has CrossAxisAlignment.start
-11. CRUD: local updates only (no re-fetch) | RefreshIndicator on all data screens
-12. Multi-section → CustomScrollView + Slivers (no shrinkWrap nested lists) | Sliver sections: no double-wrap with .toSliver()
-13. Widget splitting: body = layout only, each section in separate file
-14. Widget reuse: no duplicate cards across features, shared moved to app_shared/
-15. Forms: FormMixin + validateAndScroll() + ArabicNumbersFormatter + .toEnglishNumbers()
-16. Controllers/subscriptions disposed | No print()/debugPrint() in final code
-17. DI: @injectable + injector<T>() | Access modifiers: private _ for internal
-18. Pre-delivery checklist from `feature-development` skill PHASE 7 — all items passed
-19. Run `/post-feature-review` skill — fix any critical/high issues found
+11. Card CONTENT verified RTL: titles RIGHT, icon+text rows correct order, every Column has CrossAxisAlignment.start
+12. CRUD: local updates only (no re-fetch) | RefreshIndicator on all data screens
+13. Multi-section → CustomScrollView + Slivers (no shrinkWrap nested lists) | Sliver sections: no double-wrap with .toSliver()
+14. Widget splitting: body = layout only, each section in separate file
+15. Widget reuse: no duplicate cards across features, shared moved to app_shared/
+16. Forms: FormMixin + validateAndScroll() + ArabicNumbersFormatter + .toEnglishNumbers()
+17. Controllers/subscriptions disposed | No print()/debugPrint() in final code
+18. DI: @injectable + injector<T>() | Access modifiers: private _ for internal
+19. Mock data: if UI_AND_API or mock mode → `MockConfig.useMock` check in cubit + `{feature}_mock.dart` created (UI_ONLY features skip — no cubits)
+20. Pre-delivery checklist from `feature-development` skill PHASE 7 — all items passed
+21. Run `/post-feature-review` skill — fix any critical/high issues found

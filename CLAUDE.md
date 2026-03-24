@@ -11,7 +11,8 @@ Flutter RTL Arabic-first mobile application built with Clean Architecture + BLoC
 
 ## Quick Commands
 ```bash
-flutter run                                                    # Run app
+flutter run                                                    # Run app (real API)
+flutter run --dart-define=USE_MOCK=true                        # Run app (mock data)
 flutter pub get                                                # Install dependencies
 dart run build_runner build --delete-conflicting-outputs        # Generate injectable/freezed
 dart run generate/strings/main.dart                            # Generate locale keys
@@ -93,6 +94,16 @@ lib/src/features/{name}/
 - AppBar/BottomSheet/Dialog → check RTL with `Directionality` wrapper if content reversed
 - Dotted borders → use `dotted_border` package
 
+### API Design & Mock Data
+- Postman Collections: `postman/` folder with `{feature}.postman_collection.json` per feature group
+- Unified response: `{status, code, message, data?}` — Arabic messages
+- Multi-section screens → separate service per section (never one mega-endpoint)
+- Lists → pagination required (`?page=1&per_page=10`)
+- Multi-step forms → `validate-step-{n}` per step + final create
+- File uploads → separate `POST /upload-file` returns `{id, url, type}`, then pass `file_id`
+- Mock data: `--dart-define=USE_MOCK=true` → `MockConfig.useMock` in every cubit
+- Mock files: `entity/{feature}_mock.dart` with realistic Arabic data, 8-15 items
+
 ### UI-Only Mode
 - Before starting any feature → ask: "UI Only or UI + API?"
 - UI Only → dummy data, no API calls, no Postman
@@ -108,7 +119,7 @@ lib/src/features/{name}/
 
 Both `.claude/skills/` and `.cursor/rules/` contain the **same content and rules** — synced for equal power in Claude Code and Cursor IDE.
 
-### Skills (.claude/skills/) — 26 total
+### Skills (.claude/skills/) — 28 total
 Run `/skill-name` for detailed patterns:
 
 **Workflow & Entry Points:**
@@ -125,6 +136,8 @@ Run `/skill-name` for detailed patterns:
 
 **API & Data Flow:**
 - `api-pipeline` — Complete Postman → ApiConstants → Entity → CrudBaseParams → Cubit → UI pipeline
+- `api-design` — Auto-generate Postman Collection JSON from Figma screens (unified entities, pagination, multi-step forms, file upload)
+- `mock-data` — Mock data switching system via `--dart-define=USE_MOCK=true/false`, unified across all cubits
 - `form-api-pipeline` — Complete form → ViewController → Params → validation → API submit → success
 - `navigation-patterns` — Go.to() with arguments, back with result, refresh parent, tab navigation
 - `multi-screen-flow` — List/detail/edit/create patterns with data passing and screen linking
@@ -151,11 +164,13 @@ Run `/skill-name` for detailed patterns:
 - `pubspec-manager` — Package detection, platform config
 - `accessibility` — Tap targets ≥44, semantic labels, contrast
 
-### Cursor Rules (.cursor/rules/) — 26 total
+### Cursor Rules (.cursor/rules/) — 28 total
 Mirror of all skills above, plus:
 - `flutter-base-coding-standards.mdc` — Same as `coding-standards` skill
 - `flutter-feature-development.mdc` — Same as `feature-development` skill
 - `scaffold-statusbar.mdc` — Same as `scaffold-patterns` skill
+- `api-design.mdc` — Same as `api-design` skill (Postman Collection generation)
+- `mock-data.mdc` — Same as `mock-data` skill (mock/real API switching)
 - `error-handling-and-resilience.mdc` — **Always active** (alwaysApply: true)
 - `post-feature-review.mdc` — **Always active** (alwaysApply: true)
 
