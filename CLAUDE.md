@@ -105,9 +105,10 @@ lib/src/features/{name}/
 - Mock files: `entity/{feature}_mock.dart` with realistic Arabic data, 8-15 items
 
 ### UI-Only Mode
-- Before starting any feature → ask: "UI Only or UI + API?"
-- UI Only → dummy data, no API calls, no Postman
-- UI + API → full workflow with API integration
+- Before starting any feature → ask: "UI Only or UI + API?" then "Existing Postman or Auto Generate?"
+- **UI Only** → static data in widgets, no cubits, no API, no Postman
+- **UI + API (Existing Postman)** → provide Postman link → read & implement
+- **UI + API (Auto Generate)** → analyze Figma → generate Postman JSON + entities + cubits + mock data
 - Never create fake API endpoints — they crash the app
 
 ### Platform Configuration

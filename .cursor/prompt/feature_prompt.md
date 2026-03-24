@@ -7,24 +7,40 @@ description: Full feature development workflow — fill in feature name, Figma l
 
 Feature: [FEATURE_NAME]
 Figma Node: [FIGMA_URL]
-Postman Collection: [POSTMAN_URL] (or: لا يوجد حاليا)
 Mode: [UI_ONLY / UI_AND_API]
+API Source: [EXISTING_POSTMAN / AUTO_GENERATE / NONE]
+
+> If **EXISTING_POSTMAN** → provide: Postman Collection: [POSTMAN_URL]
+> If **AUTO_GENERATE** → will be generated from Figma in STEP 4
+> If **NONE** → UI_ONLY mode (no API)
 
 ---
 
-## ⚠️ FIRST — ASK THE USER: UI Only or UI + API?
+## ⚠️ FIRST — ASK THE USER (3 أسئلة):
 
 > **قبل ما تبدأ أي شغل — لازم تسأل المستخدم:**
-> **"عاوز تصميم UI بس ولا UI + API مع بعض؟"**
+>
+> ### السؤال 1: "عاوز تصميم UI بس ولا UI + API مع بعض؟"
 >
 > - **UI Only** → اعمل الشاشات بـ static data مباشرة في الـ widgets، بدون cubits، بدون API calls، بدون Postman. لا تحتاج MockConfig.
-> - **UI + API** → الـ workflow الكامل: Postman Collection (أو auto-generate من Figma) + cubits مع `MockConfig.useMock` + mock data files + API integration.
+> - **UI + API** → كمّل للسؤال 2.
 >
-> **لو المستخدم مش عنده API حالياً → اشتغل UI Only. ممنوع تخترع API endpoints وهمية لأنها هتخلي التطبيق يقف.**
+> ### السؤال 2 (لو UI + API): "عندك Postman Collection جاهزة ولا أولّدلك الـ API؟"
+>
+> - **A) عندي Postman جاهز** → ادّيني الـ link وأنا هقرأه وأنفذه (الطريقة القديمة — STEP 4 يتخطى، STEP 5 يشتغل)
+> - **B) ولّدلي الـ API** → هحلل شاشات Figma وأولّد Postman Collection JSON + mock data + entities أوتوماتيك (الطريقة الجديدة — STEP 4 يشتغل كامل)
+>
+> ### ملخص الأوضاع الثلاثة:
+>
+> | الوضع | Cubits | API Source | MockConfig | Postman |
+> |-------|--------|------------|------------|--------|
+> | **UI Only** | ❌ لا | — | ❌ لا | ❌ لا |
+> | **UI + API (Existing Postman)** | ✅ نعم | Postman Collection جاهزة | ✅ نعم | ✅ جاهز |
+> | **UI + API (Auto Generate)** | ✅ نعم | يتولّد من Figma | ✅ نعم | ✅ يتولّد في STEP 4 |
 >
 > **الفرق بين UI Only و Mock Mode:**
 > - **UI Only** = مفيش cubits أصلاً — data ثابتة في الـ widget مباشرة
-> - **Mock Mode** (`--dart-define=USE_MOCK=true`) = cubits موجودة بس بتسحب من mock files بدل الـ API — ده لـ UI+API mode بس
+> - **Mock Mode** (`--dart-define=USE_MOCK=true`) = cubits موجودة بس بتسحب من mock files بدل الـ API — ده لـ UI+API mode بس (سواء existing أو auto-generated)
 
 ---
 
@@ -127,14 +143,36 @@ RTL Conversion (إلزامي):
 - NEVER: Positioned(left:/right:), Align(centerLeft/Right), EdgeInsets.only(left/right:), TextAlign.left, Directionality on layouts (exception: single Text widget fix inside complex components)
 
 ══════════════════════════════════════════════════════════════
-STEP 4 — DESIGN API (if no Postman yet) — SKIP IF UI_ONLY MODE
+STEP 4 — API SOURCE — SKIP IF UI_ONLY MODE
 ══════════════════════════════════════════════════════════════
 
-**If UI_ONLY mode:** Skip this step entirely.
+**If UI_ONLY mode:** Skip STEP 4 + STEP 5 entirely.
 
-**If Postman Collection already exists:** Skip to Step 5.
+---
 
-**If NO Postman Collection yet — auto-generate from Figma using `api-design` skill:**
+### Path A: EXISTING_POSTMAN (عندي Postman جاهز)
+
+> المستخدم عنده Postman Collection جاهزة — اقرأها ونفّذها.
+
+- Read full request/response schema from the provided Postman Collection
+- Check pagination → PaginatedCubit + PaginatedListWidget if yes
+- Check actions (delete/update/toggle) → plan local state update (NEVER re-fetch):
+  - Add: insert at index 0 → setSuccess(data: [newItem, ...state.data])
+  - Edit: map + replace → state.data.map((e) => e.id == id ? updated : e).toList()
+  - Delete: removeWhere → state.data..removeWhere((e) => e.id == id)
+- One cubit per endpoint — never merge
+- Entity safety: factory initial(), fromJson with ?? defaults, tryParse only (never parse)
+- Create mock data files using `mock-data` skill (for `--dart-define=USE_MOCK=true` support)
+
+→ **بعد ما تخلص، روح STEP 6 (Plan)**
+
+---
+
+### Path B: AUTO_GENERATE (ولّدلي الـ API من Figma)
+
+> مفيش Postman — هنولّد كل حاجة أوتوماتيك من شاشات Figma باستخدام `api-design` skill.
+
+**Phase 1: Analyze & Design**
 
 1. Analyze the Figma screens → extract required services using extraction rules:
    - Multi-section screen → separate service per section
@@ -143,35 +181,42 @@ STEP 4 — DESIGN API (if no Postman yet) — SKIP IF UI_ONLY MODE
    - File uploads → separate `upload-file` service
    - CRUD → 5 standard services (list/detail/create/update/delete)
 
-2. Design endpoints (naming, method, URL structure, entities)
+2. Design endpoints (naming, method, URL structure, unified entities)
 
-3. Generate Postman Collection JSON in `postman/{feature}.postman_collection.json`:
+3. **عرض التحليل على المستخدم والانتظار للموافقة قبل التوليد:**
+   - عدد الـ services المستخرجة
+   - كل endpoint: method + URL + وصف
+   - الـ entities الموحدة وحقولها
+
+**Phase 2: Generate (بعد الموافقة)**
+
+4. Generate Postman Collection JSON in `postman/{feature}.postman_collection.json`:
    - Unified response format: `{status, code, message, data?}`
    - Arabic messages for all responses
    - Success + Error response examples for every endpoint
    - Unified entities (same shape everywhere)
 
-4. Create mock data files using `mock-data` skill:
+5. Add endpoints to `ApiConstants`
+
+6. Create entities with `factory initial()` + safe `fromJson`
+
+7. Create mock data files using `mock-data` skill:
    - `entity/{feature}_mock.dart` with realistic Arabic data
    - 8-15 items in lists
    - All entity fields populated
-   - Cubit checks `MockConfig.useMock` before API call
+
+8. Create cubits with `MockConfig.useMock` check
+
+→ **بعد ما تخلص، روح STEP 6 (Plan) — الـ entities والـ cubits جاهزين، فالـ plan هيركز على الـ UI**
+
+---
 
 ══════════════════════════════════════════════════════════════
-STEP 5 — READ API (via Postman MCP) — SKIP IF UI_ONLY MODE
+STEP 5 — (RESERVED — merged into STEP 4 paths above)
 ══════════════════════════════════════════════════════════════
 
-**If UI_ONLY mode:** Skip this step entirely. Create entities with dummy/static data only.
-
-**If UI_AND_API mode:**
-- Read full request/response schema (from Postman Collection or generated JSON)
-- Check pagination → PaginatedCubit + PaginatedListWidget if yes
-- Check actions (delete/update/toggle) → plan local state update (NEVER re-fetch):
-  - Add: insert at index 0 → setSuccess(data: [newItem, ...state.data])
-  - Edit: map + replace → state.data.map((e) => e.id == id ? updated : e).toList()
-  - Delete: removeWhere → state.data..removeWhere((e) => e.id == id)
-- One cubit per endpoint — never merge
-- Entity safety: factory initial(), fromJson with ?? defaults, tryParse only (never parse)
+> **This step is now handled within STEP 4 Path A and Path B above.**
+> Proceed directly to STEP 6.
 
 ══════════════════════════════════════════════════════════════
 STEP 6 — PLAN BEFORE CODING (انتظر الموافقة)
