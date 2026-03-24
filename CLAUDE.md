@@ -27,8 +27,9 @@ dart run generate/strings/main.dart                            # Generate locale
 - Data: RemoteDatasource + DTOs + Dio
 
 ### State Management
-- API calls → `AsyncCubit<T>` with `executeAsync()`
-- Paginated lists → `PaginatedCubit<T>`
+- API calls → `AsyncCubit<T>` with `executeAsync()` or `executeMockOrAsync()`
+- Paginated lists → `PaginatedCubit<T>` — **mandatory for any list endpoint with standalone screen**
+- `AsyncCubit<List<T>>` only for dropdowns, sub-sections, filter chips
 - CRUD → update state locally, NEVER re-fetch after add/edit/delete
 - UI state (controllers, notifiers) → `ViewController` class, not directly in view
 
@@ -95,14 +96,15 @@ lib/src/features/{name}/
 - Dotted borders → use `dotted_border` package
 
 ### API Design & Mock Data
-- Postman Collections: `postman/` folder with `{feature}.postman_collection.json` per feature group
+- Postman Collection: **ONE file** `postman/app_name.postman_collection.json` with internal folders (Auth, Products, Settings, Shared, etc.) — NEVER separate files per feature
 - Unified response: `{status, code, message, data?}` — Arabic messages
 - Multi-section screens → separate service per section (never one mega-endpoint)
-- Lists → pagination required (`?page=1&per_page=10`)
+- Lists → pagination required (`?page=1&per_page=10`) → always `PaginatedCubit`
 - Multi-step forms → `validate-step-{n}` per step + final create
 - File uploads → separate `POST /upload-file` returns `{id, url, type}`, then pass `file_id`
-- Mock data: `--dart-define=USE_MOCK=true` → `MockConfig.useMock` in every cubit
-- Mock files: `entity/{feature}_mock.dart` with realistic Arabic data, 8-15 items
+- Mock data: `--dart-define=USE_MOCK=true` → `executeMockOrAsync` in AsyncCubit, `MockConfig.useMock` in PaginatedCubit
+- Mock files: `core/config/mocks/{feature}_mock.dart` (centralized, NOT in entity/) — realistic Arabic data, 8-15 items
+- Mock files are plain classes with direct import — NOT `part of` any imports file
 
 ### UI-Only Mode
 - Before starting any feature → ask: "UI Only or UI + API?" then "Existing Postman or Auto Generate?"

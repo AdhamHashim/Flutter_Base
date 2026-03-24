@@ -23,7 +23,7 @@ Step 1: Analyze UI → identify required services
     ↓
 Step 2: Design endpoints (naming, method, pagination, entities)
     ↓
-Step 3: Generate Postman Collection JSON (per feature group)
+Step 3: Generate ONE Postman Collection JSON (with internal folders per section)
     ↓
 Step 4: Add to ApiConstants
     ↓
@@ -138,16 +138,41 @@ prefix for auth:             user/auth/
 
 ## Step 3: Postman Collection JSON Structure
 
-### File Location
+### File Location — SINGLE Collection File (MANDATORY)
+
+> **⚠️ فايل واحد بس لكل الـ API — مش ملف لكل feature.**
+> الـ endpoints بتتقسم بـ **folders داخل الـ collection نفسها.**
 
 ```
 postman/
-├── _environment.json                    ← base URL + token variables
-├── auth.postman_collection.json         ← login, register, verify, forget password
-├── {feature}.postman_collection.json    ← per feature group
-├── settings.postman_collection.json     ← profile, notifications, password
-├── shared.postman_collection.json       ← upload-file, countries, cities
-└── _entities.md                         ← entity reference (unified shapes)
+├── _environment.json                         ← base URL + token variables
+├── app_name.postman_collection.json          ← <<<< ONE FILE — all endpoints
+└── _entities.md                              ← entity reference (unified shapes)
+```
+
+### Collection Internal Structure (Folders)
+
+> **كل مجموعة endpoints بتبقى في folder جوا الـ collection:**
+
+```json
+{
+  "info": { "name": "App Name API", "schema": "..." },
+  "item": [
+    { "name": "Auth", "item": [ /* login, register, verify, ... */ ] },
+    { "name": "Home", "item": [ /* banners, categories, ... */ ] },
+    { "name": "Products", "item": [ /* list, detail, create, ... */ ] },
+    { "name": "Settings", "item": [ /* profile, notifications, ... */ ] },
+    { "name": "Shared", "item": [ /* upload-file, countries, ... */ ] }
+  ]
+}
+```
+
+### Rules
+
+```
+❌ FORBIDDEN: ملف لكل feature (auth.postman_collection.json, products.postman_collection.json)
+❌ FORBIDDEN: flat list بدون folders
+✅ CORRECT: ملف واحد + folders داخلية لكل section
 ```
 
 ### Unified Response Format
@@ -228,25 +253,33 @@ class ProductEntity {
   );
 }
 
-// Cubit — mock check at top
+// Cubit — executeMockOrAsync (clean, no boilerplate)
 @injectable
 class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
+  ProductsCubit() : super([]);
+
   Future<void> fetchProducts() async {
-    if (MockConfig.useMock) {
-      setLoading();
-      await MockConfig.simulateDelay();
-      setSuccess(data: ProductMock.list);
-      return;
-    }
-    await executeAsync(...);
+    await executeMockOrAsync(
+      mockData: ProductMock.list,
+      operation: () => baseCrudUseCase.call(CrudBaseParams(
+        api: ApiConstants.products,
+        httpRequestType: HttpRequestType.get,
+        mapper: (json) => (json['data']['data'] as List)
+            .map((e) => ProductEntity.fromJson(e)).toList(),
+      )),
+    );
   }
 }
+
+// Mock file: lib/src/core/config/mocks/product_mock.dart (NOT in entity/)
 ```
 
 ---
 
 ## Postman Collection Generation Checklist
 
+- [ ] **ملف واحد فقط** `postman/app_name.postman_collection.json` — مش ملف لكل feature
+- [ ] الـ endpoints متقسمة في **folders داخلية** (Auth, Home, Products, Settings, Shared, ...)
 - [ ] كل endpoint له اسم واضح وقصير
 - [ ] الـ URL structure متسقة (`{prefix}/{resource}`)
 - [ ] كل list endpoint فيه pagination
@@ -255,6 +288,6 @@ class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
 - [ ] Multi-step forms → validate per step + final create
 - [ ] File uploads → separate `upload-file` service
 - [ ] Response format موحد (`{status, code, message, data?}`)
-- [ ] Mock data file created لكل entity
+- [ ] Mock data file in `core/config/mocks/` (NOT entity/)
 - [ ] ApiConstants updated
-- [ ] Cubit has mock support via `MockConfig.useMock`
+- [ ] Cubit uses `executeMockOrAsync` (AsyncCubit) or `MockConfig.useMock` (PaginatedCubit)

@@ -23,7 +23,7 @@ Step 1: Analyze UI → identify required services
     ↓
 Step 2: Design endpoints (naming, method, pagination, entities)
     ↓
-Step 3: Generate Postman Collection JSON (per feature group)
+Step 3: Generate ONE Postman Collection JSON (with internal folders per section)
     ↓
 Step 4: Add to ApiConstants
     ↓
@@ -138,16 +138,85 @@ prefix for auth:             user/auth/
 
 ## Step 3: Postman Collection JSON Structure
 
-### File Location
+### File Location — SINGLE Collection File (MANDATORY)
+
+> **⚠️ فايل واحد بس لكل الـ API — مش ملف لكل feature.**
+> الـ endpoints بتتقسم بـ **folders داخل الـ collection نفسها.**
 
 ```
 postman/
-├── _environment.json                    ← base URL + token variables
-├── auth.postman_collection.json         ← login, register, verify, forget password
-├── {feature}.postman_collection.json    ← per feature group
-├── settings.postman_collection.json     ← profile, notifications, password
-├── shared.postman_collection.json       ← upload-file, countries, cities
-└── _entities.md                         ← entity reference (unified shapes)
+├── _environment.json                         ← base URL + token variables
+├── app_name.postman_collection.json          ← <<<< ONE FILE — all endpoints
+└── _entities.md                              ← entity reference (unified shapes)
+```
+
+### Collection Internal Structure (Folders)
+
+> **كل مجموعة endpoints بتبقى في folder جوا الـ collection:**
+
+```json
+{
+  "info": {
+    "name": "App Name API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        // login, register, verify, forget-password, logout
+      ]
+    },
+    {
+      "name": "Home",
+      "item": [
+        // banners, categories, featured-products
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        // list, detail, create, update, delete, validate-steps
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        // list, detail, cancel, rate
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        // profile, update-profile, change-password, notifications
+      ]
+    },
+    {
+      "name": "Shared",
+      "item": [
+        // upload-file, countries, cities
+      ]
+    }
+  ]
+}
+```
+
+### Folder Naming Convention
+
+| Folder | Contents |
+|--------|----------|
+| `Auth` | login, register, verify-otp, forget-password, reset-password, logout |
+| `Home` | banners, categories, featured items (multi-section screen services) |
+| `{Feature}` | CRUD endpoints for the feature (products, orders, etc.) |
+| `Settings` | profile, update-profile, change-password, notifications, delete-account |
+| `Shared` | upload-file, countries, cities, app-config — reusable across features |
+
+### Rules
+
+```
+❌ FORBIDDEN: ملف لكل feature (auth.postman_collection.json, products.postman_collection.json)
+❌ FORBIDDEN: flat list بدون folders
+✅ CORRECT: ملف واحد + folders داخلية لكل section
 ```
 
 ### Unified Response Format
@@ -337,7 +406,7 @@ class ProductEntity {
 }
 ```
 
-### Cubit — with Mock Data Support
+### Cubit — with Mock Data Support (executeMockOrAsync)
 
 ```dart
 @injectable
@@ -345,11 +414,8 @@ class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
   ProductsCubit() : super([]);
 
   Future<void> fetchProducts() async {
-    if (MockConfig.useMock) {
-      await _fetchMock();
-      return;
-    }
-    await executeAsync(
+    await executeMockOrAsync(
+      mockData: ProductMock.list,
       operation: () => baseCrudUseCase.call(CrudBaseParams(
         api: ApiConstants.products,
         httpRequestType: HttpRequestType.get,
@@ -358,30 +424,36 @@ class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
       )),
     );
   }
-
-  Future<void> _fetchMock() async {
-    setLoading();
-    await Future.delayed(const Duration(milliseconds: 800));
-    setSuccess(data: ProductMock.list);
-  }
 }
 ```
 
-### Mock Data File
+### Mock Data File (Centralized)
+
+> **Mock files live in `core/config/mocks/` — NOT in entity/.**
 
 ```dart
-// File: lib/src/features/products/entity/product_mock.dart
+// File: lib/src/core/config/mocks/product_mock.dart  ← centralized
 
 class ProductMock {
-  static List<ProductEntity> get list => [
-    const ProductEntity(
-      id: '1', name: 'منتج تجريبي ١', image: 'https://picsum.photos/200',
-      price: 150.0, categoryName: 'إلكترونيات', createdAt: DateTime(2026, 1, 1),
-    ),
-    // ... more mock items
-  ];
+  ProductMock._();
+
+  static List<ProductEntity> get list => List.generate(12, (i) => ProductEntity(
+    id: '${i + 1}',
+    name: _names[i % _names.length],
+    image: 'https://picsum.photos/seed/product$i/200/200',
+    price: (i + 1) * 75.0,
+    categoryName: _categories[i % _categories.length],
+    createdAt: DateTime(2026, 1, i + 1),
+  ));
 
   static ProductEntity get detail => list.first;
+
+  static Map<String, dynamic> paginatedResponse(int page, {int perPage = 10}) {
+    // ... sliced paginated data
+  }
+
+  static const _names = ['آيفون 15 برو ماكس', 'سامسونج جالكسي S24', ...];
+  static const _categories = ['هواتف ذكية', 'لابتوب', 'إكسسوارات'];
 }
 ```
 
@@ -412,8 +484,10 @@ class ProductsScreen extends StatelessWidget {
 
 ## Postman Collection Generation Checklist
 
-لكل feature group، تأكد من:
+تأكد من:
 
+- [ ] **ملف واحد فقط** `postman/app_name.postman_collection.json` — مش ملف لكل feature
+- [ ] الـ endpoints متقسمة في **folders داخلية** (Auth, Home, Products, Settings, Shared, ...)
 - [ ] كل endpoint له اسم واضح وقصير
 - [ ] الـ URL structure متسقة (`{prefix}/{resource}`)
 - [ ] كل list endpoint فيه pagination
@@ -424,9 +498,9 @@ class ProductsScreen extends StatelessWidget {
 - [ ] Headers موجودة (Accept, Content-Type, Authorization, Accept-Language)
 - [ ] Response examples لكل حالة (success, validation error, auth error, not found)
 - [ ] Response format موحد (`{status, code, message, data?}`)
-- [ ] Mock data file created لكل entity
+- [ ] Mock data file in `core/config/mocks/` (NOT entity/)
 - [ ] ApiConstants updated
-- [ ] Cubit has mock support via `MockConfig.useMock`
+- [ ] Cubit uses `executeMockOrAsync` (AsyncCubit) or `MockConfig.useMock` (PaginatedCubit)
 
 ---
 

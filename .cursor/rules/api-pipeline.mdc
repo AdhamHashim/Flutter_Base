@@ -249,19 +249,27 @@ Future<void> fetchProducts({String? categoryId, String? search}) async {
 }
 ```
 
-### Paginated List:
+### Paginated List (MANDATORY for list endpoints with standalone screens):
+
+> **Mock files: `lib/src/core/config/mocks/` — NOT in entity/.**
+> **Use `executeMockOrAsync` for AsyncCubit, direct `MockConfig.useMock` for PaginatedCubit.**
 
 ```dart
 @injectable
 class ProductsCubit extends PaginatedCubit<ProductEntity> {
   @override
-  Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) =>
-      baseCrudUseCase.call(CrudBaseParams(
-        api: ApiConstants.products,
-        httpRequestType: HttpRequestType.get,
-        queryParameters: ConstantManager.paginateJson(page),
-        mapper: (json) => json,
-      ));
+  Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) async {
+    if (MockConfig.useMock) {
+      await MockConfig.simulateDelay();
+      return Success(ProductMock.paginatedResponse(page));
+    }
+    return baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.products,
+      httpRequestType: HttpRequestType.get,
+      queryParameters: ConstantManager.paginateJson(page),
+      mapper: (json) => json,
+    ));
+  }
 
   @override
   List<ProductEntity> parseItems(json) => (json['data'] as List)

@@ -1,6 +1,6 @@
 ---
-description: Mock data switching system — environment variable based, unified across all cubits, with mock data file patterns per feature.
-globs: lib/src/features/**/entity/**_mock.dart, lib/src/features/**/cubits/**/*.dart, lib/src/core/config/mock_config.dart
+description: Mock data switching system — environment variable based, unified across all cubits, centralized mock files in config/mocks/, with executeMockOrAsync helper to eliminate boilerplate.
+globs: lib/src/core/config/mocks/**/*.dart, lib/src/features/**/cubits/**/*.dart, lib/src/core/config/mock_config.dart
 ---
 
 # Rule: Mock Data System — Flutter_Base
@@ -9,6 +9,7 @@ globs: lib/src/features/**/entity/**_mock.dart, lib/src/features/**/cubits/**/*.
 
 نظام موحد للـ switch بين mock data و real API عبر environment variable.
 يشتغل وقت الـ build (مش runtime) — زي الـ flavors.
+Mock data مركزية في `config/mocks/` — الـ cubit يفضل نضيف ومقروء.
 
 ---
 
@@ -27,16 +28,24 @@ flutter run                                 ← default = false (real API)
 ```
 lib/src/core/
 ├── config/
-│   └── mock_config.dart          ← single switch point
+│   ├── mock_config.dart              ← single switch point + executeMockOrAsync helper
+│   └── mocks/                        ← ALL mock data files (centralized)
+│       ├── product_mock.dart
+│       ├── order_mock.dart
+│       ├── notification_mock.dart
+│       ├── home_mock.dart
+│       └── auth_mock.dart
 │
 lib/src/features/{feature}/
 ├── entity/
-│   ├── {feature}_entity.dart     ← real entity (used everywhere)
-│   └── {feature}_mock.dart       ← mock data for this feature
+│   └── {feature}_entity.dart         ← real entity only (NO mock files here)
 ├── presentation/
 │   └── cubits/
-│       └── {feature}_cubit.dart  ← checks MockConfig.useMock
+│       └── {feature}_cubit.dart      ← uses executeMockOrAsync — clean & readable
 ```
+
+> **⚠️ Mock files NEVER inside `entity/` folder.**
+> All mock files live in `lib/src/core/config/mocks/` — centralized, easy to find, keeps feature folders clean.
 
 ---
 
@@ -57,137 +66,164 @@ class MockConfig {
 }
 ```
 
-> **`bool.fromEnvironment`** يقرأ `--dart-define` وقت الـ compile.
+---
+
+## executeMockOrAsync — Eliminate Boilerplate (MANDATORY)
+
+> **Method موجود في `AsyncCubit` base class — كل cubit يقدر يستخدمه.**
+
+```dart
+// Inside AsyncCubit:
+Future<void> executeMockOrAsync({
+  required T mockData,
+  required Future<Result<T, Failure>> Function() operation,
+}) async {
+  if (MockConfig.useMock) {
+    setLoading();
+    await MockConfig.simulateDelay();
+    setSuccess(data: mockData);
+    return;
+  }
+  await executeAsync(operation: operation);
+}
+```
+
+**Usage — Clean cubit:**
+```dart
+Future<void> fetchProducts() async {
+  await executeMockOrAsync(
+    mockData: ProductMock.list,
+    operation: () => baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.products,
+      httpRequestType: HttpRequestType.get,
+      mapper: (json) => (json['data']['data'] as List)
+          .map((e) => ProductEntity.fromJson(e)).toList(),
+    )),
+  );
+}
+```
 
 ---
 
-## Mock Data Files (Per Feature)
+## Mock Data Files (Centralized in config/mocks/)
 
-### Pattern
+### File Template
 
 ```dart
-// File: lib/src/features/products/entity/product_mock.dart
-
-part of '../presentation/imports/view_imports.dart';
+// File: lib/src/core/config/mocks/product_mock.dart
 
 class ProductMock {
   ProductMock._();
 
-  static List<ProductEntity> get list => List.generate(
-    10,
-    (i) => ProductEntity(
-      id: '${i + 1}',
-      name: 'منتج تجريبي ${i + 1}',
-      image: 'https://picsum.photos/seed/product$i/200/200',
-      price: (i + 1) * 50.0,
-      categoryName: 'فئة ${(i % 3) + 1}',
-      createdAt: DateTime(2026, 1, i + 1),
-    ),
-  );
+  static List<ProductEntity> get list => List.generate(12, (i) => ProductEntity(
+    id: '${i + 1}',
+    name: _names[i % _names.length],
+    image: 'https://picsum.photos/seed/product$i/200/200',
+    price: (i + 1) * 75.0,
+    categoryName: _categories[i % _categories.length],
+    createdAt: DateTime(2026, 1, i + 1),
+  ));
 
   static ProductEntity get detail => list.first;
 
-  static Map<String, dynamic> paginatedResponse(int page, {int perPage = 10}) => {
-    'data': {
-      'data': list.skip((page - 1) * perPage).take(perPage)
-          .map((e) => e.toJson()).toList(),
-      'pagination': {
-        'current_page': page,
-        'last_page': 3,
-        'per_page': perPage,
-        'total': 25,
+  static Map<String, dynamic> paginatedResponse(int page, {int perPage = 10}) {
+    final allItems = List.generate(25, (i) => ProductEntity(...));
+    final start = (page - 1) * perPage;
+    final end = (start + perPage).clamp(0, allItems.length);
+    final pageItems = start < allItems.length ? allItems.sublist(start, end) : <ProductEntity>[];
+    return {
+      'data': {
+        'data': pageItems.map((e) => e.toMap).toList(),
+        'pagination': {
+          'current_page': page,
+          'last_page': (allItems.length / perPage).ceil(),
+          'per_page': perPage,
+          'total': allItems.length,
+        },
       },
-    },
-  };
+    };
+  }
+
+  static const _names = ['آيفون 15 برو ماكس', 'سامسونج جالكسي S24', ...];
+  static const _categories = ['هواتف ذكية', 'لابتوب', 'إكسسوارات'];
 }
 ```
 
 ### Naming Convention
 
-| Feature | Mock File | Class |
-|---------|-----------|-------|
-| Products | `product_mock.dart` | `ProductMock` |
-| Orders | `order_mock.dart` | `OrderMock` |
-| Notifications | `notification_mock.dart` | `NotificationMock` |
-| Auth | `auth_mock.dart` | `AuthMock` |
+| Feature | Mock File Path | Class |
+|---------|---------------|-------|
+| Products | `config/mocks/product_mock.dart` | `ProductMock` |
+| Orders | `config/mocks/order_mock.dart` | `OrderMock` |
+| Home | `config/mocks/home_mock.dart` | `HomeMock` |
+
+> **Mock file is a plain class — NOT a `part of` any imports file.**
+> Import directly: `import 'package:app/src/core/config/mocks/product_mock.dart';`
 
 ---
 
-## Cubit Integration
+## List Services = Always Paginated (MANDATORY RULE)
 
-### GET List (AsyncCubit)
+> **أي endpoint بيرجع list → لازم يكون paginated.**
 
 ```dart
-@injectable
-class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
-  ProductsCubit() : super([]);
+// ❌ FORBIDDEN — GET list without pagination (standalone screen)
+class ProductsCubit extends AsyncCubit<List<ProductEntity>> { ... }
 
-  Future<void> fetchProducts() async {
-    if (MockConfig.useMock) {
-      setLoading();
-      await MockConfig.simulateDelay();
-      setSuccess(data: ProductMock.list);
-      return;
-    }
-    await executeAsync(
-      operation: () => baseCrudUseCase.call(CrudBaseParams(
-        api: ApiConstants.products,
-        httpRequestType: HttpRequestType.get,
-        mapper: (json) => (json['data']['data'] as List)
-            .map((e) => ProductEntity.fromJson(e)).toList(),
-      )),
-    );
-  }
-}
+// ✅ CORRECT — paginated list
+class ProductsCubit extends PaginatedCubit<ProductEntity> { ... }
 ```
 
-### POST/PUT (Action Cubit)
+### Exceptions — When AsyncCubit<List<T>> is OK:
+
+| Case | Why |
+|------|-----|
+| Dropdown data (cities, categories) | Small fixed list, no scroll needed |
+| Multi-section screen sub-lists (banners) | Short list within a larger screen |
+| Filter chips / tags | Small, rarely exceeds 20 items |
+
+---
+
+## Cubit Integration Patterns
+
+### AsyncCubit — GET/POST/PUT/DELETE (with executeMockOrAsync)
 
 ```dart
-@injectable
-class CreateProductCubit extends AsyncCubit<ProductEntity> {
-  CreateProductCubit() : super(ProductEntity.initial());
+// GET List
+await executeMockOrAsync(
+  mockData: ProductMock.list,
+  operation: () => baseCrudUseCase.call(CrudBaseParams(...)),
+);
 
-  Future<void> createProduct(ProductParams params) async {
-    if (MockConfig.useMock) {
-      setLoading();
-      await MockConfig.simulateDelay();
-      setSuccess(data: ProductEntity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: params.name, ...
-      ));
-      return;
-    }
-    await executeAsync(...);
-  }
-}
+// GET Detail
+await executeMockOrAsync(
+  mockData: ProductMock.detail,
+  operation: () => baseCrudUseCase.call(CrudBaseParams(...)),
+);
+
+// POST Create
+await executeMockOrAsync(
+  mockData: ProductEntity(id: DateTime.now().millisecondsSinceEpoch.toString(), ...),
+  operation: () => baseCrudUseCase.call(CrudBaseParams(...)),
+);
+
+// DELETE
+await executeMockOrAsync(
+  mockData: BaseModel(message: 'تم الحذف بنجاح'),
+  operation: () => baseCrudUseCase.call(CrudBaseParams(...)),
+);
 ```
 
-### PaginatedCubit
+### PaginatedCubit — Direct MockConfig check
 
 ```dart
-@injectable
-class ProductsCubit extends PaginatedCubit<ProductEntity> {
-  @override
-  Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) async {
-    if (MockConfig.useMock) {
-      await MockConfig.simulateDelay();
-      return Success(ProductMock.paginatedResponse(page));
-    }
-    return baseCrudUseCase.call(CrudBaseParams(
-      api: ApiConstants.products,
-      httpRequestType: HttpRequestType.get,
-      queryParameters: ConstantManager.paginateJson(page),
-      mapper: (json) => json,
-    ));
+@override
+Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) async {
+  if (MockConfig.useMock) {
+    await MockConfig.simulateDelay();
+    return Success(ProductMock.paginatedResponse(page));
   }
-
-  @override
-  List<ProductEntity> parseItems(json) =>
-      (json['data'] as List).map((e) => ProductEntity.fromJson(e)).toList();
-
-  @override
-  PaginationMeta parsePagination(json) => PaginationMeta.fromJson(json['pagination']);
+  return baseCrudUseCase.call(CrudBaseParams(...));
 }
 ```
 
@@ -195,60 +231,20 @@ class ProductsCubit extends PaginatedCubit<ProductEntity> {
 
 ## Mock Data Quality Rules
 
-### Rule 1: Realistic Data
-```dart
-// ✅ CORRECT — realistic Arabic data
-ProductEntity(name: 'آيفون 15 برو ماكس', price: 5499.0, categoryName: 'هواتف ذكية')
-
-// ❌ WRONG — placeholder nonsense
-ProductEntity(name: 'Test', price: 0, categoryName: 'Cat1')
-```
-
-### Rule 2: Match Entity Fields
-```dart
-// ✅ All required fields filled with realistic values
-// ❌ WRONG — missing fields or empty strings
-```
-
-### Rule 3: Enough Items for Testing
-```dart
-// ✅ List: 8-15 items (tests scrolling, pagination feel)
-// ✅ Variety: different names, prices, categories, dates
-```
-
-### Rule 4: Simulate Delay
-```dart
-// ✅ Always simulate network delay — tests loading/skeleton states
-await MockConfig.simulateDelay();  // 800ms default
-
-// ❌ WRONG — instant mock (skips loading state testing)
-setSuccess(data: ProductMock.list);  // no delay
-```
-
----
-
-## Run Commands
-
-```bash
-# Design review mode (mock data)
-flutter run --dart-define=USE_MOCK=true
-
-# Real API mode (default)
-flutter run --dart-define=USE_MOCK=false
-flutter run  # same as false
-```
+1. **Realistic Arabic data** — not "Test" or "Cat1"
+2. **All entity fields populated** — no empty strings
+3. **8-15 items** for simple lists, **20-30** for paginated
+4. **Delay always simulated** — via `executeMockOrAsync` or `MockConfig.simulateDelay()`
+5. **Paginated mock** slices data correctly per page + calculates `last_page`
 
 ---
 
 ## Mock Data Checklist (Per Feature)
 
-- [ ] `{feature}_mock.dart` created in `entity/` folder
-- [ ] Mock class has `list`, `detail` getters (and `paginatedResponse` if paginated)
-- [ ] Mock data is realistic (Arabic names, real image URLs, varied values)
-- [ ] 8-15 items in lists (enough for scroll testing)
-- [ ] All entity fields populated (no empty strings for required fields)
-- [ ] Cubit checks `MockConfig.useMock` before API call
-- [ ] `MockConfig.simulateDelay()` called in mock path (tests loading states)
-- [ ] `MockConfig` imported from `core/config/mock_config.dart`
-- [ ] Mock file added as `part` in `view_imports.dart`
+- [ ] `{feature}_mock.dart` created in `core/config/mocks/` (NOT in entity/)
+- [ ] Mock class has `list`, `detail`, `paginatedResponse` as needed
+- [ ] Realistic Arabic data, 8-15 items (or 20-30 for paginated)
+- [ ] Cubit uses `executeMockOrAsync` (AsyncCubit) or `MockConfig.useMock` (PaginatedCubit)
+- [ ] Mock file imported directly (not part-of)
+- [ ] List endpoints use `PaginatedCubit` (standalone screens)
 - [ ] Tested with `--dart-define=USE_MOCK=true`

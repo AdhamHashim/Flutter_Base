@@ -23,6 +23,8 @@ description: Flutter feature development workflow — Figma MCP + Postman MCP + 
 - Every `fromJson` field needs `?? defaultValue` or nullable
 - One cubit per endpoint — never merge
 - Check response fully for pagination before starting
+- **List endpoints → MUST be `PaginatedCubit`** (not `AsyncCubit<List<T>>`)
+- Mock data files in `core/config/mocks/` — NOT in `entity/` folder
 
 ### RTL — Mandatory Check on EVERY Screen:
 - `CrossAxisAlignment.start` → physical RIGHT (use for Arabic text alignment) ✅
@@ -155,6 +157,14 @@ class _FeatureBody extends StatelessWidget {
 
 ## PHASE 5 — Cubit Pattern
 
+### Mock Data Location
+
+> **Mock files live in `lib/src/core/config/mocks/{feature}_mock.dart`** — centralized.
+> **NOT in `features/{feature}/entity/`** — keep feature folders clean.
+> **Use `executeMockOrAsync` helper** to avoid repetitive `if (MockConfig.useMock)` blocks.
+
+### Standard Cubit (with Mock Support)
+
 ```dart
 // part of '../imports/view_imports.dart'
 @injectable
@@ -162,8 +172,9 @@ class MyFeatureCubit extends AsyncCubit<List<MyFeatureEntity>> {
   MyFeatureCubit() : super([]);
 
   Future<void> fetchItems() async {
-    await executeAsync(
-      operation: () async => baseCrudUseCase.call(
+    await executeMockOrAsync(
+      mockData: MyFeatureMock.list,
+      operation: () => baseCrudUseCase.call(
         CrudBaseParams(
           api: ApiConstants.myEndpoint,
           httpRequestType: HttpRequestType.get,
@@ -190,11 +201,35 @@ class MyFeatureCubit extends AsyncCubit<List<MyFeatureEntity>> {
 }
 ```
 
-**Pagination:**
+**Pagination (MANDATORY for list screens):**
 ```dart
-class MyCubit extends PaginatedCubit<ItemEntity> { }
+// List endpoints with standalone screens → ALWAYS PaginatedCubit
+@injectable
+class MyCubit extends PaginatedCubit<ItemEntity> {
+  @override
+  Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) async {
+    if (MockConfig.useMock) {
+      await MockConfig.simulateDelay();
+      return Success(MyFeatureMock.paginatedResponse(page));
+    }
+    return baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.myEndpoint,
+      httpRequestType: HttpRequestType.get,
+      queryParameters: ConstantManager.paginateJson(page),
+      mapper: (json) => json,
+    ));
+  }
+
+  @override
+  List<ItemEntity> parseItems(json) =>
+      (json['data'] as List).map((e) => ItemEntity.fromJson(e)).toList();
+
+  @override
+  PaginationMeta parsePagination(json) => PaginationMeta.fromJson(json['pagination']);
+}
 // View: PaginatedListWidget(cubit: ..., itemBuilder: ...)
 ```
+> **Exception:** AsyncCubit<List<T>> only for dropdowns, sub-sections, filter chips.
 
 ### ⚠️ CRUD Local Update Rule (NON-NEGOTIABLE)
 
@@ -382,6 +417,8 @@ Entity & API:
 □ Every entity has factory initial() + fromJson with ?? defaults + tryParse (never parse)
 □ One cubit per endpoint | Part-of system in view_imports.dart
 □ Local update on add/edit/delete (never re-fetch) | ApiConstants for all URLs
+□ List endpoints use PaginatedCubit (not AsyncCubit<List>) for standalone screens
+□ Mock files in core/config/mocks/ (NOT entity/) | executeMockOrAsync used (not raw if-block)
 
 RTL (see rtl-arabic skill for full rules):
 □ No Positioned(left/right), Align(centerLeft/Right), EdgeInsets.only(left/right), TextAlign.left

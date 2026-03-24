@@ -190,22 +190,26 @@ STEP 4 — API SOURCE — SKIP IF UI_ONLY MODE
 
 **Phase 2: Generate (بعد الموافقة)**
 
-4. Generate Postman Collection JSON in `postman/{feature}.postman_collection.json`:
+4. Generate endpoints into **ONE single Postman Collection** `postman/app_name.postman_collection.json`:
+   - Add endpoints as a **folder** inside the existing collection (Auth, Products, Settings, Shared, etc.)
+   - If collection doesn't exist → create it with all folders
+   - If collection exists → add/update the relevant folder only
    - Unified response format: `{status, code, message, data?}`
    - Arabic messages for all responses
    - Success + Error response examples for every endpoint
    - Unified entities (same shape everywhere)
+   - **❌ NEVER create separate files** like `auth.postman_collection.json`, `products.postman_collection.json`
 
 5. Add endpoints to `ApiConstants`
 
 6. Create entities with `factory initial()` + safe `fromJson`
 
-7. Create mock data files using `mock-data` skill:
-   - `entity/{feature}_mock.dart` with realistic Arabic data
-   - 8-15 items in lists
+7. Create mock data files in `core/config/mocks/{feature}_mock.dart` (centralized, NOT in entity/):
+   - Realistic Arabic data, 8-15 items in lists
    - All entity fields populated
+   - `paginatedResponse(page)` for list endpoints
 
-8. Create cubits with `MockConfig.useMock` check
+8. Create cubits with `executeMockOrAsync` (AsyncCubit) or `MockConfig.useMock` (PaginatedCubit)
 
 → **بعد ما تخلص، روح STEP 6 (Plan) — الـ entities والـ cubits جاهزين، فالـ plan هيركز على الـ UI**
 
@@ -361,6 +365,6 @@ STEP 8 — VERIFY
 16. Forms: FormMixin + validateAndScroll() + ArabicNumbersFormatter + .toEnglishNumbers()
 17. Controllers/subscriptions disposed | No print()/debugPrint() in final code
 18. DI: @injectable + injector<T>() | Access modifiers: private _ for internal
-19. Mock data: if UI_AND_API or mock mode → `MockConfig.useMock` check in cubit + `{feature}_mock.dart` created (UI_ONLY features skip — no cubits)
+19. Mock data: if UI_AND_API → `executeMockOrAsync` in cubit + mock file in `core/config/mocks/` (UI_ONLY features skip — no cubits)
 20. Pre-delivery checklist from `feature-development` skill PHASE 7 — all items passed
 21. Run `/post-feature-review` skill — fix any critical/high issues found
