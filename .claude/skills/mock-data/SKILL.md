@@ -186,10 +186,13 @@ class ProductMock {
       'data': {
         'data': pageItems.map((e) => e.toMap).toList(),
         'pagination': {
-          'current_page': page,
-          'last_page': (allItems.length / perPage).ceil(),
+          'total_items': allItems.length,
+          'count_items': pageItems.length,
           'per_page': perPage,
-          'total': allItems.length,
+          'total_pages': (allItems.length / perPage).ceil(),
+          'current_page': page,
+          'next_page_url': page < (allItems.length / perPage).ceil() ? '?page=${page + 1}' : '',
+          'prev_page_url': page > 1 ? '?page=${page - 1}' : '',
         },
       },
     };

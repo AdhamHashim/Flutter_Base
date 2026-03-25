@@ -36,6 +36,7 @@ state.isInitial / state.isLoading / state.isSuccess / state.isError / state.isLo
 ## executeMockOrAsync — Mock/Real Switch Helper (MANDATORY)
 
 > **بيشيل الـ `if (MockConfig.useMock)` المتكرر — يخلي الـ cubit نضيف.**
+> **Method موجود في `AsyncCubit` — يتسخدم مباشرة بدون setup.**
 
 ```dart
 // Definition (inside AsyncCubit base class):
@@ -54,16 +55,32 @@ Future<void> executeMockOrAsync({
 ```
 
 ```dart
-// ✅ Usage — clean cubit
+// ❌ BEFORE — repetitive boilerplate
+Future<void> fetchProducts() async {
+  if (MockConfig.useMock) {
+    setLoading();
+    await MockConfig.simulateDelay();
+    setSuccess(data: ProductMock.list);
+    return;
+  }
+  await executeAsync(operation: () => baseCrudUseCase.call(...));
+}
+
+// ✅ AFTER — clean one-liner mock path
 Future<void> fetchProducts() async {
   await executeMockOrAsync(
     mockData: ProductMock.list,
-    operation: () => baseCrudUseCase.call(CrudBaseParams(...)),
+    operation: () => baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.products,
+      httpRequestType: HttpRequestType.get,
+      mapper: (json) => (json['data']['data'] as List)
+          .map((e) => ProductEntity.fromJson(e)).toList(),
+    )),
   );
 }
 ```
 
-> **Mock files location:** `lib/src/core/config/mocks/{feature}_mock.dart`
+> **Mock files location:** `lib/src/core/config/mocks/{feature}_mock.dart` (centralized, NOT in entity/)
 
 ---
 
@@ -78,6 +95,26 @@ class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
     await executeMockOrAsync(
       mockData: ProductMock.list,
       operation: () => baseCrudUseCase.call(CrudBaseParams(
+        api: ApiConstants.products,
+        httpRequestType: HttpRequestType.get,
+        mapper: (json) => (json['data']['data'] as List)
+            .map((e) => ProductEntity.fromJson(e)).toList(),
+      )),
+    );
+  }
+}
+```
+
+## Standard Cubit Template (without Mock — real API only)
+
+```dart
+@injectable
+class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
+  ProductsCubit() : super([]);
+
+  Future<void> fetchProducts() async {
+    await executeAsync(
+      operation: () async => baseCrudUseCase.call(CrudBaseParams(
         api: ApiConstants.products,
         httpRequestType: HttpRequestType.get,
         mapper: (json) => (json['data']['data'] as List)
@@ -222,7 +259,10 @@ class ProductsCubit extends AsyncCubit<List<ProductEntity>> { ... }
 class ProductsCubit extends PaginatedCubit<ProductEntity> { ... }
 ```
 
-**Exceptions (AsyncCubit<List<T>> OK):** dropdowns, sub-sections (banners), filter chips/tags.
+**Exceptions (AsyncCubit<List<T>> is OK):**
+- Dropdown data (cities, categories) — small fixed list
+- Multi-section sub-lists (banners inside home) — short list
+- Filter chips / tags — rarely exceeds 20 items
 
 ### PaginatedCubit with Mock Support
 

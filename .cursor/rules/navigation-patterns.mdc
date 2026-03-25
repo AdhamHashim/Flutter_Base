@@ -3,7 +3,7 @@ description: Navigation patterns for Flutter_Base — Go.to() with arguments, ba
 globs: lib/src/features/**/view/**/*.dart, lib/src/core/navigation/**/*.dart
 ---
 
-# Rule: Navigation Patterns — Flutter_Base
+# Skill: Navigation Patterns — Flutter_Base
 
 ## When to Use
 

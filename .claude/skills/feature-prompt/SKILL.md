@@ -213,6 +213,17 @@ STEP 4 — API SOURCE — SKIP IF UI_ONLY MODE
 
 → **بعد ما تخلص، روح STEP 6 (Plan) — الـ entities والـ cubits جاهزين، فالـ plan هيركز على الـ UI**
 
+**⚠️ API Design Rules (لازم تتبع في الـ Postman generation):**
+- Pagination key: `data.pagination` (NOT `data.meta`)
+- Body mode: `urlencoded` for text, `formdata` for files, `raw JSON` for complex nested only
+- Boolean values: integer `1`/`0` in responses, string `"1"`/`"0"` in requests
+- Validation errors: `data.items.{field}: [errors]` (NOT `errors.{field}`)
+- All success = HTTP 200 (no 201, 204)
+- Status/enum fields: rich objects `{value, text_ar, text_en, tag_color}` (NOT plain strings)
+- Emoji-commented JSON body sections (👤📱🎂🌍🏦📄🔐)
+- Every endpoint: Figma link(s) + Arabic description
+- Response examples: scenario-based names (`success first step`, `fail validation`, `empty response`)
+
 ---
 
 ══════════════════════════════════════════════════════════════

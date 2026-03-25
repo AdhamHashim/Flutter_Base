@@ -34,7 +34,7 @@ import 'package:flutterbase/src/config/res/config_imports.dart';
 
 ## Figma Color → AppColors Mapping
 
-### CRITICAL: Color Reuse Policy (READ BEFORE EVERY SCREEN)
+### ⚠️ CRITICAL: Color Reuse Policy (READ BEFORE EVERY SCREEN)
 
 > **ALWAYS reuse existing AppColors before adding new ones.**
 > The core colors (`main`, `primary`, `secondary`, `hintText`, `fill`, `border`, etc.) are shared across ALL screens.
@@ -55,14 +55,14 @@ Figma #F5F5F5 (light bg)      → USE AppColors.fill (#F9FAFB) — same purpose
 Figma #E5E7EB (divider)       → USE AppColors.grey1 (#DFDFDF) or AppColors.border — similar
 ```
 
-### FORBIDDEN — Screen-Prefixed Color Names:
+### ❌ FORBIDDEN — Screen-Prefixed Color Names:
 ```dart
-// NEVER name colors after a specific screen
+// ❌ NEVER name colors after a specific screen
 static const Color loginPrimary = Color(0xFF224D9B);
 static const Color cartBackground = Color(0xFFF5F5F5);
 static const Color profileDivider = Color(0xFFE5E7EB);
 
-// CORRECT — generic reusable names
+// ✅ CORRECT — generic reusable names
 static const Color accentBlue = Color(0xFF224D9B);    // if truly new
 static const Color lightBackground = Color(0xFFF5F5F5); // if truly new
 ```
@@ -223,7 +223,7 @@ fully round → AppCircular.infinity
 
 ---
 
-## Icon Size Adjustment (Figma → Code) — CRITICAL
+## ⚠️ Icon Size Adjustment (Figma → Code) — CRITICAL
 
 > **الأيقونات بتتحط أكبر من التصميم لو مستخدمتش الحجم الصح من Figma.**
 > **لازم تقرأ حجم الأيقونة من Figma بدقة وتطبقه بالظبط — أو تقلله لو شكله كبير.**
@@ -235,7 +235,7 @@ fully round → AppCircular.infinity
 4. **لو الأيقونة جوا Container** → حجم الأيقونة ≠ حجم الـ Container. Container أكبر والأيقونة أصغر جواه
 
 ```dart
-// CORRECT — icon size matches Figma exactly
+// ✅ CORRECT — icon size matches Figma exactly
 // Figma: icon 20x20 inside 40x40 container
 Container(
   width: AppSize.sW40, height: AppSize.sH40,
@@ -245,13 +245,13 @@ Container(
   ),
 )
 
-// CORRECT — standalone icon with exact Figma size
+// ✅ CORRECT — standalone icon with exact Figma size
 IconWidget(icon: AppAssets.svg.baseSvg.notification.path, height: AppSize.sH24, width: AppSize.sW24)
 
-// WRONG — icon too large (used container size for icon)
+// ❌ WRONG — icon too large (used container size for icon)
 IconWidget(icon: AppAssets.svg.baseSvg.search.path, height: AppSize.sH40)  // ← should be sH20!
 
-// WRONG — guessed icon size instead of reading from Figma
+// ❌ WRONG — guessed icon size instead of reading from Figma
 IconWidget(icon: ..., height: AppSize.sH30)  // Figma says 20 → should be sH20
 ```
 
@@ -266,7 +266,7 @@ IconWidget(icon: ..., height: AppSize.sH30)  // Figma says 20 → should be sH20
 
 ## Figma Font Size → FontSizeManager Mapping
 
-### CRITICAL: Font Size Adjustment Rule
+### ⚠️ CRITICAL: Font Size Adjustment Rule
 
 > Figma font sizes need adjustment when converting to Flutter code.
 > This compensates for rendering differences between Figma and Flutter (especially with Expo Arabic font + ScreenUtil `.sp`).
@@ -307,18 +307,18 @@ FontSizeManager.s6 / s8 / s10 / s11 / s12 / s13 / s14 / s15 / s16 / s18 / s20 / 
 ### Example
 ```dart
 // Figma: title 16sp bold
-// CORRECT — reduced to 14sp
+// ✅ CORRECT — reduced to 14sp
 const TextStyle().setMainTextColor.s14.bold
 
-// WRONG — used Figma value directly
+// ❌ WRONG — used Figma value directly
 const TextStyle().setMainTextColor.s16.bold
 
 // Figma: body 14sp regular
-// CORRECT — reduced to 13sp or 12sp
+// ✅ CORRECT — reduced to 13sp or 12sp
 const TextStyle().setHintColor.s13.regular
 
 // Figma: heading 22sp bold
-// CORRECT — reduced to 20sp
+// ✅ CORRECT — reduced to 20sp
 const TextStyle().setMainTextColor.s20.bold
 ```
 
@@ -326,7 +326,7 @@ const TextStyle().setMainTextColor.s20.bold
 
 ## Figma Font Weight → FontWeightManager / TextStyleEx
 
-> **تنبيه: `FontWeightManager.regular` = w500 (مش w400). استخدم الجدول ده بالظبط:**
+> **⚠️ تنبيه: `FontWeightManager.regular` = w500 (مش w400). استخدم الجدول ده بالظبط:**
 
 | Figma weight | FontWeightManager | TextStyleEx | Flutter FontWeight |
 |---|---|---|---|

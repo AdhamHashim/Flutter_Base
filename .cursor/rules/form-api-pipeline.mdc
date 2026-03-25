@@ -3,7 +3,7 @@ description: Complete form-to-API pipeline — FormMixin, ViewController, Params
 globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/cubits/**/*.dart
 ---
 
-# Rule: Form → API Complete Pipeline
+# Skill: Form → API Complete Pipeline
 
 ## When to Use
 

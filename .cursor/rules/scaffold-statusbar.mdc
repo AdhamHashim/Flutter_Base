@@ -139,7 +139,7 @@ showCustomDialog(
 
 ```dart
 // ❌ Building custom header containers in body widgets (use DefaultScaffold)
-Container(color: AppColors.loginPrimary, child: SafeArea(...Row(...))
+Container(color: AppColors.loginPrimary, child: SafeArea(...Row(...)))
 
 // ❌ Forgetting status bar color (leaves previous screen's color)
 // Every screen must either use DefaultScaffold or call Helpers.changeStatusbarColor

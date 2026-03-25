@@ -73,6 +73,18 @@ lib/src/features/{name}/
 - Error handling: `AsyncBlocBuilder` handles loading/error/success automatically
 - Network errors: `ErrorView(error, onRetry)` with retry button
 
+### Backend Response Patterns (CRITICAL)
+- Pagination key: `data.pagination` (default — some backends use `data.meta`)
+- Validation errors: `data.items.{field}: [errors]` (NOT `errors.{field}`)
+- All success = HTTP 200 (no 201, 204)
+- Status fields: rich objects `{value, text_ar, text_en, tag_color}` (NOT plain strings)
+- Request body: `urlencoded` for text, `formdata` for files, `raw JSON` for complex nested data only
+- Boolean values: integer `1`/`0` in responses, string `"1"`/`"0"` in requests
+- Token location: `data.user.token`
+- File uploads: inline with form-data (NOT separate upload endpoint)
+- Toggle endpoints: `PUT /switch-{field}` with no body
+- Status change: `PUT /change-status-to-{value}` in URL
+
 ### Design Token Conversion (Figma → Code)
 - Font size: Figma ≤13sp → **keep as-is**, 14–18sp → reduce 1–2sp, ≥20sp → reduce 2sp
 - Font weight: may need to reduce if looks heavier than design
@@ -96,13 +108,32 @@ lib/src/features/{name}/
 - Dotted borders → use `dotted_border` package
 
 ### API Design & Mock Data
-- Postman Collection: **ONE file** `postman/app_name.postman_collection.json` with internal folders (Auth, Products, Settings, Shared, etc.) — NEVER separate files per feature
+- Postman Collection: **ONE file** `postman/app_name.postman_collection.json` with nested folders (App → Feature → Endpoints) — NEVER separate files per feature
 - Unified response: `{status, code, message, data?}` — Arabic messages
+- Pagination: `data.pagination` object with `total_items`, `count_items`, `per_page`, `total_pages`, `current_page`, `next_page_url`, `prev_page_url`
+- Validation errors: `data.items.{field}: [error strings]` (NOT `errors.{field}`)
 - Multi-section screens → separate service per section (never one mega-endpoint)
-- Lists → pagination required (`?page=1&per_page=10`) → always `PaginatedCubit`
+- Lists → pagination required (`?page=1&per_page=15`) → always `PaginatedCubit`
 - Multi-step forms → `validate-step-{n}` per step + final create
-- File uploads → separate `POST /upload-file` returns `{id, url, type}`, then pass `file_id`
+- File uploads → inline with form-data in same request (NOT separate upload endpoint)
+- Request body: `urlencoded` for text-only, `formdata` for files, `raw JSON` for complex nested data only
+- URL naming: kebab-case always (`login-with-password`, `change-status-to-delivered`)
+- URL structure: `{{base_url}}/api/v1/{app}/{resource}` — app = user/supplier/(none for shared)
+- Toggle endpoints: `PUT /switch-{field}` with no body
+- Status change: `PUT /change-status-to-{value}` in URL path
+- OTP pattern: `{action}-send-code` / `{action}-check-code` / `{action}-resend-code`
+- Every field in Postman body must have `description` with validation rules (`required|string|max:255`)
+- Validation rules: Laravel pipe-separated format (`required|string|max:50|min:2`)
+- Headers always: `Accept: application/json` + `Accept-Language: {{lang}}`
+- Collection variables: `base_url`, `lang`, `user_token`, `supplier_token`, `user_phone`
+- Pre-request scripts: auto-save phone from body; Test scripts: auto-save token from `data.user.token`
+- **Emoji-commented JSON body**: group fields with emoji section headers (👤📱🎂🌍🏦📄🔐) for readability
+- **Endpoint documentation**: every endpoint must have Figma link(s) + Arabic description
+- **Response examples**: scenario-based names (`success first step`, `fail validation`, `empty response`)
+- **Collection description**: must include Response Standard, Status Codes, Pagination rules, Enums
+- **Forms with dropdowns** → `get-{form}-data` endpoint for lookup lists (countries, cities, etc.)
 - Mock data: `--dart-define=USE_MOCK=true` → `executeMockOrAsync` in AsyncCubit, `MockConfig.useMock` in PaginatedCubit
+- Mock paginated data: use `pagination` key (default — match what the real backend uses)
 - Mock files: `core/config/mocks/{feature}_mock.dart` (centralized, NOT in entity/) — realistic Arabic data, 8-15 items
 - Mock files are plain classes with direct import — NOT `part of` any imports file
 

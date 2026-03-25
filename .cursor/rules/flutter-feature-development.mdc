@@ -203,6 +203,7 @@ class MyFeatureCubit extends AsyncCubit<List<MyFeatureEntity>> {
 
 **Pagination (MANDATORY for list screens):**
 ```dart
+// List endpoints with standalone screens → ALWAYS PaginatedCubit
 @injectable
 class MyCubit extends PaginatedCubit<ItemEntity> {
   @override

@@ -176,14 +176,15 @@ RefreshIndicator(
 
 ## ViewController Class Pattern (MANDATORY)
 
-> **Controllers, ValueNotifiers, AnimationControllers, params — كل حاجة تتعلق بالـ UI state لازم تكون في class منفصل (ViewController)، مش مباشرة في الـ View.**
+> **⚠️ ممنوع نهائياً: أي Controller أو ValueNotifier داخل الـ View مباشرة.**
+> **كل حاجة تتعلق بالـ UI state + handlers بتاعتها لازم تكون في ViewController class. الـ View تستدعي الـ class بس.**
 
 ### Why?
 - الـ View تبقى نظيفة — layout فقط
 - سهولة الاختبار والصيانة
 - تجنب setState — استخدم `ValueNotifier` + `ValueListenableBuilder`
 
-### CORRECT — ViewController class
+### ✅ CORRECT — ViewController class
 
 ```dart
 class ChatViewController {
@@ -204,7 +205,7 @@ class ChatViewController {
 }
 ```
 
-### CORRECT — View uses ViewController object
+### ✅ CORRECT — View uses ViewController object
 
 ```dart
 class _ChatInputState extends State<_ChatInput> {
@@ -240,10 +241,10 @@ class _ChatInputState extends State<_ChatInput> {
 }
 ```
 
-### FORBIDDEN — Controllers/logic directly in View
+### ❌ FORBIDDEN — Controllers/logic directly in View
 
 ```dart
-// WRONG — controllers, dispose, business logic scattered in view
+// ❌ WRONG — controllers, dispose, business logic scattered in view
 class _ChatInputState extends State<_ChatInput> {
   final _controller = TextEditingController();
   bool _isSending = false;
@@ -266,9 +267,10 @@ class _ChatInputState extends State<_ChatInput> {
 ```
 
 ### ViewController Rules:
+- **ممنوع** وضع Controller أو ValueNotifier داخل الـ View/State — لازم في ViewController فقط
 - **كل** `TextEditingController`, `ValueNotifier`, `AnimationController`, `ScrollController`, `FocusNode` → داخل الـ ViewController
 - **كل** function متعلقة بالـ UI logic (onSend, onSearch, selectTab, onFilter) → داخل الـ ViewController
-- الـ View تستخدم **object واحد** من الـ ViewController وتنادي functions و variables منه
+- الـ View تستخدم **object واحد** من الـ ViewController وتنادي منه بس — `_vc.xxx`
 - استخدم `ValueNotifier` + `ValueListenableBuilder` بدل `setState`
 - الـ ViewController يعمل `dispose()` لكل الـ controllers/notifiers
 - الـ View تنادي `_vc.dispose()` في `dispose()` بتاعها
@@ -317,7 +319,7 @@ BlocListener<SubmitCubit, AsyncState<bool>>(
 > **أي أيقونة داخل Container بـ background لازم تتلف في `Center` widget عشان حجمها ميبقاش بحجم الـ Container.**
 
 ```dart
-// CORRECT — Icon wrapped in Center inside Container
+// ✅ CORRECT — Icon wrapped in Center inside Container
 Container(
   width: AppSize.sH48,
   height: AppSize.sH48,
@@ -335,7 +337,7 @@ Container(
   ),
 )
 
-// WRONG — Icon without Center → stretches to Container size
+// ❌ WRONG — Icon without Center → stretches to Container size
 Container(
   width: AppSize.sH48,
   height: AppSize.sH48,
