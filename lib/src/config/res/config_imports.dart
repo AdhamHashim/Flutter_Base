@@ -6,3 +6,4 @@ import 'package:get_it/get_it.dart';
 part 'app_sizes.dart';
 part 'color_manager.dart';
 part 'constants_manager.dart';
+part 'figma_spacing_tokens.dart';

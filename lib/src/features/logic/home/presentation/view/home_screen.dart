@@ -16,6 +16,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    Helpers.changeStatusbarColor(
+      statusBarColor: AppColors.cardFill,
+      statusBarIconBrightness: Brightness.dark,
+    );
     _initNotifications();
   }
 
@@ -34,18 +38,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     context.locale;
-    return ValueListenableBuilder<int>(
-      valueListenable: params.selectedIndexNotifier,
-      builder: (context, value, child) {
-        return Scaffold(
-          body: _HomeBody(value),
-          bottomNavigationBar: CustomNavigationBar(
-            selectedIndex: value,
-            onTabChange: (newIndex) => params.updateNavValue(newIndex),
-            tabs: params.navTabs,
-          ),
-        );
-      },
+    return BlocProvider(
+      create: (_) => injector<BillsCubit>(),
+      child: ValueListenableBuilder<int>(
+        valueListenable: params.selectedIndexNotifier,
+        builder: (context, value, child) {
+          return Scaffold(
+            body: _HomeBody(value),
+            bottomNavigationBar: CustomNavigationBar(
+              selectedIndex: value,
+              onTabChange: (newIndex) => params.updateNavValue(newIndex),
+              tabs: params.navTabs,
+            ),
+          );
+        },
+      ),
     );
   }
 }

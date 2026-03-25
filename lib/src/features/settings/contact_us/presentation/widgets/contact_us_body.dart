@@ -8,75 +8,154 @@ class _ContactUsBody extends StatefulWidget {
 }
 
 class _ContactUsBodyState extends State<_ContactUsBody> {
-  final ContactUsParams params = ContactUsParams();
+  late final ContactUsViewController _vc = ContactUsViewController();
+
   @override
   void dispose() {
-    params.dispose();
+    _vc.dispose();
     super.dispose();
+  }
+
+  Future<void> _onWhatsAppTap() async {
+    try {
+      await LauncherHelper.launchWhatsApp(ConstantManager.supportWhatsAppPhone);
+    } catch (_) {
+      if (!mounted) return;
+      MessageUtils.showSnackBar(
+        context: context,
+        baseStatus: BaseStatus.error,
+        message: LocaleKeys.checkInternet,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ContactUsCubit>();
     return Form(
-      key: params.formKey,
-      child:
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: AppMargin.mH10,
-                  children: [
-                    if (!UserCubit.instance.isUserLoggedIn) ...[
-                      CustomTextFiled(
-                        controller: params.fullNameController,
-                        hint: LocaleKeys.fullNameLabel,
-                        title: LocaleKeys.fullNameLabel,
-                        textInputType: TextInputType.text,
-                        textInputAction: TextInputAction.next,
-                        validator: (value) => Validators.validateEmpty(
-                          value,
-                          fieldTitle: LocaleKeys.fullNameLabel,
-                        ),
-                      ),
-                      CustomTextFiled(
-                        controller: params.phoneController,
-                        hint: LocaleKeys.phoneNumber,
-                        title: LocaleKeys.phoneNumber,
-                        textInputType: TextInputType.phone,
-                        textInputAction: TextInputAction.next,
-                        validator: (value) => Validators.validatePhone(
-                          value,
-                          fieldTitle: LocaleKeys.phoneNumber,
-                        ),
-                      ),
-                    ],
+      key: _vc.formKey,
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: AppMargin.mH20,
+                children: [
+                  if (!UserCubit.instance.isUserLoggedIn) ...[
                     CustomTextFiled(
-                      hint: LocaleKeys.messageHint,
-                      title: LocaleKeys.messageLabel,
-                      isOptional: true,
-                      controller: params.messageController,
-                      maxLines: ConstantManager.maxLines,
-                      textInputType: TextInputType.multiline,
-                      textInputAction: TextInputAction.newline,
-                      validator: (value) => Validators.validateEmpty(value),
+                      borderRadius: BorderRadius.circular(AppCircular.r15),
+                      controller: _vc.fullNameController,
+                      hint: LocaleKeys.contactUsNameHint,
+                      title: LocaleKeys.name,
+                      textInputType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
+                      isOptional: false,
+                      inputFormatters: [TextOnlyFormatter()],
+                      validator: (value) => Validators.validateEmpty(
+                        value,
+                        fieldTitle: LocaleKeys.name,
+                      ),
+                    ),
+                    CustomTextFiled(
+                      borderRadius: BorderRadius.circular(AppCircular.r15),
+                      controller: _vc.phoneController,
+                      hint: LocaleKeys.contactUsPhoneHint,
+                      title: LocaleKeys.phoneNumber,
+                      textInputType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
+                      isOptional: false,
+                      inputFormatters: [
+                        PhoneNumberFormatter(),
+                        ArabicNumbersFormatter(),
+                      ],
+                      validator: (value) => Validators.validatePhone(
+                        value,
+                        fieldTitle: LocaleKeys.phoneNumber,
+                      ),
                     ),
                   ],
-                ),
+                  CustomTextFiled(
+                    borderRadius: BorderRadius.circular(AppCircular.r15),
+                    controller: _vc.requestTypeController,
+                    hint: LocaleKeys.contactUsRequestTypeHint,
+                    title: LocaleKeys.contactUsRequestTypeLabel,
+                    textInputType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    isOptional: false,
+                    inputFormatters: [TextWithNumberFormatter()],
+                    validator: (value) => Validators.validateEmpty(
+                      value,
+                      fieldTitle: LocaleKeys.contactUsRequestTypeLabel,
+                    ),
+                  ),
+                  CustomTextFiled(
+                    borderRadius: BorderRadius.circular(AppCircular.r15),
+                    controller: _vc.detailsController,
+                    hint: LocaleKeys.contactUsDetailsHint,
+                    title: LocaleKeys.contactUsDetailsLabel,
+                    maxLines: ConstantManager.maxLines,
+                    textInputType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    isOptional: false,
+                    inputFormatters: [TextWithNumberFormatter()],
+                    validator: (value) => Validators.validateEmpty(
+                      value,
+                      fieldTitle: LocaleKeys.contactUsDetailsLabel,
+                    ),
+                  ),
+                  _ContactUsAttachmentField(vc: _vc),
+                  Center(
+                    child: Text(
+                      LocaleKeys.contactUsOr,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle().setMainTextColor.s14.semiBold,
+                    ),
+                  ).paddingSymmetric(vertical: AppPadding.pH4),
+                  LoadingButton.withWidget(
+                    color: AppColors.success,
+                    borderRadius: AppCircular.r15,
+                    height: AppSize.sH60,
+                    onTap: () async => _onWhatsAppTap(),
+                    titleAsWidget: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconWidget(
+                          icon: AppAssets.svg.wzeinIcons.whatsapp.path,
+                          height: AppSize.sH22,
+                          width: AppSize.sW20,
+                          color: AppColors.white,
+                        ),
+                        AppMargin.mW10.szW,
+                        Text(
+                          LocaleKeys.contactUsWhatsapp,
+                          style: const TextStyle().setWhiteColor.s14.semiBold,
+                        ),
+                      ],
+                    ),
+                  ),
+                  AppMargin.mH8.szH,
+                ],
+              ).paddingSymmetric(
+                vertical: AppPadding.pH4,
+                horizontal: AppPadding.pW14,
               ),
-              LoadingButton(
-                title: LocaleKeys.sendBtn,
-                onTap: () async => await cubit.contactUs(params),
-              ),
-            ],
+            ),
+          ),
+          LoadingButton(
+            title: LocaleKeys.contactUsConfirm,
+            color: AppColors.forth,
+            borderRadius: AppCircular.r20,
+            height: AppSize.sH55,
+            onTap: () async => cubit.contactUs(_vc),
           ).paddingSymmetric(
-            vertical: AppPadding.pH16,
+            vertical: AppPadding.pH12,
             horizontal: AppPadding.pW14,
           ),
+        ],
+      ),
     );
   }
 }

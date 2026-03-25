@@ -10,10 +10,12 @@ import '../../custom_widget_validator.dart';
 class CustomPinTextField extends StatelessWidget {
   final ValueChanged<String>? onCompleted;
   final TextEditingController controller;
+  final int length;
   const CustomPinTextField({
     super.key,
     required this.controller,
     this.onCompleted,
+    this.length = 4,
   });
 
   @override
@@ -41,7 +43,7 @@ class CustomPinTextField extends StatelessWidget {
         builder: (state) {
           return Center(
             child: Pinput(
-              length: ConstantManager.pinCodeFieldsCount,
+              length: length,
               controller: controller,
               keyboardType: TextInputType.number,
               autofocus: true,

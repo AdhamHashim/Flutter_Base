@@ -7,15 +7,17 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => injector<BaseUrlCubit>()),
-        BlocProvider(create: (context) => injector<SplashCubit>()),
+        BlocProvider(create: (_) => injector<BaseUrlCubit>()),
+        BlocProvider(create: (_) => injector<SplashCubit>()),
       ],
-      child: _SplashView(),
+      child: const _SplashView(),
     );
   }
 }
 
 class _SplashView extends StatefulWidget {
+  const _SplashView();
+
   @override
   State<_SplashView> createState() => _SplashViewState();
 }
@@ -24,20 +26,41 @@ class _SplashViewState extends State<_SplashView> {
   @override
   void initState() {
     super.initState();
+    Helpers.changeStatusbarColor(
+      statusBarColor: AppColors.forth,
+      statusBarIconBrightness: Brightness.light,
+    );
     context.read<SplashCubit>().initApp(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: context.width,
-        height: context.height,
-        padding: EdgeInsets.all(AppPadding.pH20),
-        decoration: const BoxDecoration(gradient: AppColors.gradient),
-        child: AppAssets.svg.appSvg.appLogo.image(
-          width: context.width * .3,
-          height: context.height * .16,
+      backgroundColor: AppColors.forth,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              AppAssets.svg.appSvg.appLogo.image(
+                width: context.width * .35,
+                height: context.height * .18,
+                // color: AppColors.white,
+              ),
+              AppSize.sH22.szH,
+              Text(
+                LocaleKeys.splashAppNameLatin,
+                style:
+                    const TextStyle().setWhiteColor.s20.semiBold.setFontFamily,
+              ),
+              AppSize.sH10.szH,
+              Text(
+                LocaleKeys.splashAppNameAr,
+                style: const TextStyle().setWhiteColor.s16.medium.setFontFamily,
+              ),
+            ],
+          ),
         ),
       ),
     );

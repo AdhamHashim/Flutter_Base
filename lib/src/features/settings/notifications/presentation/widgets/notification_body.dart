@@ -5,17 +5,33 @@ class _NotificationBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedListWidget<NotificationsCubit, NotificationEntity>(
-      skeletonItemCount: 10,
-      config: PaginatedListConfig(padding: EdgeInsets.all(AppPadding.pH10)),
-      skeletonBuilder: (context) =>
-          _NotificationCardWidget(NotificationEntity.initail()),
-      itemBuilder: (context, item, index) => _NotificationCardWidget(item),
-      emptyWidget: EmptyWidget(
-        path: AppAssets.svg.baseSvg.notificationEmpty.path,
-        title: LocaleKeys.noNotificationsTitle,
-        desc: LocaleKeys.noNotificationsDesc,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppSize.sH8.szH,
+        const _NotificationClearAllRow(),
+        AppSize.sH12.szH,
+        Expanded(
+          child: PaginatedListWidget<NotificationsCubit, NotificationEntity>(
+            skeletonItemCount: 4,
+            config: PaginatedListConfig(
+              padding: EdgeInsetsDirectional.only(
+                start: AppPadding.pW12,
+                end: AppPadding.pW12,
+                bottom: AppPadding.pH16,
+              ),
+            ),
+            skeletonBuilder: (context) =>
+                _NotificationCardWidget(NotificationEntity.initial()),
+            itemBuilder: (context, item, index) => _NotificationCardWidget(item),
+            emptyWidget: EmptyWidget(
+              path: AppAssets.svg.baseSvg.notificationEmpty.path,
+              title: LocaleKeys.noNotificationsTitle,
+              desc: LocaleKeys.noNotificationsDesc,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -4,9 +4,21 @@ import '../res/config_imports.dart';
 
 class AppTheme {
   static ThemeData get light {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: AppColors.brandPrimary,
+      brightness: Brightness.light,
+    ).copyWith(
+      surface: AppColors.scaffoldBackground,
+      onSurface: AppColors.main,
+      primary: AppColors.brandPrimary,
+      onPrimary: AppColors.buttonText,
+      error: AppColors.error,
+    );
+
     return ThemeData(
-      primarySwatch: AppColors.primary.toMaterialColor(),
-      primaryColor: AppColors.primary,
+      colorScheme: colorScheme,
+      primarySwatch: AppColors.brandPrimary.toMaterialColor(),
+      primaryColor: AppColors.brandPrimary,
       useMaterial3: true,
       hoverColor: Colors.transparent,
       splashColor: Colors.transparent,
@@ -18,8 +30,8 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.scaffoldBackground,
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.white,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.hintText,
+        selectedItemColor: AppColors.brandPrimary,
+        unselectedItemColor: AppColors.navInactive,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
@@ -27,7 +39,7 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: AppPadding.pW4),
-          foregroundColor: AppColors.primary,
+          foregroundColor: AppColors.brandPrimary,
           minimumSize: Size(AppSize.sW30, AppSize.sH30),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSize.sH0),
@@ -36,9 +48,9 @@ class AppTheme {
       ),
       dialogTheme: const DialogThemeData(surfaceTintColor: Colors.transparent),
       textSelectionTheme: TextSelectionThemeData(
-        cursorColor: AppColors.primary,
-        selectionColor: AppColors.primary.withValues(alpha: 0.2),
-        selectionHandleColor: AppColors.primary,
+        cursorColor: AppColors.brandPrimary,
+        selectionColor: AppColors.brandPrimary.withValues(alpha: 0.2),
+        selectionHandleColor: AppColors.brandPrimary,
       ),
       appBarTheme: const AppBarTheme(foregroundColor: AppColors.white),
       iconTheme: const IconThemeData(color: AppColors.white),
@@ -49,17 +61,24 @@ class AppTheme {
   }
 
   static ThemeData get dark {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: AppColorsWithDarkMode.buttonColor,
+      brightness: Brightness.dark,
+    );
+
     return ThemeData(
-      primarySwatch: AppColorsWithDarkMode.primary.toMaterialColor(),
-      primaryColor: AppColorsWithDarkMode.primary,
+      colorScheme: colorScheme,
+      primarySwatch: AppColorsWithDarkMode.buttonColor.toMaterialColor(),
+      primaryColor: AppColorsWithDarkMode.buttonColor,
       useMaterial3: true,
+      fontFamily: ConstantManager.fontFamily,
       bottomSheetTheme: const BottomSheetThemeData(
         modalBackgroundColor: AppColorsWithDarkMode.white,
       ),
       scaffoldBackgroundColor: AppColorsWithDarkMode.border,
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColorsWithDarkMode.white,
-        selectedItemColor: AppColorsWithDarkMode.primary,
+        selectedItemColor: AppColorsWithDarkMode.buttonColor,
         unselectedItemColor: AppColorsWithDarkMode.hintText,
         showSelectedLabels: true,
         showUnselectedLabels: true,
@@ -68,7 +87,7 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: AppPadding.pW4),
-          foregroundColor: AppColorsWithDarkMode.primary,
+          foregroundColor: AppColorsWithDarkMode.buttonColor,
           minimumSize: Size(AppSize.sW30, AppSize.sH30),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSize.sH0),

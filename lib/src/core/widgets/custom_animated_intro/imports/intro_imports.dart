@@ -2,12 +2,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
- import '../../../../config/language/languages.dart';
+import '../../../../config/language/languages.dart';
 import '../../../../config/language/locale_keys.g.dart';
 import '../../../../config/res/config_imports.dart';
-import '../../../../features/logic/home/presentation/imports/view_imports.dart';
-import '../../../extensions/context_extension.dart';
+import '../../../../features/login/presentation/imports/view_imports.dart'
+    show LoginScreen;
+import '../../../../features/register/presentation/imports/view_imports.dart';
 import '../../../extensions/text_style_extensions.dart';
+import '../../../extensions/widgets/sized_box_helper.dart';
 import '../../../navigation/navigator.dart';
 import '../../buttons/default_button.dart';
 

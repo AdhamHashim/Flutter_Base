@@ -1,5 +1,6 @@
 enum NamedRoutes {
-  splash('/');
+  splash('/'),
+  login('/login');
 
   final String routeName;
 
