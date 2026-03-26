@@ -98,18 +98,18 @@ Generated at: {timestamp}
 
 | # | Screen Name | Feature Name | Figma Node | Postman URLs | Status |
 |---|---|---|---|---|---|
-| 1 | Login | login | 1:2 | TODO | pending |
-| 2 | Register | register | 1:5 | TODO | pending |
-| 3 | Home | home | 1:8 | TODO | pending |
+| 1 | Login | login | 1:2 | TODO | ⬜ pending |
+| 2 | Register | register | 1:5 | TODO | ⬜ pending |
+| 3 | Home | home | 1:8 | TODO | ⬜ pending |
 ...
 
 ## Execution Order
 
 (Based on Figma prototype flow — adjust as needed)
 
-1. login → .cursor/prompt/tasks/login.md
-2. register → .cursor/prompt/tasks/register.md
-3. home → .cursor/prompt/tasks/home.md
+1. ⬜ login → .cursor/prompt/tasks/login.md
+2. ⬜ register → .cursor/prompt/tasks/register.md
+3. ⬜ home → .cursor/prompt/tasks/home.md
 ...
 
 ## Navigation Map
@@ -139,7 +139,7 @@ Show the user:
 
 #### Step 3.1 — Pick Next Task
 
-Read `_schedule.md`, find the first task with status `pending`.
+Read `_schedule.md`, find the first task with status `⬜ pending`.
 
 #### Step 3.2 — Read Task Prompt
 
@@ -160,7 +160,7 @@ Follow the `feature_prompt.md` workflow:
 #### Step 3.4 — Update Schedule
 
 After completing a task, update `_schedule.md`:
-- Change status from `pending` to `done`
+- Change status from `⬜ pending` to `✅ done`
 - Add any notes about navigation connections made
 
 #### Step 3.5 — Link Navigation
@@ -176,7 +176,7 @@ When implementing each screen, ensure navigation connections to already-built sc
 
 #### Step 3.6 — Repeat
 
-Continue to Step 3.1 until all tasks are `done`.
+Continue to Step 3.1 until all tasks are `✅ done`.
 
 ---
 

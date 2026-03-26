@@ -1,5 +1,5 @@
 ---
-description: AsyncCubit templates, CRUD local updates, AsyncBlocBuilder, PaginatedCubit, and BlocListener patterns for Flutter_Base.
+description: AsyncCubit templates, CRUD local updates, AsyncBlocBuilder, PaginatedCubit, executeMockOrAsync, and BlocListener patterns for Flutter_Base.
 globs: ["lib/**/*.dart"]
 ---
 
@@ -17,6 +17,7 @@ All cubits that do API calls extend `AsyncCubit<T>`. Never create raw `Cubit` fo
 abstract class AsyncCubit<T> extends Cubit<AsyncState<T>> {
   // Built-in: setLoading(), setSuccess(data), setError(msg), reset(), updateData()
   // Built-in: executeAsync(operation, successEmitter, showErrorToast)
+  // Built-in: executeMockOrAsync(mockData, operation) ← mock/real switch helper
   // Built-in: baseCrudUseCase (auto-injected)
 }
 ```
@@ -32,7 +33,79 @@ state.isInitial / state.isLoading / state.isSuccess / state.isError / state.isLo
 
 ---
 
-## Standard Cubit Template
+## executeMockOrAsync — Mock/Real Switch Helper (MANDATORY)
+
+> **بيشيل الـ `if (MockConfig.useMock)` المتكرر — يخلي الـ cubit نضيف.**
+> **Method موجود في `AsyncCubit` — يتسخدم مباشرة بدون setup.**
+
+```dart
+// Definition (inside AsyncCubit base class):
+Future<void> executeMockOrAsync({
+  required T mockData,
+  required Future<Result<T, Failure>> Function() operation,
+}) async {
+  if (MockConfig.useMock) {
+    setLoading();
+    await MockConfig.simulateDelay();
+    setSuccess(data: mockData);
+    return;
+  }
+  await executeAsync(operation: operation);
+}
+```
+
+```dart
+// ❌ BEFORE — repetitive boilerplate
+Future<void> fetchProducts() async {
+  if (MockConfig.useMock) {
+    setLoading();
+    await MockConfig.simulateDelay();
+    setSuccess(data: ProductMock.list);
+    return;
+  }
+  await executeAsync(operation: () => baseCrudUseCase.call(...));
+}
+
+// ✅ AFTER — clean one-liner mock path
+Future<void> fetchProducts() async {
+  await executeMockOrAsync(
+    mockData: ProductMock.list,
+    operation: () => baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.products,
+      httpRequestType: HttpRequestType.get,
+      mapper: (json) => (json['data']['data'] as List)
+          .map((e) => ProductEntity.fromJson(e)).toList(),
+    )),
+  );
+}
+```
+
+> **Mock files location:** `lib/src/core/config/mocks/{feature}_mock.dart` (centralized, NOT in entity/)
+
+---
+
+## Standard Cubit Template (with Mock Support)
+
+```dart
+@injectable
+class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
+  ProductsCubit() : super([]);
+
+  Future<void> fetchProducts() async {
+    await executeMockOrAsync(
+      mockData: ProductMock.list,
+      operation: () => baseCrudUseCase.call(CrudBaseParams(
+        api: ApiConstants.products,
+        httpRequestType: HttpRequestType.get,
+        mapper: (json) => (json['data']['data'] as List)
+            .map((e) => ProductEntity.fromJson(e)).toList(),
+      )),
+    );
+  }
+}
+```
+
+## Standard Cubit Template (without Mock — real API only)
 
 ```dart
 @injectable
@@ -172,6 +245,54 @@ BlocListener<SubmitCubit, AsyncState<bool>>(
 ---
 
 ## Pagination — PaginatedCubit
+
+### List Services = Always Paginated (MANDATORY)
+
+> **أي endpoint بيرجع list وليه شاشة مستقلة → لازم يكون `PaginatedCubit`.**
+> **`AsyncCubit<List<T>>` مسموح بس للـ dropdowns والـ sub-sections الصغيرة.**
+
+```dart
+// ❌ FORBIDDEN — standalone list screen without pagination
+class ProductsCubit extends AsyncCubit<List<ProductEntity>> { ... }
+
+// ✅ CORRECT — paginated
+class ProductsCubit extends PaginatedCubit<ProductEntity> { ... }
+```
+
+**Exceptions (AsyncCubit<List<T>> is OK):**
+- Dropdown data (cities, categories) — small fixed list
+- Multi-section sub-lists (banners inside home) — short list
+- Filter chips / tags — rarely exceeds 20 items
+
+### PaginatedCubit with Mock Support
+
+```dart
+@injectable
+class ProductsCubit extends PaginatedCubit<ProductEntity> {
+  @override
+  Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) async {
+    if (MockConfig.useMock) {
+      await MockConfig.simulateDelay();
+      return Success(ProductMock.paginatedResponse(page));
+    }
+    return baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.products,
+      httpRequestType: HttpRequestType.get,
+      queryParameters: ConstantManager.paginateJson(page),
+      mapper: (json) => json,
+    ));
+  }
+
+  @override
+  List<ProductEntity> parseItems(json) =>
+      (json['data'] as List).map((e) => ProductEntity.fromJson(e)).toList();
+
+  @override
+  PaginationMeta parsePagination(json) => PaginationMeta.fromJson(json['pagination']);
+}
+```
+
+### UI Widget
 
 ```dart
 PaginatedListWidget<ItemEntity>(

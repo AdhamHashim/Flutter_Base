@@ -3,7 +3,7 @@ description: Comprehensive mapping from Figma MCP elements (Frame, Auto-layout, 
 globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/view/**/*.dart
 ---
 
-# Rule: Figma Component to Flutter Widget Mapping
+# Skill: Figma Component to Flutter Widget Mapping
 
 ## When to Use
 
@@ -30,7 +30,7 @@ globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/view/**/*.dart
 | **Component** | reusable | Extract to separate widget file | One file per component |
 | **Instance** | component instance | Use the extracted widget | Pass different props |
 
-### Auto-Layout → Flex Properties
+### Auto-Layout to Flex Properties
 
 | Figma Auto-Layout Property | Flutter Equivalent |
 |---------------------------|-------------------|
@@ -136,16 +136,16 @@ globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/view/**/*.dart
 
 | Figma State/Variant | Flutter Implementation |
 |---------------------|----------------------|
-| Default | `AsyncBlocBuilder` → `builder:` |
-| Loading | `AsyncBlocBuilder` → `skeletonBuilder:` with `Entity.initial()` |
-| Error | `AsyncBlocBuilder` → `errorBuilder:` with `ErrorView` |
-| Empty | Inside `builder:` → `if (data.isEmpty) return EmptyWidget()` |
+| Default | `AsyncBlocBuilder` -> `builder:` |
+| Loading | `AsyncBlocBuilder` -> `skeletonBuilder:` with `Entity.initial()` |
+| Error | `AsyncBlocBuilder` -> `errorBuilder:` with `ErrorView` |
+| Empty | Inside `builder:` -> `if (data.isEmpty) return EmptyWidget()` |
 | Disabled | Widget with `opacity: 0.5` + `IgnorePointer` |
 | Selected/Active | Conditional `decoration` or `color` based on state |
 
 ---
 
-## RTL Conversion Rules (Figma MCP → Code)
+## RTL Conversion Rules (Figma MCP to Code)
 
 > **Figma MCP outputs nodes in LTR order. For RTL Arabic designs, REVERSE horizontal children.**
 
@@ -179,16 +179,16 @@ These are often toggled off in Figma but MUST be implemented in code.
 
 ## Conversion Checklist
 
-- [ ] Every Figma Frame → correct Flutter layout widget (Row/Column/Stack)
-- [ ] Auto-layout spacing → `.szH` / `.szW` extensions
-- [ ] Padding → `.paddingAll()` / `.paddingStart()` extensions (never `Padding` widget)
-- [ ] Text → `LocaleKeys.xxx.tr()` (never hardcoded strings)
-- [ ] Colors → `AppColors.xxx` (match by purpose)
-- [ ] Sizes → `AppSize.xxx` / `AppPadding.xxx`
-- [ ] Font sizes → adjusted per design-tokens rules
-- [ ] Images → `CachedImage` (remote) or `IconWidget` (local)
-- [ ] Icons → `IconWidget` (never `Icons.*`)
-- [ ] Buttons → `LoadingButton` (async) or `DefaultButton` (sync)
-- [ ] RTL → horizontal children reversed from MCP order
-- [ ] Hidden layers → all states implemented
+- [ ] Every Figma Frame -> correct Flutter layout widget (Row/Column/Stack)
+- [ ] Auto-layout spacing -> `.szH` / `.szW` extensions
+- [ ] Padding -> `.paddingAll()` / `.paddingStart()` extensions (never `Padding` widget)
+- [ ] Text -> `LocaleKeys.xxx.tr()` (never hardcoded strings)
+- [ ] Colors -> `AppColors.xxx` (match by purpose)
+- [ ] Sizes -> `AppSize.xxx` / `AppPadding.xxx`
+- [ ] Font sizes -> adjusted per design-tokens rules
+- [ ] Images -> `CachedImage` (remote) or `IconWidget` (local)
+- [ ] Icons -> `IconWidget` (never `Icons.*`)
+- [ ] Buttons -> `LoadingButton` (async) or `DefaultButton` (sync)
+- [ ] RTL -> horizontal children reversed from MCP order
+- [ ] Hidden layers -> all states implemented
 - [ ] `const` on every eligible widget/constructor

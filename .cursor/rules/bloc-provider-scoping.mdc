@@ -3,7 +3,7 @@ description: BlocProvider scoping rules — where to provide cubits, single vs m
 globs: lib/src/features/**/view/**/*.dart
 ---
 
-# Rule: BlocProvider Scoping Rules
+# Skill: BlocProvider Scoping Rules
 
 ## When to Use
 

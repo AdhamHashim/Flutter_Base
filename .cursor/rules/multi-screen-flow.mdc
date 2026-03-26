@@ -3,7 +3,7 @@ description: Multi-screen feature flow patterns — list/detail/edit/create with
 globs: lib/src/features/**/view/**/*.dart, lib/src/features/**/cubits/**/*.dart
 ---
 
-# Rule: Multi-Screen Feature Flow
+# Skill: Multi-Screen Feature Flow
 
 ## When to Use
 

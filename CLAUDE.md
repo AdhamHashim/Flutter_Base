@@ -11,7 +11,8 @@ Flutter RTL Arabic-first mobile application built with Clean Architecture + BLoC
 
 ## Quick Commands
 ```bash
-flutter run                                                    # Run app
+flutter run                                                    # Run app (real API)
+flutter run --dart-define=USE_MOCK=true                        # Run app (mock data)
 flutter pub get                                                # Install dependencies
 dart run build_runner build --delete-conflicting-outputs        # Generate injectable/freezed
 dart run generate/strings/main.dart                            # Generate locale keys
@@ -26,8 +27,9 @@ dart run generate/strings/main.dart                            # Generate locale
 - Data: RemoteDatasource + DTOs + Dio
 
 ### State Management
-- API calls → `AsyncCubit<T>` with `executeAsync()`
-- Paginated lists → `PaginatedCubit<T>`
+- API calls → `AsyncCubit<T>` with `executeAsync()` or `executeMockOrAsync()`
+- Paginated lists → `PaginatedCubit<T>` — **mandatory for any list endpoint with standalone screen**
+- `AsyncCubit<List<T>>` only for dropdowns, sub-sections, filter chips
 - CRUD → update state locally, NEVER re-fetch after add/edit/delete
 - UI state (controllers, notifiers) → `ViewController` class, not directly in view
 
@@ -71,6 +73,18 @@ lib/src/features/{name}/
 - Error handling: `AsyncBlocBuilder` handles loading/error/success automatically
 - Network errors: `ErrorView(error, onRetry)` with retry button
 
+### Backend Response Patterns (CRITICAL)
+- Pagination key: `data.pagination` (default — some backends use `data.meta`)
+- Validation errors: `data.items.{field}: [errors]` (NOT `errors.{field}`)
+- All success = HTTP 200 (no 201, 204)
+- Status fields: rich objects `{value, text_ar, text_en, tag_color}` (NOT plain strings)
+- Request body: `urlencoded` for text, `formdata` for files, `raw JSON` for complex nested data only
+- Boolean values: integer `1`/`0` in responses, string `"1"`/`"0"` in requests
+- Token location: `data.user.token`
+- File uploads: inline with form-data (NOT separate upload endpoint)
+- Toggle endpoints: `PUT /switch-{field}` with no body
+- Status change: `PUT /change-status-to-{value}` in URL
+
 ### Design Token Conversion (Figma → Code)
 - Font size: Figma ≤13sp → **keep as-is**, 14–18sp → reduce 1–2sp, ≥20sp → reduce 2sp
 - Font weight: may need to reduce if looks heavier than design
@@ -93,10 +107,41 @@ lib/src/features/{name}/
 - AppBar/BottomSheet/Dialog → check RTL with `Directionality` wrapper if content reversed
 - Dotted borders → use `dotted_border` package
 
+### API Design & Mock Data
+- Postman Collection: **ONE file** `postman/app_name.postman_collection.json` with nested folders (App → Feature → Endpoints) — NEVER separate files per feature
+- Unified response: `{status, code, message, data?}` — Arabic messages
+- Pagination: `data.pagination` object with `total_items`, `count_items`, `per_page`, `total_pages`, `current_page`, `next_page_url`, `prev_page_url`
+- Validation errors: `data.items.{field}: [error strings]` (NOT `errors.{field}`)
+- Multi-section screens → separate service per section (never one mega-endpoint)
+- Lists → pagination required (`?page=1&per_page=15`) → always `PaginatedCubit`
+- Multi-step forms → `validate-step-{n}` per step + final create
+- File uploads → inline with form-data in same request (NOT separate upload endpoint)
+- Request body: `urlencoded` for text-only, `formdata` for files, `raw JSON` for complex nested data only
+- URL naming: kebab-case always (`login-with-password`, `change-status-to-delivered`)
+- URL structure: `{{base_url}}/api/v1/{app}/{resource}` — app = user/supplier/(none for shared)
+- Toggle endpoints: `PUT /switch-{field}` with no body
+- Status change: `PUT /change-status-to-{value}` in URL path
+- OTP pattern: `{action}-send-code` / `{action}-check-code` / `{action}-resend-code`
+- Every field in Postman body must have `description` with validation rules (`required|string|max:255`)
+- Validation rules: Laravel pipe-separated format (`required|string|max:50|min:2`)
+- Headers always: `Accept: application/json` + `Accept-Language: {{lang}}`
+- Collection variables: `base_url`, `lang`, `user_token`, `supplier_token`, `user_phone`
+- Pre-request scripts: auto-save phone from body; Test scripts: auto-save token from `data.user.token`
+- **Emoji-commented JSON body**: group fields with emoji section headers (👤📱🎂🌍🏦📄🔐) for readability
+- **Endpoint documentation**: every endpoint must have Figma link(s) + Arabic description
+- **Response examples**: scenario-based names (`success first step`, `fail validation`, `empty response`)
+- **Collection description**: must include Response Standard, Status Codes, Pagination rules, Enums
+- **Forms with dropdowns** → `get-{form}-data` endpoint for lookup lists (countries, cities, etc.)
+- Mock data: `--dart-define=USE_MOCK=true` → `executeMockOrAsync` in AsyncCubit, `MockConfig.useMock` in PaginatedCubit
+- Mock paginated data: use `pagination` key (default — match what the real backend uses)
+- Mock files: `core/config/mocks/{feature}_mock.dart` (centralized, NOT in entity/) — realistic Arabic data, 8-15 items
+- Mock files are plain classes with direct import — NOT `part of` any imports file
+
 ### UI-Only Mode
-- Before starting any feature → ask: "UI Only or UI + API?"
-- UI Only → dummy data, no API calls, no Postman
-- UI + API → full workflow with API integration
+- Before starting any feature → ask: "UI Only or UI + API?" then "Existing Postman or Auto Generate?"
+- **UI Only** → static data in widgets, no cubits, no API, no Postman
+- **UI + API (Existing Postman)** → provide Postman link → read & implement
+- **UI + API (Auto Generate)** → analyze Figma → generate Postman JSON + entities + cubits + mock data
 - Never create fake API endpoints — they crash the app
 
 ### Platform Configuration
@@ -108,7 +153,7 @@ lib/src/features/{name}/
 
 Both `.claude/skills/` and `.cursor/rules/` contain the **same content and rules** — synced for equal power in Claude Code and Cursor IDE.
 
-### Skills (.claude/skills/) — 26 total
+### Skills (.claude/skills/) — 28 total
 Run `/skill-name` for detailed patterns:
 
 **Workflow & Entry Points:**
@@ -125,6 +170,8 @@ Run `/skill-name` for detailed patterns:
 
 **API & Data Flow:**
 - `api-pipeline` — Complete Postman → ApiConstants → Entity → CrudBaseParams → Cubit → UI pipeline
+- `api-design` — Auto-generate Postman Collection JSON from Figma screens (unified entities, pagination, multi-step forms, file upload)
+- `mock-data` — Mock data switching system via `--dart-define=USE_MOCK=true/false`, unified across all cubits
 - `form-api-pipeline` — Complete form → ViewController → Params → validation → API submit → success
 - `navigation-patterns` — Go.to() with arguments, back with result, refresh parent, tab navigation
 - `multi-screen-flow` — List/detail/edit/create patterns with data passing and screen linking
@@ -151,11 +198,13 @@ Run `/skill-name` for detailed patterns:
 - `pubspec-manager` — Package detection, platform config
 - `accessibility` — Tap targets ≥44, semantic labels, contrast
 
-### Cursor Rules (.cursor/rules/) — 26 total
+### Cursor Rules (.cursor/rules/) — 28 total
 Mirror of all skills above, plus:
 - `flutter-base-coding-standards.mdc` — Same as `coding-standards` skill
 - `flutter-feature-development.mdc` — Same as `feature-development` skill
 - `scaffold-statusbar.mdc` — Same as `scaffold-patterns` skill
+- `api-design.mdc` — Same as `api-design` skill (Postman Collection generation)
+- `mock-data.mdc` — Same as `mock-data` skill (mock/real API switching)
 - `error-handling-and-resilience.mdc` — **Always active** (alwaysApply: true)
 - `post-feature-review.mdc` — **Always active** (alwaysApply: true)
 

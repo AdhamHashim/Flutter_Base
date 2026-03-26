@@ -1,9 +1,8 @@
 ---
 description: Complete API integration pipeline from Postman → ApiConstants → Entity → CrudBaseParams → Cubit → UI. Step-by-step for GET/list endpoints.
 globs: lib/src/features/**/cubits/**/*.dart, lib/src/core/network/**/*.dart
----
 
-# Rule: API Pipeline — Postman to Working Screen
+# Skill: API Pipeline — Postman to Working Screen
 
 ## When to Use
 
@@ -51,18 +50,34 @@ From Postman, extract:
 ### Response Structure — Know Your JSON Path
 
 ```json
-// Type A: Direct data
-{"data": [...]}                    → mapper: (json) => (json['data'] as List).map(...)
+// Type A: Single object (detail, profile, create/update response)
+// Response: {"status":"success","code":200,"message":"...","data":{...}}
+→ mapper: (json) => Entity.fromJson(json['data'])
 
-// Type B: Nested data with pagination
-{"data": {"data": [...], "pagination": {...}}}  → mapper: (json) => (json['data']['data'] as List).map(...)
+// Type B: Nested data with pagination (list endpoints) — uses 'pagination' key
+// Response: {"status":"success","code":200,"message":"...","data":{"data":[...],"pagination":{...}}}
+→ mapper: (json) => (json['data']['data'] as List).map(...)
 
-// Type C: Single object
-{"data": {"id": 1, "name": "..."}}  → mapper: (json) => Entity.fromJson(json['data'])
+// Type C: User data (login, check-code) — token inside data.user
+// Response: {"status":"success","code":200,"data":{"user":{...,"token":"N|xxx"}}}
+→ mapper: (json) => UserEntity.fromJson(json['data']['user'])
 
-// Type D: Message only (delete/action)
-{"msg": "Success", "key": "success"} → mapper: (json) => BaseModel.fromJson(json)
+// Type D: Message only (delete, toggle, status change)
+// Response: {"status":"success","code":200,"message":"تم الحذف بنجاح."}
+→ mapper: (json) => BaseModel.fromJson(json)
 ```
+
+### ⚠️ Critical Backend Patterns to Match
+
+| Pattern | Real Backend | ❌ NOT This |
+|---------|-------------|------------|
+| Pagination key | `data.pagination` | `data.meta` |
+| Validation errors | `data.items.{field}: [errors]` | `errors.{field}: [errors]` |
+| Status field | `200` for ALL success | No 201/204 |
+| Body format | `urlencoded` / `formdata` / `raw JSON` (complex nested only) | — |
+| Boolean values | integer `1`/`0` | `true`/`false` |
+| Token location | `data.user.token` | `data.token` |
+| Status/enum fields | `{value, text_ar, text_en, tag_color}` | plain string |
 
 ---
 
@@ -249,19 +264,28 @@ Future<void> fetchProducts({String? categoryId, String? search}) async {
 }
 ```
 
-### Paginated List:
+### Paginated List (MANDATORY for list endpoints with standalone screens):
+
+> **Mock files live in `lib/src/core/config/mocks/` — NOT in entity/.**
+> **Use `executeMockOrAsync` for AsyncCubit, direct `MockConfig.useMock` check for PaginatedCubit.**
+> **⚠️ Pagination key is `pagination` — match real backend.**
 
 ```dart
 @injectable
 class ProductsCubit extends PaginatedCubit<ProductEntity> {
   @override
-  Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) =>
-      baseCrudUseCase.call(CrudBaseParams(
-        api: ApiConstants.products,
-        httpRequestType: HttpRequestType.get,
-        queryParameters: ConstantManager.paginateJson(page),
-        mapper: (json) => json,
-      ));
+  Future<Result<Map<String, dynamic>, Failure>> fetchPageData(int page, {String? key}) async {
+    if (MockConfig.useMock) {
+      await MockConfig.simulateDelay();
+      return Success(ProductMock.paginatedResponse(page));
+    }
+    return baseCrudUseCase.call(CrudBaseParams(
+      api: ApiConstants.products,
+      httpRequestType: HttpRequestType.get,
+      queryParameters: ConstantManager.paginateJson(page),
+      mapper: (json) => json,
+    ));
+  }
 
   @override
   List<ProductEntity> parseItems(json) => (json['data'] as List)

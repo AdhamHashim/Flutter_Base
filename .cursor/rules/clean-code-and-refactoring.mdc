@@ -70,25 +70,25 @@ widgets/
    - ده مش تحسين اختياري — ده performance requirement. Flutter بيعمل skip لـ rebuild لأي widget مع `const`.
 
    ```dart
-   // CORRECT — const on every eligible widget
+   // ✅ CORRECT — const on every eligible widget
    const _MyHeader();
    const SizedBox(height: 8);
    const EdgeInsetsDirectional.only(start: 16);
    const TextStyle().setMainTextColor.s14.bold;
 
-   // CORRECT — const constructor
+   // ✅ CORRECT — const constructor
    class _FeatureHeader extends StatelessWidget {
      const _FeatureHeader();  // ← const constructor
      @override
      Widget build(BuildContext context) => ...;
    }
 
-   // WRONG — missing const on eligible widget
+   // ❌ WRONG — missing const on eligible widget
    SizedBox(height: 8);           // ← should be const SizedBox(height: 8)
    _MyHeader();                    // ← should be const _MyHeader()
    EdgeInsets.all(16);            // ← should be const EdgeInsets.all(16)
 
-   // WRONG — missing const constructor
+   // ❌ WRONG — missing const constructor
    class _FeatureHeader extends StatelessWidget {
      _FeatureHeader();            // ← should be const _FeatureHeader()
    }
@@ -112,4 +112,5 @@ widgets/
 عند استخدام هذا الـ skill، اعرض:
 - قائمة بالـ widgets التي تم استخراجها لملفات منفصلة.
 - قائمة بالـ widgets المكررة اللي تم توحيدها.
-- أي إعادة تسمية مهمة (قبل/بعد) إن كانت مفيدة للمراجعة.
+- أي إعادة تسمية مهمة (قبل/بعد) إن كانت مفيدة للمراجعة. 
+
