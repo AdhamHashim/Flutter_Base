@@ -22,9 +22,9 @@ Future<void> initUserData(BuildContext context) async {
   ).then((value) async {
     final result = await UserCubit.instance.init();
     if (result) {
-      Go.to(const HomeScreen());
+      Go.offAll(const HomeScreen());
     } else {
-      Go.to(const IntroScreen());
+      Go.offAll(const IntroScreen());
     }
   });
 }

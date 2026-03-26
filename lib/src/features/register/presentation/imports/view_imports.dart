@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../config/language/locale_keys.g.dart';
+import '../../../../config/res/assets.gen.dart';
+import '../../../../config/res/config_imports.dart';
+import '../../../../core/extensions/string_extension.dart';
+import '../../../../core/extensions/context_extension.dart';
+import '../../../../core/extensions/text_style_extensions.dart';
+import '../../../../core/extensions/widgets/padding_extension.dart';
+import '../../../../core/extensions/widgets/sized_box_helper.dart';
+import '../../../../core/helpers/helpers.dart';
+import '../../../../core/helpers/arabic_numbers_formatter.dart';
+import '../../../../core/helpers/input_formatters.dart';
+import '../../../../core/helpers/validators.dart';
+import '../../../../core/navigation/navigator.dart';
+import '../entity/register_params.dart';
+import '../../../../core/widgets/buttons/default_button.dart';
+import '../../../../core/widgets/buttons/loading_button.dart';
+import '../../../../core/widgets/fields/drop_downs/app_drop_down/app_dropdown.dart';
+import '../../../../core/widgets/fields/text_fields/custom_text_field.dart';
+import '../../../../core/widgets/fields/text_fields/pin_text_field.dart';
+import '../../../../core/widgets/icon_widget.dart';
+import '../../../../core/widgets/pickers/custom_date_picker.dart';
+import '../../../logic/home/presentation/imports/view_imports.dart'
+    show HomeScreen;
+
+part '../view/register_screen.dart';
+part '../view/register_verify_otp_screen.dart';
+part '../view/register_create_pin_screen.dart';
+part '../view/register_confirm_pin_screen.dart';
+part '../view/register_financial_data_screen.dart';
+part '../widgets/register_header_widget.dart';
+part '../widgets/register_body.dart';
+part '../widgets/register_verify_otp_body.dart';
+part '../widgets/register_pin_body.dart';
+part '../widgets/register_auto_lock_info_widget.dart';
+part '../widgets/register_financial_data_body.dart';

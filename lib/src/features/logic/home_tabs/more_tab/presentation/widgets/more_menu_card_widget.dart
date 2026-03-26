@@ -1,70 +1,90 @@
 part of '../imports/view_imports.dart';
 
 class MoreMenuCardWidget extends StatelessWidget {
-  final MoreItemEntity menuItem;
-
   const MoreMenuCardWidget({super.key, required this.menuItem});
+
+  final MoreItemEntity menuItem;
 
   @override
   Widget build(BuildContext context) {
     context.locale;
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.border,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppCircular.r2),
-      ),
-      margin: EdgeInsets.symmetric(vertical: AppMargin.mH4),
-      padding: EdgeInsets.symmetric(
-        horizontal: AppPadding.pW10,
-        vertical: menuItem.useSwitch
-            ? ConstantManager.zeroAsDouble
-            : AppPadding.pH6,
-      ),
-
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: AppMargin.mW8,
-        children: [
-          if (menuItem.icon.contains('.svg')) ...[
-            SvgPicture.asset(
-              menuItem.icon,
-              width: AppSize.sH35,
-              height: AppSize.sH35,
-            ),
-          ] else ...[
-            Image.asset(
-              menuItem.icon,
-              width: AppSize.sH35,
-              height: AppSize.sH35,
-            ),
-          ],
-          Expanded(
-            child: Text(
-              menuItem.title,
-              style: const TextStyle().setMainTextColor.s13.regular,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      textDirection: context.isArabic
+          ? ui.TextDirection.rtl
+          : ui.TextDirection.ltr,
+      children: [
+        Container(
+          width: AppSize.sH40,
+          height: AppSize.sH40,
+          decoration: const BoxDecoration(
+            color: AppColors.selectedButton,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: IconWidget(
+              icon: menuItem.icon,
+              width: AppSize.sW18,
+              height: AppSize.sH18,
             ),
           ),
-          if (menuItem.useSwitch) ...[
-            const _SwitchNotifyWidget(),
-          ] else ...[
-            if (!menuItem.disableArrow) ...[
-              Transform(
-                alignment: Alignment.center,
-                transform: context.isRight
-                    ? Matrix4.rotationY(math.pi)
-                    : Matrix4.rotationX(math.pi),
-                child: AppAssets.svg.baseSvg.arrowBack.svg(
-                  width: AppSize.sH16,
-                  height: AppSize.sH16,
+        ),
+        AppMargin.mW12.szW,
+        Expanded(
+          child: menuItem.useSwitch
+              ? Row(
+                  textDirection: context.isArabic
+                      ? ui.TextDirection.rtl
+                      : ui.TextDirection.ltr,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        menuItem.title,
+                        textAlign: TextAlign.start,
+                        textDirection: context.isArabic
+                            ? ui.TextDirection.rtl
+                            : ui.TextDirection.ltr,
+                        style: const TextStyle()
+                            .setSecondryColor
+                            .s14
+                            .medium
+                            .setFontFamily,
+                      ),
+                    ),
+                    const _SwitchNotifyWidget(),
+                  ],
+                )
+              : Text(
+                  menuItem.title,
+                  textAlign: TextAlign.start,
+                  textDirection: context.isArabic
+                      ? ui.TextDirection.rtl
+                      : ui.TextDirection.ltr,
+                  style: const TextStyle()
+                      .setSecondryColor
+                      .s14
+                      .medium
+                      .setFontFamily,
                 ),
-              ),
-            ],
-          ],
+        ),
+        if (!menuItem.useSwitch && !menuItem.disableArrow) ...[
+          AppMargin.mW12.szW,
+          Transform(
+            alignment: Alignment.center,
+            transform: context.isRight
+                ? Matrix4.rotationY(math.pi)
+                : Matrix4.identity(),
+            child: IconWidget(
+              icon: AppAssets.svg.baseSvg.arrowBack.path,
+              width: AppSize.sH20,
+              height: AppSize.sH20,
+            ),
+          ),
         ],
-      ),
-    ).onClick(onTap: menuItem.onTap);
+      ],
+    )
+        .paddingSymmetric(vertical: AppPadding.pH12)
+        .onClick(onTap: menuItem.onTap);
   }
 }
 

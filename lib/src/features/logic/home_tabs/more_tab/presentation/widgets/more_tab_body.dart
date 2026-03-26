@@ -6,42 +6,42 @@ class _MoreTabBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.locale;
-    final generalItems = MoreItemEntity.generalItems;
-    final otherItems = MoreItemEntity.otherItems;
-    final guestItems = MoreItemEntity.guestItems;
+    final isLoggedIn = UserCubit.instance.isUserLoggedIn;
     return Column(
-      spacing: AppMargin.mH30,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (UserCubit.instance.isUserLoggedIn)
-          const ProfileInfoWithIconsWidget(
-            profileIconAppear: ProfileIconAppearEnum.more,
-          ),
+        const _MoreTabHeaderWidget(),
         Expanded(
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: AppMargin.mH18,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: AppMargin.mH20,
               children: [
-                if (UserCubit.instance.isUserLoggedIn) ...[
+                if (isLoggedIn) const _MoreSubscriptionCardWidget(),
+                if (isLoggedIn)
                   _MoreSectionWidget(
-                    titleKey: LocaleKeys.moreGeneralTitle,
-                    items: generalItems,
+                    titleKey: LocaleKeys.moreAccountSection,
+                    items: MoreItemEntity.accountItems,
                   ),
+                if (isLoggedIn)
                   _MoreSectionWidget(
-                    titleKey: LocaleKeys.moreOthersTitle,
-                    items: otherItems,
+                    titleKey: LocaleKeys.moreAppSection,
+                    items: MoreItemEntity.appItems,
                   ),
-                ] else ...[
-                  _MoreSectionWidget(
-                    titleKey: ConstantManager.emptyText,
-                    items: guestItems,
-                  ),
-                ],
+                _MoreSectionWidget(
+                  titleKey: LocaleKeys.moreSupportSection,
+                  items: isLoggedIn
+                      ? MoreItemEntity.supportItems
+                      : MoreItemEntity.guestSupportItems,
+                ),
+                if (isLoggedIn) const _MoreLogoutSectionWidget(),
+                AppMargin.mH16.szH,
               ],
-            ),
+            ).paddingSymmetric(horizontal: AppPadding.pW14),
           ),
         ),
       ],
-    ).paddingAll(AppPadding.pH14);
+    );
   }
 }

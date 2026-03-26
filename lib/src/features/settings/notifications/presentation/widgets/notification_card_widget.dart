@@ -1,74 +1,145 @@
 part of '../imports/view_imports.dart';
 
 class _NotificationCardWidget extends StatelessWidget {
-  final NotificationEntity notificationEntity;
   const _NotificationCardWidget(this.notificationEntity);
+
+  final NotificationEntity notificationEntity;
+
+  Color _accentBackground() {
+    switch (notificationEntity.accent) {
+      case NotificationAccent.success:
+        return AppColors.success.withValues(alpha: 0.08);
+      case NotificationAccent.warning:
+        return AppColors.warning.withValues(alpha: 0.1);
+      case NotificationAccent.info:
+        return AppColors.info.withValues(alpha: 0.1);
+    }
+  }
+
+  Color _accentForeground() {
+    switch (notificationEntity.accent) {
+      case NotificationAccent.success:
+        return AppColors.success;
+      case NotificationAccent.warning:
+        return AppColors.warning;
+      case NotificationAccent.info:
+        return AppColors.info;
+    }
+  }
+
+  String _accentIconPath() {
+    switch (notificationEntity.accent) {
+      case NotificationAccent.success:
+        return AppAssets.svg.baseSvg.correct.path;
+      case NotificationAccent.warning:
+        return AppAssets.svg.baseSvg.notify.path;
+      case NotificationAccent.info:
+        return AppAssets.svg.baseSvg.notifications.path;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(AppPadding.pH10),
-      margin: EdgeInsets.symmetric(vertical: AppMargin.mH4),
+      margin: EdgeInsets.only(bottom: AppMargin.mH12),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppCircular.r5),
+        color: AppColors.scaffoldBackground,
+        borderRadius: BorderRadius.circular(AppCircular.r15),
+        boxShadow: [AppColors.containerShadow],
+        border: notificationEntity.isUnread
+            ? BorderDirectional(
+                start: BorderSide(
+                  width: AppSize.sW4,
+                  color: AppColors.forth,
+                ),
+              )
+            : null,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: AppMargin.mW8,
         children: [
-          AppAssets.svg.baseSvg.notifications.svg(
-            width: AppSize.sW40,
-            height: AppSize.sH40,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: AppMargin.mH6,
-              children: [
-                Text(
-                  notificationEntity.body,
-                  style: const TextStyle().setMainTextColor.s11.regular,
-                ),
-                Text(
-                  notificationEntity.createdAt,
-                  style: const TextStyle()
-                      .setColor(const Color(0xff7B7B7B))
-                      .s10
-                      .regular,
-                ),
-              ],
+          Container(
+            width: AppSize.sH50,
+            height: AppSize.sH50,
+            decoration: BoxDecoration(
+              color: _accentBackground(),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: IconWidget(
+                icon: _accentIconPath(),
+                width: AppSize.sW20,
+                height: AppSize.sH20,
+                color: _accentForeground(),
+              ),
             ),
           ),
-          BlocProvider(
-            create: (context) =>
-                DeleteNotificationCubit(context.read<NotificationsCubit>()),
-            child: Builder(
-              builder: (context) {
-                return Skeleton.ignore(
-                  child: AppAssets.svg.baseSvg.deleteAll
-                      .svg(width: AppSize.sW25, height: AppSize.sH25)
-                      .onClick(
+          AppMargin.mW12.szW,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        notificationEntity.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle().setMainTextColor.s14.semiBold,
+                      ),
+                    ),
+                    AppMargin.mW8.szW,
+                    Skeleton.ignore(
+                      child: IconWidget(
+                        icon: AppAssets.svg.wzeinIcons.delete02.path,
+                        width: AppSize.sW20,
+                        height: AppSize.sH20,
+                        color: AppColors.primary,
+                      ).onClick(
                         onTap: () {
                           final cubit = context.read<DeleteNotificationCubit>();
                           deleteNotifications(
                             cubit: cubit,
-                            title: LocaleKeys.deleteNotification,
-                            onTap: () async => await cubit
-                                .deleteOneNotification(notificationEntity),
+                            title: LocaleKeys.notificationsDeleteSheetTitle,
+                            message: LocaleKeys.notificationsDeleteSheetDesc,
+                            onConfirm: () async =>
+                                cubit.deleteOneNotification(notificationEntity),
                           );
                         },
                       ),
-                );
-              },
+                    ),
+                  ],
+                ),
+                AppMargin.mH6.szH,
+                Text(
+                  notificationEntity.body,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.start,
+                  style: const TextStyle().setPrimaryColor.s12.regular,
+                ),
+                AppMargin.mH8.szH,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      notificationEntity.createdAt,
+                      style: const TextStyle().setHintColor.s12.regular,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
-      ),
+      ).paddingAll(AppPadding.pH16),
     ).onClick(
-      onTap: () => NotificationRoutes.navigateByType(notificationEntity.toMap),
+      onTap: () =>
+          NotificationRoutes.navigateByType(notificationEntity.toMap),
     );
   }
 }

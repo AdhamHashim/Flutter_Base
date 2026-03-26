@@ -40,18 +40,13 @@ class DefaultScaffold extends StatelessWidget {
                   horizontal: AppPadding.pH12,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (showArrow) ...[
-                      ArrowWidget(onTap: onTap),
-                    ] else ...[
-                      const SizedBox.shrink(),
-                    ],
+                    if (showArrow) ...[ArrowWidget(onTap: onTap)],
                     if (headLineWidget == null) ...[
                       Text(
                         title,
-                        style: const TextStyle().setMainTextColor.s13.medium,
+                        style: const TextStyle().setMainTextColor.s20.medium,
                       ),
                     ] else ...[
                       headLineWidget!,

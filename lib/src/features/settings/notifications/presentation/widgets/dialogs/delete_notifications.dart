@@ -1,69 +1,108 @@
 part of '../../imports/view_imports.dart';
 
-Future deleteNotifications({
+Future<void> deleteNotifications({
   required DeleteNotificationCubit cubit,
   required String title,
-  required Future<void> Function() onTap,
-}) async {
+  String? message,
+  required Future<void> Function() onConfirm,
+}) {
   return showDefaultBottomSheet(
     child: BlocProvider.value(
       value: cubit,
-      child: _DeleteAllNotificationBody(title: title, onTap: onTap),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: _NotificationDeleteSheetBody(
+          title: title,
+          message: message,
+          onConfirm: onConfirm,
+        ),
+      ),
     ),
   );
 }
 
-class _DeleteAllNotificationBody extends StatelessWidget {
+class _NotificationDeleteSheetBody extends StatelessWidget {
+  const _NotificationDeleteSheetBody({
+    required this.title,
+    required this.onConfirm,
+    this.message,
+  });
+
   final String title;
-  final Future<void> Function() onTap;
-  const _DeleteAllNotificationBody({required this.title, required this.onTap});
+  final String? message;
+  final Future<void> Function() onConfirm;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
-      spacing: AppMargin.mH4,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AppAssets.svg.baseSvg.notificationDialog.image(
-          width: context.width * .3,
-          height: context.height * .14,
-          fit: BoxFit.cover,
+        Center(
+          child: Container(
+            width: AppSize.sW60,
+            height: AppSize.sH4,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(AppCircular.r12),
+            ),
+          ),
+        ),
+        AppSize.sH20.szH,
+        Center(
+          child: IconWidget(
+            icon: AppAssets.svg.baseSvg.notificationDelete.path,
+            width: AppSize.sW30,
+            height: AppSize.sH30,
+            color: AppColors.error,
+          ),
         ),
         AppSize.sH16.szH,
-        Text(title, style: const TextStyle().setMainTextColor.s15.medium),
         Text(
-          LocaleKeys.warning,
-          style: const TextStyle().setSecondryColor.s11.regular,
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle().setMainTextColor.s14.semiBold,
         ),
-        AppSize.sH10.szH,
+        if (message != null && message!.isNotEmpty) ...[
+          AppSize.sH12.szH,
+          Text(
+            message!,
+            textAlign: TextAlign.center,
+            style: const TextStyle().setHintColor.s13.regular,
+          ),
+        ],
+        AppSize.sH20.szH,
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: AppMargin.mW14,
           children: [
             Expanded(
-              child: LoadingButton(
-                height: AppSize.sH40,
-                title: LocaleKeys.confirm,
-                color: AppColors.error,
-                onTap: onTap,
+              child: DefaultButton(
+                width: double.infinity,
+                height: AppSize.sH55,
+                title: LocaleKeys.back,
+                color: AppColors.grey1,
+                textColor: AppColors.primary,
+                borderRadius: BorderRadius.circular(AppCircular.r15),
+                onTap: () => Go.back(),
               ),
             ),
+            AppMargin.mW8.szW,
             Expanded(
               child: LoadingButton(
-                height: AppSize.sH40,
-                title: LocaleKeys.cancel,
+                height: AppSize.sH55,
+                borderRadius: AppCircular.r15,
+                title: LocaleKeys.notificationsDeleteAction,
                 color: AppColors.white,
-                textColor: AppColors.main,
-                borderSide: const BorderSide(color: AppColors.border),
-                onTap: () async => Go.back(),
+                textColor: AppColors.error,
+                borderSide: const BorderSide(color: AppColors.error),
+                onTap: onConfirm,
               ),
             ),
           ],
         ),
       ],
+    ).paddingSymmetric(
+      horizontal: AppPadding.pW20,
+      vertical: AppPadding.pH8,
     );
   }
 }

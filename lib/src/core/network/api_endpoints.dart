@@ -41,6 +41,16 @@ class ApiConstants {
   static const String changeEmailVerifyCode =
       'user/profile/change-email-verify-code';
 
+  // ---------------------- Change phone -----------------------------------
+  static const String changePhoneSendSmsToCurrentPhone =
+      'user/change-phone/send-sms-to-current-phone';
+  static const String changePhoneVerifyCurrentPhoneCode =
+      'user/change-phone/verify-current-phone-code';
+  static const String changePhoneSendSmsToNewPhone =
+      'user/change-phone/send-sms-to-new-phone';
+  static const String changePhoneVerifyNewPhoneCode =
+      'user/change-phone/verify-new-phone-code';
+
   // ---------------------- More -----------------------------------
   static const String faqs = 'get-faqs';
   static const String about = 'about';
