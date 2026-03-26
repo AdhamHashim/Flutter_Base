@@ -1,0 +1,39 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Flutter: Generate AppAssets (build_runner)",
+      "type": "shell",
+      "command": "dart run build_runner build --delete-conflicting-outputs",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {}
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Watch build_runner (assets + codegen)",
+      "type": "shell",
+      "command": "dart run build_runner watch --delete-conflicting-outputs",
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {}
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      }
+    }
+  ]
+}

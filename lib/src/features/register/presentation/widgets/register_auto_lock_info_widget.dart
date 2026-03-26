@@ -29,6 +29,12 @@ class RegisterAutoLockInfoWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          IconWidget(
+            icon: iconPath ?? AppAssets.svg.wzeinIcons.defince.path,
+            height: AppSize.sH20,
+            width: AppSize.sW20,
+          ),
+          16.szW,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,20 +50,11 @@ class RegisterAutoLockInfoWidget extends StatelessWidget {
                 AppSize.sH4.szH,
                 Text(
                   description,
-                  style: const TextStyle()
-                      .setHintColor
-                      .s13
-                      .regular
-                      .setFontFamily,
+                  style:
+                      const TextStyle().setHintColor.s13.regular.setFontFamily,
                 ),
               ],
             ),
-          ),
-          IconWidget(
-            icon: iconPath ?? AppAssets.svg.baseSvg.changePass.path,
-            color: AppColors.forth,
-            height: AppSize.sH20,
-            width: AppSize.sW20,
           ),
         ],
       ),

@@ -93,12 +93,18 @@ class _RegisterVerifyOtpBodyState extends State<_RegisterVerifyOtpBody> {
             Container(
               padding: EdgeInsets.all(AppPadding.pH16),
               decoration: BoxDecoration(
-                color: AppColors.infoBoxLight,
+                color: AppColors.buttonText,
                 borderRadius: BorderRadius.circular(AppCircular.r12),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    color: AppColors.info,
+                    size: AppSize.sH20,
+                  ),
+                  16.szW,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,12 +128,6 @@ class _RegisterVerifyOtpBodyState extends State<_RegisterVerifyOtpBody> {
                         ),
                       ],
                     ),
-                  ),
-                  IconWidget(
-                    icon: AppAssets.svg.baseSvg.notify.path,
-                    color: AppColors.forth,
-                    height: AppSize.sH20,
-                    width: AppSize.sW20,
                   ),
                 ],
               ),

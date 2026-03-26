@@ -53,53 +53,33 @@ class _LoginBodyState extends State<_LoginBody> {
               ),
             ),
             AppSize.sH20.szH,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: AppMargin.mH6,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: AppMargin.mW2,
-                  children: [
-                    Text(
-                      '*',
-                      style: const TextStyle()
-                          .setColor(AppColors.error)
-                          .s13
-                          .regular,
-                    ),
-                    Text(
-                      LocaleKeys.registerPasswordLabel,
-                      style: const TextStyle().setMainTextColor.s13.regular,
-                    ),
-                  ],
-                ),
-                DefaultTextField(
-                  controller: _vc.passwordController,
-                  isPassword: true,
-                  inputType: TextInputType.visiblePassword,
-                  action: TextInputAction.done,
-                  validator: (v) => Validators.validatePassword(
-                    v,
-                    fieldTitle: LocaleKeys.registerPasswordLabel,
-                  ),
-                  title: LocaleKeys.loginPasswordHint,
-                  fillColor: AppColors.white,
-                  borderRadius: BorderRadius.circular(AppCircular.r15),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: AppPadding.pW8,
-                    vertical: AppPadding.pH14,
-                  ),
-                  style: const TextStyle().setMainTextColor.s12.regular,
-                  prefixIcon: IconWidget(
-                    icon: AppAssets.svg.wzeinIcons.circlePassword.path,
-                    height: AppSize.sH16,
-                    width: AppSize.sW16,
-                  ).paddingAll(AppPadding.pW8),
-                ),
-              ],
+
+            CustomTextFiled(
+              hint: LocaleKeys.loginPasswordHint,
+              textInputType: TextInputType.visiblePassword,
+              textInputAction: TextInputAction.done,
+              controller: _vc.passwordController,
+              isPassword: true,
+
+              validator: (v) => Validators.validatePassword(
+                v,
+                fieldTitle: LocaleKeys.registerPasswordLabel,
+              ),
+              title: LocaleKeys.registerPasswordLabel,
+              // fillColor: AppColors.white,
+              // borderRadius: BorderRadius.circular(AppCircular.r15),
+              // contentPadding: EdgeInsets.symmetric(
+              //   horizontal: AppPadding.pW8,
+              //   vertical: AppPadding.pH14,
+              // ),
+              // style: const TextStyle().setMainTextColor.s12.regular,
+              prefixIcon: IconWidget(
+                icon: AppAssets.svg.wzeinIcons.circlePassword.path,
+                height: AppSize.sH16,
+                width: AppSize.sW16,
+              ).paddingAll(AppPadding.pW8),
             ),
+
             AppSize.sH20.szH,
             LoadingButton(
               title: LocaleKeys.confirm,
@@ -125,7 +105,7 @@ class _LoginBodyState extends State<_LoginBody> {
               height: AppSize.sH55,
               onTap: () => Go.to(const RegisterScreen()),
             ),
-            AppSize.sH20.szH,
+            AppSize.sH35.szH,
             const Center(child: _LoginForgotPasswordFooter()),
           ],
         ).paddingSymmetric(horizontal: AppPadding.pW14),

@@ -537,6 +537,10 @@ class $AssetsSvgWzeinIconsGen {
   SvgGenImage get button72 =>
       const SvgGenImage('assets/svg/wzein_icons/button-7_2.svg');
 
+  /// File path: assets/svg/wzein_icons/calender.svg
+  SvgGenImage get calender =>
+      const SvgGenImage('assets/svg/wzein_icons/calender.svg');
+
   /// File path: assets/svg/wzein_icons/circle-password.svg
   SvgGenImage get circlePassword =>
       const SvgGenImage('assets/svg/wzein_icons/circle-password.svg');
@@ -560,6 +564,14 @@ class $AssetsSvgWzeinIconsGen {
   /// File path: assets/svg/wzein_icons/circle-password_6.svg
   SvgGenImage get circlePassword6 =>
       const SvgGenImage('assets/svg/wzein_icons/circle-password_6.svg');
+
+  /// File path: assets/svg/wzein_icons/currency.svg
+  SvgGenImage get currency =>
+      const SvgGenImage('assets/svg/wzein_icons/currency.svg');
+
+  /// File path: assets/svg/wzein_icons/defince.svg
+  SvgGenImage get defince =>
+      const SvgGenImage('assets/svg/wzein_icons/defince.svg');
 
   /// File path: assets/svg/wzein_icons/delete-02.svg
   SvgGenImage get delete02 =>
@@ -1803,6 +1815,9 @@ class $AssetsSvgWzeinIconsGen {
   SvgGenImage get icon3 =>
       const SvgGenImage('assets/svg/wzein_icons/icon3.svg');
 
+  /// File path: assets/svg/wzein_icons/lamp.svg
+  SvgGenImage get lamp => const SvgGenImage('assets/svg/wzein_icons/lamp.svg');
+
   /// File path: assets/svg/wzein_icons/logout-03.svg
   SvgGenImage get logout03 =>
       const SvgGenImage('assets/svg/wzein_icons/logout-03.svg');
@@ -2107,6 +2122,9 @@ class $AssetsSvgWzeinIconsGen {
   SvgGenImage get rightSide9 =>
       const SvgGenImage('assets/svg/wzein_icons/right-side_9.svg');
 
+  /// File path: assets/svg/wzein_icons/sun.svg
+  SvgGenImage get sun => const SvgGenImage('assets/svg/wzein_icons/sun.svg');
+
   /// File path: assets/svg/wzein_icons/vector.svg
   SvgGenImage get vector =>
       const SvgGenImage('assets/svg/wzein_icons/vector.svg');
@@ -2345,12 +2363,15 @@ class $AssetsSvgWzeinIconsGen {
     button69,
     button7,
     button72,
+    calender,
     circlePassword,
     circlePassword2,
     circlePassword3,
     circlePassword4,
     circlePassword5,
     circlePassword6,
+    currency,
+    defince,
     delete02,
     delete022,
     delete023,
@@ -2671,6 +2692,7 @@ class $AssetsSvgWzeinIconsGen {
     icon592,
     icon593,
     icon3,
+    lamp,
     logout03,
     marginWrap,
     marginWrap10,
@@ -2747,6 +2769,7 @@ class $AssetsSvgWzeinIconsGen {
     rightSide7,
     rightSide8,
     rightSide9,
+    sun,
     vector,
     vector10,
     vector11,

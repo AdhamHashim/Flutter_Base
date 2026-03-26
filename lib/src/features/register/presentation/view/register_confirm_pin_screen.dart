@@ -13,7 +13,8 @@ class _RegisterConfirmPinView extends StatefulWidget {
   const _RegisterConfirmPinView();
 
   @override
-  State<_RegisterConfirmPinView> createState() => _RegisterConfirmPinViewState();
+  State<_RegisterConfirmPinView> createState() =>
+      _RegisterConfirmPinViewState();
 }
 
 class _RegisterConfirmPinViewState extends State<_RegisterConfirmPinView> {

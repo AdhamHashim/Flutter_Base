@@ -8,11 +8,14 @@ class _RegisterFinancialDataBody extends StatefulWidget {
       _RegisterFinancialDataBodyState();
 }
 
-class _RegisterFinancialDataBodyState extends State<_RegisterFinancialDataBody> {
-  final TextEditingController _monthlySalaryController = TextEditingController();
+class _RegisterFinancialDataBodyState
+    extends State<_RegisterFinancialDataBody> {
+  final TextEditingController _monthlySalaryController =
+      TextEditingController();
   final TextEditingController _salaryDateController = TextEditingController();
   final TextEditingController _dailyExpenseController = TextEditingController();
-  final TextEditingController _holidayExpenseController = TextEditingController();
+  final TextEditingController _holidayExpenseController =
+      TextEditingController();
   final ValueNotifier<Set<int>> _selectedWeekdays = ValueNotifier({5, 6});
 
   static const List<int> _weekdayIndices = [6, 5, 4, 3, 2, 1, 0];
@@ -55,7 +58,7 @@ class _RegisterFinancialDataBodyState extends State<_RegisterFinancialDataBody> 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            RegisterHeaderWidget(
+          RegisterHeaderWidget(
             title: LocaleKeys.registerFinancialDataTitle,
             subtitle: LocaleKeys.registerFinancialDataSubtitle,
           ),
@@ -71,6 +74,11 @@ class _RegisterFinancialDataBodyState extends State<_RegisterFinancialDataBody> 
               DecimalNumberFormatter(decimalPlaces: 2),
               ArabicNumbersFormatter(),
             ],
+            prefixIcon: IconWidget(
+              icon: AppAssets.svg.wzeinIcons.currency.path,
+              height: AppSize.sH20,
+              width: AppSize.sW20,
+            ).paddingAll(AppPadding.pW4),
           ),
           AppSize.sH20.szH,
           CustomTextFiled(
@@ -85,6 +93,12 @@ class _RegisterFinancialDataBodyState extends State<_RegisterFinancialDataBody> 
               dateFormat: 'dd/MM/yyyy',
             ),
             readOnly: true,
+            fillColor: AppColors.white,
+            prefixIcon: IconWidget(
+              icon: AppAssets.svg.wzeinIcons.currency.path,
+              height: AppSize.sH20,
+              width: AppSize.sW20,
+            ).paddingAll(AppPadding.pW4),
           ),
           AppSize.sH20.szH,
           CustomTextFiled(
@@ -98,11 +112,21 @@ class _RegisterFinancialDataBodyState extends State<_RegisterFinancialDataBody> 
               DecimalNumberFormatter(decimalPlaces: 2),
               ArabicNumbersFormatter(),
             ],
+            prefixIcon: IconWidget(
+              icon: AppAssets.svg.wzeinIcons.calender.path,
+              height: AppSize.sH20,
+              width: AppSize.sW20,
+            ).paddingAll(AppPadding.pW4),
           ),
           AppSize.sH20.szH,
           CustomTextFiled(
             title: LocaleKeys.registerHolidayExpenseLabel,
             hint: '0.00',
+            prefixIcon: IconWidget(
+              icon: AppAssets.svg.wzeinIcons.sun.path,
+              height: AppSize.sH20,
+              width: AppSize.sW20,
+            ).paddingAll(AppPadding.pW4),
             controller: _holidayExpenseController,
             textInputType: TextInputType.number,
             textInputAction: TextInputAction.done,
@@ -115,11 +139,8 @@ class _RegisterFinancialDataBodyState extends State<_RegisterFinancialDataBody> 
           AppSize.sH20.szH,
           Text(
             LocaleKeys.registerWeekdaysLabel,
-            style: const TextStyle()
-                .setMainTextColor
-                .s14
-                .semiBold
-                .setFontFamily,
+            style:
+                const TextStyle().setMainTextColor.s14.semiBold.setFontFamily,
           ),
           AppSize.sH8.szH,
           ValueListenableBuilder<Set<int>>(
@@ -145,26 +166,23 @@ class _RegisterFinancialDataBodyState extends State<_RegisterFinancialDataBody> 
                       height: AppSize.sH45,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.forth
-                            : AppColors.grey1,
-                        borderRadius:
-                            BorderRadius.circular(AppCircular.r12),
+                        color: isSelected ? AppColors.forth : AppColors.grey1,
+                        borderRadius: BorderRadius.circular(AppCircular.r12),
                       ),
                       child: Text(
                         _getWeekdayLabel(index),
                         textAlign: TextAlign.center,
                         style: isSelected
                             ? const TextStyle()
-                                .setWhiteColor
-                                .s12
-                                .regular
-                                .setFontFamily
+                                  .setWhiteColor
+                                  .s12
+                                  .regular
+                                  .setFontFamily
                             : const TextStyle()
-                                .setPrimaryColor
-                                .s12
-                                .regular
-                                .setFontFamily,
+                                  .setPrimaryColor
+                                  .s12
+                                  .regular
+                                  .setFontFamily,
                       ),
                     ),
                   );
@@ -175,17 +193,13 @@ class _RegisterFinancialDataBodyState extends State<_RegisterFinancialDataBody> 
           AppSize.sH8.szH,
           Text(
             LocaleKeys.registerWeekdaysHelper,
-            style: const TextStyle()
-                .setHintColor
-                .s12
-                .regular
-                .setFontFamily,
+            style: const TextStyle().setHintColor.s12.regular.setFontFamily,
           ),
           AppSize.sH20.szH,
           RegisterAutoLockInfoWidget(
             title: LocaleKeys.registerNoticeTitle,
             description: LocaleKeys.registerNoticeDesc,
-            iconPath: AppAssets.svg.baseSvg.notify.path,
+            iconPath: AppAssets.svg.wzeinIcons.lamp.path,
           ),
           AppSize.sH30.szH,
           LoadingButton(
