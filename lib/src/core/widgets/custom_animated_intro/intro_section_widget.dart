@@ -111,6 +111,7 @@ class _IntroSectionWidgetState extends State<IntroSectionWidget> {
                     _ContentWidget(
                       title: widget.introDto.title,
                       subTitle: widget.introDto.subtitle,
+                      subimagePath: widget.introDto.subimagePath,
                     ),
                   ],
                 ),
@@ -126,7 +127,12 @@ class _IntroSectionWidgetState extends State<IntroSectionWidget> {
 class _ContentWidget extends StatelessWidget {
   final String title;
   final String subTitle;
-  const _ContentWidget({required this.title, required this.subTitle});
+  final String subimagePath;
+  const _ContentWidget({
+    required this.title,
+    required this.subTitle,
+    required this.subimagePath,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -138,10 +144,23 @@ class _ContentWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (title.isNotEmpty) ...[
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle().setWhiteColor.s24.bold.setFontFamily,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle().setWhiteColor.s24.bold.setFontFamily,
+                ),
+                AppSize.sW8.szW,
+                SvgPicture.asset(
+                  subimagePath,
+                  width: 24,
+                  height: 24,
+                  fit: BoxFit.contain,
+                ),
+              ],
             ),
             AppSize.sH10.szH,
           ],
@@ -151,7 +170,7 @@ class _ContentWidget extends StatelessWidget {
               textAlign: TextAlign.center,
 
               style: const TextStyle(
-                height: 1.5,
+                height: 1.56,
               ).setWhiteColor.s16.regular.setFontFamily,
             ),
           ],

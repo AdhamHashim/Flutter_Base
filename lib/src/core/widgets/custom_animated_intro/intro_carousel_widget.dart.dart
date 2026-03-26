@@ -35,7 +35,21 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
   @override
   void dispose() {
     _ticker.dispose();
+    indexNotifier.dispose();
     super.dispose();
+  }
+
+  /// Dart `%` can be negative; list indices must be in `0..length-1`.
+  int _normalizePageIndex(int raw) {
+    final int length = widget.children.length;
+    if (length == 0) return 0;
+    return ((raw % length) + length) % length;
+  }
+
+  void _commitDragIndexToPage() {
+    if (_dragIndex == null) return;
+    _index = _normalizePageIndex(_dragIndex!);
+    indexNotifier.value = _index;
   }
 
   void _tick(Duration duration) {
@@ -53,13 +67,13 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
       onPanEnd: (details) => _handlePanEnd(details, _getSize()),
       child: Stack(
         children: <Widget>[
-          widget.children[_index % length],
+          widget.children[_normalizePageIndex(_index)],
           _dragIndex == null
               ? const SizedBox.shrink()
               : ClipPath(
                   clipBehavior: Clip.hardEdge,
                   clipper: IntroClipper(edge, margin: 10.0),
-                  child: widget.children[_dragIndex! % length],
+                  child: widget.children[_normalizePageIndex(_dragIndex!)],
                 ),
           Positioned(
             bottom: 0,
@@ -187,8 +201,7 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
 
   void _handlePanDown(DragDownDetails details, Size size) {
     if (_dragIndex != null && _dragCompleted) {
-      _index = _dragIndex!;
-      indexNotifier.value = _index;
+      _commitDragIndexToPage();
     }
     _dragIndex = null;
     _dragOffset = details.localPosition;
@@ -251,6 +264,9 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
       edge.farEdgeTension = 0.01;
       edge.edgeTension = 0.0;
       edge.applyTouchOffset();
+      // Keep dots + Next/Start button in sync with the visible page (was only
+      // updated on the next pan before).
+      _commitDragIndexToPage();
     }
     return _dragCompleted;
   }

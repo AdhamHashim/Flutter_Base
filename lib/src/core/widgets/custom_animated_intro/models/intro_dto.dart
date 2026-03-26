@@ -13,12 +13,16 @@ class IntroPhoneOverlay {
   });
 
   final String imagePath;
+
   /// Fraction of layout height.
   final double insetTop;
+
   /// Fraction of layout width (physical end / “right” in Figma frame).
   final double insetEnd;
+
   /// Fraction of layout height.
   final double insetBottom;
+
   /// Fraction of layout width (physical start / “left” in Figma frame).
   final double insetStart;
   final double designFrameWidth;
@@ -27,6 +31,7 @@ class IntroPhoneOverlay {
 
 class IntroDto {
   final String title;
+  final String subimagePath;
   final String subtitle;
 
   final String backGroundImagePath;
@@ -35,6 +40,7 @@ class IntroDto {
 
   const IntroDto({
     required this.title,
+    required this.subimagePath,
     required this.subtitle,
     required this.backGroundImagePath,
     required this.pointerImagePath,

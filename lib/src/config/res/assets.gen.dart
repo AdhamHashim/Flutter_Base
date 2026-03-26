@@ -1799,6 +1799,10 @@ class $AssetsSvgWzeinIconsGen {
   SvgGenImage get icon593 =>
       const SvgGenImage('assets/svg/wzein_icons/icon-59_3.svg');
 
+  /// File path: assets/svg/wzein_icons/icon3.svg
+  SvgGenImage get icon3 =>
+      const SvgGenImage('assets/svg/wzein_icons/icon3.svg');
+
   /// File path: assets/svg/wzein_icons/logout-03.svg
   SvgGenImage get logout03 =>
       const SvgGenImage('assets/svg/wzein_icons/logout-03.svg');
@@ -2666,6 +2670,7 @@ class $AssetsSvgWzeinIconsGen {
     icon59,
     icon592,
     icon593,
+    icon3,
     logout03,
     marginWrap,
     marginWrap10,

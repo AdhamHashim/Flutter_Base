@@ -42,6 +42,7 @@ class _IntroBody extends StatelessWidget {
         IntroSectionWidget(
           introDto: IntroDto(
             title: LocaleKeys.introWelcome,
+            subimagePath: AppAssets.svg.appSvg.logo.path,
             subtitle: LocaleKeys.introPlatforminfo,
             backGroundImagePath: AppAssets.images.intro.onboardingSlide1Bg.path,
             pointerImagePath: null,
@@ -56,6 +57,8 @@ class _IntroBody extends StatelessWidget {
         ),
         IntroSectionWidget(
           introDto: IntroDto(
+            subimagePath: AppAssets.svg.wzeinIcons.group1219826119.path,
+
             title: LocaleKeys.introBudgetGoals,
             subtitle: LocaleKeys.introPlatforminfo,
             backGroundImagePath: AppAssets.images.intro.onboardingSlide2Bg.path,
@@ -71,6 +74,8 @@ class _IntroBody extends StatelessWidget {
         ),
         IntroSectionWidget(
           introDto: IntroDto(
+            subimagePath: AppAssets.svg.wzeinIcons.icon3.path,
+
             title: LocaleKeys.introBillsGuarantees,
             subtitle: LocaleKeys.introPlatforminfo,
             backGroundImagePath: AppAssets.images.intro.onboardingSlide3Bg.path,
