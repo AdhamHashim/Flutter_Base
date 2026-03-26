@@ -35,21 +35,7 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
   @override
   void dispose() {
     _ticker.dispose();
-    indexNotifier.dispose();
     super.dispose();
-  }
-
-  /// Dart `%` can be negative; list indices must be in `0..length-1`.
-  int _normalizePageIndex(int raw) {
-    final int length = widget.children.length;
-    if (length == 0) return 0;
-    return ((raw % length) + length) % length;
-  }
-
-  void _commitDragIndexToPage() {
-    if (_dragIndex == null) return;
-    _index = _normalizePageIndex(_dragIndex!);
-    indexNotifier.value = _index;
   }
 
   void _tick(Duration duration) {
@@ -67,117 +53,31 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
       onPanEnd: (details) => _handlePanEnd(details, _getSize()),
       child: Stack(
         children: <Widget>[
-          widget.children[_normalizePageIndex(_index)],
+          widget.children[_index % length],
           _dragIndex == null
               ? const SizedBox.shrink()
               : ClipPath(
                   clipBehavior: Clip.hardEdge,
                   clipper: IntroClipper(edge, margin: 10.0),
-                  child: widget.children[_normalizePageIndex(_dragIndex!)],
+                  child: widget.children[_dragIndex! % length],
                 ),
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppPadding.pW20,
-                  vertical: AppPadding.pH20,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ValueListenableBuilder<int>(
-                      valueListenable: indexNotifier,
-                      builder: (context, value, _) {
-                        return /* Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox.shrink(), */ _PageIndicatorWidget(
-                          count: length,
-                          currentIndex: value % length,
-                        );
-                        //     if (value % length < 2)
-                        //       GestureDetector(
-                        //         onTap: () => Go.to(const RegisterScreen()),
-                        //         child: Padding(
-                        //           padding: EdgeInsets.symmetric(
-                        //             vertical: AppPadding.pH6,
-                        //             horizontal: AppPadding.pW8,
-                        //           ),
-                        //           child: Text(
-                        //             LocaleKeys.introSkip,
-                        //             style: const TextStyle()
-                        //                 .setWhiteColor
-                        //                 .s16
-                        //                 .medium
-                        //                 .setFontFamily,
-                        //           ),
-                        //         ),
-                        //       )
-                        //     else
-                        //       const SizedBox.shrink(),
-                        //   ],
-                        // );
-                      },
-                    ),
-                    AppSize.sH8.szH,
-                    ValueListenableBuilder<int>(
-                      valueListenable: indexNotifier,
-                      builder: (context, value, _) {
-                        return SizedBox(
-                          width: double.infinity,
-                          height: AppSize.sH55,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: DefaultButton(
-                                  title: value % length == 2
-                                      ? LocaleKeys.introStartnow
-                                      : LocaleKeys.introNext,
-                                  color: AppColors.forth,
-                                  borderRadius: BorderRadius.circular(
-                                    AppCircular.r20,
-                                  ),
-                                  textColor: AppColors.white,
-                                  fontSize: FontSizeManager.s16,
-                                  onTap: () => value % length == 2
-                                      ? Go.to(const LoginScreen())
-                                      : _animateToNextPage(),
-                                ),
-                              ),
-                              if (value % length < 2)
-                                GestureDetector(
-                                  onTap: () => Go.to(const LoginScreen()),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: AppPadding.pH6,
-                                      horizontal: AppPadding.pW8,
-                                    ),
-                                    child: Text(
-                                      LocaleKeys.introSkip,
-                                      style: const TextStyle()
-                                          .setWhiteColor
-                                          .s16
-                                          .medium
-                                          .setFontFamily,
-                                    ),
-                                  ),
-                                )
-                              else
-                                const SizedBox.shrink(),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
+            bottom: AppMargin.mH18,
+            right: AppMargin.mW12,
+            left: AppMargin.mW12,
+            child: ValueListenableBuilder(
+              valueListenable: indexNotifier,
+              builder: (context, value, child) {
+                return DefaultButton(
+                  title: value % length == 2
+                      ? LocaleKeys.introStartnow
+                      : LocaleKeys.introNext,
+                  onTap: () => value % length == 2
+                      ? Go.to(const HomeScreen())
+                      // ? Go.to(const LoginScreen())
+                      : _animateToNextPage(),
+                );
+              },
             ),
           ),
           if (widget.imagePathesYouNeedToShowInSideOfPage.isNotEmpty) ...[
@@ -201,7 +101,8 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
 
   void _handlePanDown(DragDownDetails details, Size size) {
     if (_dragIndex != null && _dragCompleted) {
-      _commitDragIndexToPage();
+      _index = _dragIndex!;
+      indexNotifier.value = _index;
     }
     _dragIndex = null;
     _dragOffset = details.localPosition;
@@ -264,9 +165,6 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
       edge.farEdgeTension = 0.01;
       edge.edgeTension = 0.0;
       edge.applyTouchOffset();
-      // Keep dots + Next/Start button in sync with the visible page (was only
-      // updated on the next pan before).
-      _commitDragIndexToPage();
     }
     return _dragCompleted;
   }
@@ -345,32 +243,5 @@ class IntroCarouselWidgetState extends State<IntroCarouselWidget>
         }
       });
     });
-  }
-}
-
-class _PageIndicatorWidget extends StatelessWidget {
-  final int count;
-  final int currentIndex;
-
-  const _PageIndicatorWidget({required this.count, required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        count,
-        (index) => Container(
-          margin: EdgeInsets.symmetric(horizontal: AppMargin.mW4),
-          width: AppSize.sH14,
-          height: AppSize.sH14,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: index == currentIndex ? AppColors.forth : AppColors.grey2,
-          ),
-        ),
-      ),
-    );
   }
 }

@@ -1,3 +1,4 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,7 +52,7 @@ class CustomTextFiled extends StatelessWidget {
     this.hasBorder = true,
     this.readOnly = false,
     this.isPassword = false,
-    this.isOptional = true,
+    this.isOptional = false,
   });
 
   @override
@@ -106,7 +107,7 @@ class CustomTextFiled extends StatelessWidget {
           onTap: onTap,
           fillColor: readOnly && fillColor == null
               ? AppColors.border
-              : (fillColor ?? AppColors.white),
+              : (fillColor ?? AppColors.border),
           action: textInputAction,
           onChanged: onChanged,
           validator: validator,

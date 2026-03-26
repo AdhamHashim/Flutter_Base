@@ -64,7 +64,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
         icon: tab.icon,
         text: Text(tab.text, style: const TextStyle().setWhiteColor.s13.medium),
         active: isActive,
-        color: AppColors.forth,
+        color: const Color(0xff5C40C2),
         onPressed: () => _handleTabPress(index),
       ),
     );

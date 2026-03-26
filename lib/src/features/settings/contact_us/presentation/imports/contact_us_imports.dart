@@ -1,41 +1,23 @@
-import 'dart:io';
-
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-
 import '../../../../../config/language/locale_keys.g.dart';
-import '../../../../../config/res/assets.gen.dart';
 import '../../../../../config/res/config_imports.dart';
 import '../../../../../core/base_crud/code/domain/base_domain_imports.dart';
 import '../../../../../core/base_crud/code/presentation/cubit/base_cubit/async_cubit.dart';
-import '../../../../../core/extensions/base_state.dart';
-import '../../../../../core/extensions/form_mixin.dart';
-import '../../../../../core/extensions/string_extension.dart';
-import '../../../../../core/extensions/text_style_extensions.dart';
 import '../../../../../core/extensions/widgets/padding_extension.dart';
-import '../../../../../core/extensions/widgets/sized_box_helper.dart';
-import '../../../../../core/helpers/arabic_numbers_formatter.dart';
-import '../../../../../core/helpers/image_helper.dart';
-import '../../../../../core/helpers/input_formatters.dart';
 import '../../../../../core/helpers/validators.dart';
 import '../../../../../core/navigation/navigator.dart';
 import '../../../../../core/network/api_endpoints.dart';
 import '../../../../../core/shared/cubits/user_cubit/user_cubit.dart';
 import '../../../../../core/shared/models/base_model.dart';
 import '../../../../../core/widgets/buttons/loading_button.dart';
-import '../../../../../core/widgets/custom_messages.dart';
+import '../../../../../core/widgets/dialogs/success_dialog.dart';
 import '../../../../../core/widgets/fields/text_fields/custom_text_field.dart';
-import '../../../../../core/widgets/icon_widget.dart';
-import '../../../../../core/widgets/pickers/default_bottom_sheet.dart';
 import '../../../../../core/widgets/scaffolds/default_scaffold.dart'
     show DefaultScaffold;
-import '../../../../../core/helpers/lancher_helper.dart';
+import '../../entity/contact_us_params.dart';
 
-part '../contact_us_view_controller.dart';
 part '../view/contact_us_view.dart';
-part '../widgets/contact_us_attachment_field.dart';
 part '../widgets/contact_us_body.dart';
-part '../widgets/contact_us_success_sheet.dart';
 part '../cubits/contact_us_cubit.dart';

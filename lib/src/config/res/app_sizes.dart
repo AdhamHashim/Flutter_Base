@@ -42,9 +42,6 @@ class AppPadding {
   static double pH18 = 18.0.h;
   static double pH20 = 20.0.h;
   static double pH35 = 35.0.h;
-  static double pH40 = 40.0.h;
-  static double pH50 = 50.0.h;
-  static double pH60 = 60.0.h;
 
   // VALUES FOR WIDTH
   static double pW2 = 2.0.h;
@@ -128,10 +125,9 @@ class ScreenSizes {
 }
 
 class FontWeightManager {
-  static FontWeight bold = FontWeight.w700;
-  static FontWeight semiBold = FontWeight.w600;
-  static FontWeight medium = FontWeight.w500;
-  static FontWeight regular = FontWeight.w400;
+  static FontWeight bold = FontWeight.bold;
+  static FontWeight medium = FontWeight.w700;
+  static FontWeight regular = FontWeight.w500;
   static FontWeight light = FontWeight.w300;
 }
 

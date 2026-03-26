@@ -8,7 +8,7 @@ class ContactUsScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => injector<ContactUsCubit>(),
       child: DefaultScaffold(
-        title: LocaleKeys.contactUsSupportTitle,
+        title: LocaleKeys.contactUs,
         body: const _ContactUsBody(),
       ),
     );

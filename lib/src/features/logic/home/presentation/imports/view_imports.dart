@@ -1,33 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../../config/language/locale_keys.g.dart';
-import '../../../../../config/res/assets.gen.dart';
 import '../../../../../config/res/config_imports.dart';
-import '../../../../../core/extensions/text_style_extensions.dart';
-import '../../../../../core/extensions/widgets/padding_extension.dart';
-import '../../../../../core/extensions/widgets/sized_box_helper.dart';
-import '../../../../../core/extensions/widgets/sliver_extension.dart';
-import '../../../../../core/extensions/widgets/widget_extension.dart';
-import '../../../../../core/helpers/helpers.dart';
 import '../../../../../core/notification/notification_service.dart';
-import '../../../../../core/widgets/icon_widget.dart';
 import '../../../../../core/widgets/navigation_bar/navigation_bar.dart';
-import '../../../../../core/widgets/riyal_price_text.dart';
-import '../../../bills/presentation/cubits/bills_cubit.dart';
-import '../../../bills/presentation/imports/view_imports.dart';
-import '../../../reports/presentation/imports/view_imports.dart';
 import '../../../home_tabs/more_tab/presentation/imports/view_imports.dart';
 import '../../entity/home_params.dart';
-import '../../entity/home_tab_ui_model.dart';
 
 part '../view/home_screen.dart';
 part '../widgets/home_body.dart';
-part '../widgets/home_tab_body.dart';
-part '../widgets/home_tab_header_section.dart';
-part '../widgets/home_tab_balance_card_section.dart';
-part '../widgets/home_tab_shortcuts_section.dart';
-part '../widgets/home_tab_daily_summary_section.dart';
-part '../widgets/home_tab_commitment_section.dart';
-part '../widgets/home_tab_savings_section.dart';

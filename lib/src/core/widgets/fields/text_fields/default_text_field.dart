@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../config/res/assets.gen.dart';
 import '../../../../config/res/config_imports.dart';
 import '../../../extensions/text_style_extensions.dart';
-import '../../icon_widget.dart';
 
 class DefaultTextField extends StatefulWidget {
   final String? title;
@@ -83,54 +81,15 @@ class _DefaultTextFieldState extends State<DefaultTextField> {
 
   @override
   void initState() {
-    super.initState();
-    _isSecure = widget.isPassword == true;
-  }
-
-  @override
-  void didUpdateWidget(covariant DefaultTextField oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.isPassword != true && widget.isPassword == true) {
+    if (widget.isPassword != null) {
       _isSecure = true;
     }
-  }
-
-  Widget? _resolveSuffixIcon() {
-    if (widget.isPassword != true) return widget.suffixIcon;
-
-    final toggle = Material(
-      color: AppColors.white.withValues(alpha: 0),
-      child: InkWell(
-        onTap: () => setState(() => _isSecure = !_isSecure),
-        borderRadius: BorderRadius.circular(AppCircular.r8),
-        child: SizedBox(
-          width: AppSize.sH44,
-          height: AppSize.sH44,
-          child: Center(
-            child: IconWidget(
-              icon: AppAssets.svg.wzeinIcons.eye.path,
-              color: AppColors.hintText,
-              height: AppSize.sH20,
-              width: AppSize.sW20,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    if (widget.suffixIcon != null) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [widget.suffixIcon!, toggle],
-      );
-    }
-    return toggle;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final bool isLabel = widget.label != null;
-    final bool isPwd = widget.isPassword == true;
     return TextFormField(
       controller: widget.controller,
       onChanged: widget.onChanged,
@@ -155,9 +114,9 @@ class _DefaultTextFieldState extends State<DefaultTextField> {
       style: widget.style,
       onFieldSubmitted: widget.onSubmitted,
       textInputAction: widget.action,
-      enableSuggestions: !isPwd,
+      enableSuggestions: true,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      autocorrect: !isPwd,
+      autocorrect: true,
       autofocus: widget.autoFocus,
       focusNode: widget.autoFocus == true ? widget.focusNode : null,
       cursorColor: AppColors.main,
@@ -170,7 +129,7 @@ class _DefaultTextFieldState extends State<DefaultTextField> {
         filled: widget.filled,
         suffixText: widget.suffixText,
         prefixIcon: widget.prefixIcon,
-        suffixIcon: _resolveSuffixIcon(),
+        suffixIcon: widget.suffixIcon,
         prefix: widget.prefixWidget,
         errorStyle: const TextStyle().setErrorColor.s12.regular,
         fillColor: widget.fillColor ?? Colors.white,

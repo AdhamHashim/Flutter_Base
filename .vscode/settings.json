@@ -1,9 +1,0 @@
-{
-  "emeraldwalk.runonsave.commands": [
-    {
-      "match": ".*[/\\\\]assets[/\\\\].*\\.(svg|png|jpg|jpeg|webp|gif|json|ttf|otf|lottie)$",
-      "cmd": "cd ${workspaceFolder} && dart run build_runner build --delete-conflicting-outputs",
-      "isAsync": true
-    }
-  ]
-}

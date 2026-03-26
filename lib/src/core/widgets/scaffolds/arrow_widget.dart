@@ -30,10 +30,10 @@ class ArrowWidget extends StatelessWidget {
       children: [
         Transform(
           alignment: Alignment.center,
-          transform: !context.isRight
+          transform: context.isRight
               ? Matrix4.rotationY(math.pi)
               : Matrix4.rotationX(math.pi),
-          child: AppAssets.svg.wzeinIcons.button6
+          child: AppAssets.svg.baseSvg.arrowBack
               .svg(width: width ?? AppSize.sH35, height: height ?? AppSize.sH35)
               .onClick(onTap: onTap ?? () => Go.back()),
         ),

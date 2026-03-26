@@ -21,8 +21,6 @@ class ConstantManager {
   static const int pgSize = 10;
   static const int pgFirst = 1;
   static const int maxLines = 5;
-  /// WhatsApp support line (digits only, country code without +). Replace with production number.
-  static const String supportWhatsAppPhone = '966500000000';
   static String platform = Platform.isAndroid ? 'android' : 'ios';
 
   static Map<String, dynamic>? paginateJson(int page) => {
@@ -35,10 +33,6 @@ final class SecureLocalVariableKeys {
   static const String defaultCountryID = "CURRENCY_COUNTRY_ID";
   static const String baseUrlKey = "base_url";
   static const String socetIoUrl = "socet_io_url";
-}
-
-final class AppPreferenceKeys {
-  static const String useDarkTheme = 'app_use_dark_theme';
 }
 
 final class SkeltonizerManager {

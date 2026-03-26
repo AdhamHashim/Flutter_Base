@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'config/res/config_imports.dart';
 import 'config/themes/app_theme.dart';
 import 'core/helpers/loading_manager.dart';
-import 'core/theme/app_theme_controller.dart';
 import 'core/navigation/navigator.dart';
 import 'core/navigation/route_generator.dart';
 import 'core/network/un_authenticated_interceptor.dart';
@@ -23,24 +22,10 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  ThemeMode _themeMode = ThemeMode.light;
-
   @override
   void initState() {
     super.initState();
-    _themeMode = AppThemeController.readSavedDarkMode()
-        ? ThemeMode.dark
-        : ThemeMode.light;
-    AppThemeController.instance.register((mode) {
-      setState(() => _themeMode = mode);
-    });
     _addUnAuthenticatedListener();
-  }
-
-  @override
-  void dispose() {
-    AppThemeController.instance.unregister();
-    super.dispose();
   }
 
   void _addUnAuthenticatedListener() {
@@ -69,8 +54,6 @@ class _AppState extends State<App> {
             home: const SplashScreen(),
             navigatorObservers: [AppNavigationObserver()],
             theme: AppTheme.light,
-            darkTheme: AppTheme.dark,
-            themeMode: _themeMode,
             builder: (context, child) {
               return MediaQuery(
                 data: MediaQuery.of(

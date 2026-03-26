@@ -35,10 +35,6 @@ class _IntroSectionWidgetState extends State<IntroSectionWidget> {
         final offsetY = 20 + cos(time) * 20;
         final width = constraints.maxWidth;
         final height = constraints.maxHeight;
-        final overlay = widget.introDto.phoneOverlay;
-        final radius = overlay == null
-            ? 0.0
-            : overlay.borderRadiusDesignPx * width / overlay.designFrameWidth;
         return Stack(
           alignment: Alignment.center,
           fit: StackFit.expand,
@@ -50,68 +46,28 @@ class _IntroSectionWidgetState extends State<IntroSectionWidget> {
               ),
               child: Transform(
                 transform: Matrix4.diagonal3Values(scaleX, scaleY, 1),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      widget.introDto.backGroundImagePath,
-                      fit: BoxFit.cover,
-                    ),
-                    if (overlay != null)
-                      Positioned(
-                        left: width * overlay.insetStart,
-                        top: height * overlay.insetTop,
-                        right: width * overlay.insetEnd,
-                        bottom: height * overlay.insetBottom,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(radius),
-                          child: Image.asset(
-                            overlay.imagePath,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                child: Image.asset(widget.introDto.backGroundImagePath),
               ),
             ),
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.black.withValues(alpha: 0.6),
-                      AppColors.black.withValues(alpha: 0.3),
-                      AppColors.black,
-                    ],
-                  ),
-                ),
+            Container(
+              color: Colors.black38,
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(
+                vertical: AppPadding.pH14,
+                horizontal: AppPadding.pW10,
               ),
-            ),
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppPadding.pW20,
-                  vertical: AppPadding.pH20,
-                ),
+              child: SafeArea(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: AppMargin.mH40,
                   children: [
-                    if (widget.introDto.pointerImagePath != null) ...[
-                      Image.asset(
-                        widget.introDto.pointerImagePath!,
-                        width: width * .35,
-                        fit: BoxFit.contain,
-                      ),
-                      AppSize.sH16.szH,
-                    ],
+                    _PointerWithSkipButtonWidget(
+                      pointerImagePath: widget.introDto.pointerImagePath!,
+                    ),
                     _ContentWidget(
                       title: widget.introDto.title,
                       subTitle: widget.introDto.subtitle,
-                      subimagePath: widget.introDto.subimagePath,
                     ),
                   ],
                 ),
@@ -127,55 +83,68 @@ class _IntroSectionWidgetState extends State<IntroSectionWidget> {
 class _ContentWidget extends StatelessWidget {
   final String title;
   final String subTitle;
-  final String subimagePath;
-  const _ContentWidget({
-    required this.title,
-    required this.subTitle,
-    required this.subimagePath,
-  });
+  const _ContentWidget({required this.title, required this.subTitle});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: AppPadding.pH60),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (title.isNotEmpty) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle().setWhiteColor.s24.bold.setFontFamily,
-                ),
-                AppSize.sW8.szW,
-                SvgPicture.asset(
-                  subimagePath,
-                  width: 24,
-                  height: 24,
-                  fit: BoxFit.contain,
-                ),
-              ],
-            ),
-            AppSize.sH10.szH,
-          ],
-          if (subTitle.isNotEmpty) ...[
-            Text(
-              subTitle,
-              textAlign: TextAlign.center,
-
-              style: const TextStyle(
-                height: 1.56,
-              ).setWhiteColor.s16.regular.setFontFamily,
-            ),
-          ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppMargin.mH10,
+      children: <Widget>[
+        if (title.isNotEmpty) ...[
+          Text(
+            title,
+            textAlign: TextAlign.start,
+            style: context.textStyle.s28.setWhiteColor.bold,
+          ),
         ],
-      ),
+        if (subTitle.isNotEmpty) ...[
+          Text(
+            subTitle,
+            textAlign: TextAlign.start,
+            style: context.textStyle.s13.setWhiteColor.medium,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _PointerWithSkipButtonWidget extends StatelessWidget {
+  final String pointerImagePath;
+  const _PointerWithSkipButtonWidget({required this.pointerImagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        GestureDetector(
+          // onTap: () => Go.offAll(const LoginScreen()),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              vertical: AppPadding.pH6,
+              horizontal: AppPadding.pW14,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppCircular.r40),
+              color: AppColors.white.withAlpha(25),
+              border: Border.all(color: AppColors.white.withAlpha(10)),
+            ),
+            child: Text(
+              LocaleKeys.introSkip,
+              style: context.textStyle.s11.setWhiteColor.regular,
+            ),
+          ),
+        ),
+        Image.asset(
+          pointerImagePath,
+          width: context.width * .4,
+          fit: BoxFit.cover,
+        ),
+      ],
     );
   }
 }

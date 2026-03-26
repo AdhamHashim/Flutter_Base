@@ -62,7 +62,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
       width: AppSize.sH22,
       height: AppSize.sH22,
       // ignore: deprecated_member_use
-      color: widget.active ? AppColors.white : AppColors.hintText,
+      color: widget.active ? AppColors.white : const Color(0xff999999),
     );
     final hasText = widget.text.data?.isNotEmpty ?? false;
     if (!hasText) return iconWidget;

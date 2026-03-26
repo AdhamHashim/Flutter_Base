@@ -4,22 +4,23 @@ part of '../imports/contact_us_imports.dart';
 class ContactUsCubit extends AsyncCubit<BaseModel?> {
   ContactUsCubit() : super(null);
 
-  Future<void> contactUs(ContactUsViewController vc) async {
-    if (!vc.validateAndScroll()) return;
+  Future<void> contactUs(ContactUsParams params) async {
+    if (params.validate()) return;
     await executeAsync(
       operation: () async => baseCrudUseCase.call(
         CrudBaseParams(
           api: ApiConstants.contactUs,
-          body: vc.toJson(),
+          body: params.toJson(),
           httpRequestType: HttpRequestType.post,
           mapper: (json) => BaseModel.fromJson(json),
         ),
       ),
-      successEmitter: (_) {
+      successEmitter: (success) {
         Go.back();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          showContactUsSuccessBottomSheet();
-        });
+        successDialog(
+          context: Go.context,
+          title: LocaleKeys.contactRequestSendSuccessfully,
+        );
       },
     );
   }

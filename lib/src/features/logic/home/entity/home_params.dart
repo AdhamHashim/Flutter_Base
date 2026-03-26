@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import '../../../../config/language/locale_keys.g.dart';
 import '../../../../config/res/assets.gen.dart';
 import '../../../../config/res/config_imports.dart';
@@ -17,24 +17,26 @@ class HomeParams {
   String visitorDesc(int value) {
     switch (value) {
       case 1:
-        return LocaleKeys.billsNavOperations;
+        return LocaleKeys.home;
       case 2:
-        return LocaleKeys.billsNavReports;
+        return LocaleKeys.home;
+      case 3:
+        return LocaleKeys.home;
       default:
         return ConstantManager.emptyText;
     }
   }
 
   void updateNavValue(int value) {
-    // if (UserCubit.instance.isUserLoggedIn) {
-    selectedIndexNotifier.value = value;
-    // } else {
-    //   if (value == 0 || value == 3) {
-    //     selectedIndexNotifier.value = value;
-    //   } else {
-    //     visitorDialog(visitorDesc(value));
-    //   }
-    // }
+    if (UserCubit.instance.isUserLoggedIn) {
+      selectedIndexNotifier.value = value;
+    } else {
+      if (value == 0 || value == 4) {
+        selectedIndexNotifier.value = value;
+      } else {
+        visitorDialog(visitorDesc(value));
+      }
+    }
   }
 
   List<NavigationBarEntity> get navTabs => [
@@ -43,16 +45,20 @@ class HomeParams {
       icon: AppAssets.svg.appSvg.home.path,
     ),
     NavigationBarEntity(
-      text: LocaleKeys.billsNavOperations,
-      icon: AppAssets.svg.wzeinIcons.aX338Expenses.path,
+      text: LocaleKeys.home,
+      icon: AppAssets.svg.appSvg.home.path,
     ),
     NavigationBarEntity(
-      text: LocaleKeys.billsNavReports,
-      icon: AppAssets.svg.wzeinIcons.aX338Expenses2.path,
+      text: LocaleKeys.home,
+      icon: AppAssets.svg.appSvg.home.path,
     ),
     NavigationBarEntity(
-      text: LocaleKeys.billsNavSettings,
-      icon: AppAssets.svg.baseSvg.changePass.path,
+      text: LocaleKeys.home,
+      icon: AppAssets.svg.appSvg.home.path,
+    ),
+    NavigationBarEntity(
+      text: LocaleKeys.home,
+      icon: AppAssets.svg.appSvg.home.path,
     ),
   ];
 }

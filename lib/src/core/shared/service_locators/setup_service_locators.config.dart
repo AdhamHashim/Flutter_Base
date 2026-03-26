@@ -12,12 +12,8 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
-import '../../../features/logic/bills/presentation/cubits/bills_cubit.dart'
-    as _i84;
 import '../../../features/logic/home_tabs/more_tab/presentation/imports/view_imports.dart'
     as _i869;
-import '../../../features/settings/change_phone/presentation/imports/view_imports.dart'
-    as _i306;
 import '../../../features/settings/complains/presentation/imports/view_imports.dart'
     as _i319;
 import '../../../features/settings/contact_us/presentation/imports/contact_us_imports.dart'
@@ -53,20 +49,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i30.GetBaseEntityCubit(),
     );
     gh.factory<_i200.BaseUrlCubit>(() => _i200.BaseUrlCubit());
-    gh.factory<_i84.BillsCubit>(() => _i84.BillsCubit());
     gh.factory<_i869.LogOutCubit>(() => _i869.LogOutCubit());
-    gh.factory<_i306.ChangePhoneSendSmsToCurrentCubit>(
-      () => _i306.ChangePhoneSendSmsToCurrentCubit(),
-    );
-    gh.factory<_i306.ChangePhoneVerifyCurrentPhoneCubit>(
-      () => _i306.ChangePhoneVerifyCurrentPhoneCubit(),
-    );
-    gh.factory<_i306.ChangePhoneSendSmsToNewCubit>(
-      () => _i306.ChangePhoneSendSmsToNewCubit(),
-    );
-    gh.factory<_i306.ChangePhoneVerifyNewPhoneCubit>(
-      () => _i306.ChangePhoneVerifyNewPhoneCubit(),
-    );
     gh.factory<_i319.AddComplainCubit>(() => _i319.AddComplainCubit());
     gh.factory<_i319.ComplainsDetailsCubit>(
       () => _i319.ComplainsDetailsCubit(),

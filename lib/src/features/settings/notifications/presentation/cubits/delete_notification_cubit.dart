@@ -1,17 +1,10 @@
 part of '../imports/view_imports.dart';
 
 class DeleteNotificationCubit extends AsyncCubit<BaseModel?> {
+  final NotificationsCubit notificationsCubit;
   DeleteNotificationCubit(this.notificationsCubit) : super(null);
 
-  final NotificationsCubit notificationsCubit;
-
   Future<void> deleteOneNotification(NotificationEntity notification) async {
-    if (kNotificationsUiOnly) {
-      notificationsCubit.deleteOneNotification(notification);
-      Go.back();
-      return;
-    }
-
     final result = await baseCrudUseCase.call(
       CrudBaseParams(
         api: '${ApiConstants.deleteNotification}${notification.id}',
@@ -37,12 +30,6 @@ class DeleteNotificationCubit extends AsyncCubit<BaseModel?> {
   }
 
   Future<void> deleteAllNotifications() async {
-    if (kNotificationsUiOnly) {
-      notificationsCubit.clearData();
-      Go.back();
-      return;
-    }
-
     final result = await baseCrudUseCase.call(
       CrudBaseParams(
         api: ApiConstants.deleteAllNotifications,

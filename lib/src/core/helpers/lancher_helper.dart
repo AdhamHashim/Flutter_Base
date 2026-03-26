@@ -14,7 +14,7 @@ class LauncherHelper {
     await launchUrl(Uri.parse(url));
   }
 
-  static Future<void> launchWhatsApp(String phone) async {
+  static void launchWhatsApp(String phone) async {
     final String message = 'مرحبا بك';
     if (phone.startsWith('00966')) {
       phone = phone.substring(5);
