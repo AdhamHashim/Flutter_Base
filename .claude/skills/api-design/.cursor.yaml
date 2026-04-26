@@ -1,1 +1,0 @@
-globs: ["postman/**/*.json", "lib/src/core/network/**/*.dart", "lib/src/features/**/entity/**/*.dart"]

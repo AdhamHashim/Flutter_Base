@@ -21,31 +21,25 @@
 Feature:     [FEATURE_NAME]
 Figma Node:  [FIGMA_URL]
 Mode:        [UI_ONLY | UI_AND_API]
-API Source:  [EXISTING_POSTMAN | AUTO_GENERATE | NONE]
+Postman:     [POSTMAN_URL لو UI_AND_API، اتركه فاضي لو UI_ONLY]
 ```
 
-> If **EXISTING_POSTMAN** → provide Postman Collection: `[POSTMAN_URL]`
-> If **AUTO_GENERATE** → API will be generated from Figma in PHASE 3
-> If **NONE** → UI_ONLY mode (no API, no cubits, no Postman)
+> **UI_AND_API** → provide Postman Collection: `[POSTMAN_URL]` (جاهز من فريق الباك إند)
+> **UI_ONLY** → no API, no cubits, no Postman — static data في الـ widgets
 
 
 ## Decision Tree — لو الـ Inputs مش واضحة، اسأل أولاً
 
-### السؤال 1 — UI بس ولا UI + API؟
+### السؤال الوحيد — UI بس ولا UI + API؟
 - **UI Only** → static data في الـ widgets مباشرة، بدون cubits، بدون API
-- **UI + API** → كمّل للسؤال 2
-
-### السؤال 2 — Postman جاهز ولا أولّد API من Figma؟
-- **A) EXISTING_POSTMAN** → ادّيني الـ link، PHASE 3 يقرأ الـ collection
-- **B) AUTO_GENERATE** → PHASE 3 يولّد Postman + Entities من Figma
+- **UI + API** → ادّيني link الـ Postman Collection (جاهز من الباك إند)
 
 ### ملخص الأوضاع
 
-| الوضع | Cubits | API Source | MockConfig |
-|-------|--------|------------|------------|
-| **UI Only** | ❌ | — | ❌ |
-| **UI + API (Existing)** | ✅ | Postman جاهز | ✅ بطلب صريح |
-| **UI + API (Auto)** | ✅ | يتولّد من Figma | ✅ بطلب صريح |
+| الوضع | Cubits | Postman | MockConfig |
+|-------|--------|---------|------------|
+| **UI Only** | ❌ | ❌ | ❌ |
+| **UI + API** | ✅ | جاهز من الباك إند | ✅ بطلب صريح |
 
 > **Mock data:** ممنوع تلقائياً. See `no-mock-without-permission` skill.
 
@@ -78,13 +72,11 @@ API Source:  [EXISTING_POSTMAN | AUTO_GENERATE | NONE]
 اقرأ كل الـ states: main, empty, loading, error, modals, bottom sheets, success/failure.
 
 
-## PHASE 3 — API Source (skip if UI_ONLY)
+## PHASE 3 — Postman Collection (skip if UI_ONLY)
 
-### Path A: EXISTING_POSTMAN
 > **See `api-pipeline` skill** — Postman → ApiConstants → Entity → Cubit → UI.
 
-### Path B: AUTO_GENERATE
-> **See `api-design` skill** — analyze Figma → design endpoints → generate ONE Postman collection.
+اقرأ الـ Postman Collection اللي ادّاه المستخدم → استخرج الـ endpoints + الـ entities → نفّذ الـ pipeline.
 
 → بعد ما تخلص PHASE 3، روح PHASE 4.
 

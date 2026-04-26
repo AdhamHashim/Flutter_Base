@@ -79,7 +79,7 @@ Cursor metadata (`globs`, `alwaysApply`) lives in `.claude/skills/<name>/.cursor
 ## Where to Look First
 
 - Adding a feature? `feature-prompt`.
-- API? `api-pipeline` (existing) or `api-design` (auto-generate).
+- API? `api-pipeline` (Postman جاهز من فريق الباك إند).
 - Form? `form-api-pipeline`.
 - RTL? `rtl-arabic`.
 - Review finished work? `post-feature-review`.
