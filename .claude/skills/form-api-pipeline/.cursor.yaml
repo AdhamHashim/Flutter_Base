@@ -1,0 +1,1 @@
+globs: ["lib/src/features/**/widgets/**/*.dart", "lib/src/features/**/cubits/**/*.dart"]

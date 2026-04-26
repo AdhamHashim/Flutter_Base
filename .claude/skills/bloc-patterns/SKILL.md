@@ -5,6 +5,11 @@ description: AsyncCubit templates, CRUD local updates, AsyncBlocBuilder, Paginat
 
 # Skill: BLoC/Cubit Patterns — Flutter_Base
 
+<!-- centralized-rules -->
+> **⚠️ Mock data ممنوع تلقائياً.** See `no-mock-without-permission` skill — لا تضيف mock data بدون طلب صريح من المستخدم.
+
+
+
 ## Architecture Overview
 
 All cubits that do API calls extend `AsyncCubit<T>`. Never create raw `Cubit` for data-fetching.
@@ -353,4 +358,4 @@ Figma "Loading More" → state.isLoadingMore → list + loader at bottom
 ## Entity Safety
 
 Every entity MUST have `factory initial()`, `fromJson` with `??` defaults, `tryParse` (never `parse`).
-See `flutter-base-coding-standards.mdc` section 8.5 for full rules.
+See `coding-standards` section 8.5 for full rules.

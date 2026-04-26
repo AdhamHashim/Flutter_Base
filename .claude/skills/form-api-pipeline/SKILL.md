@@ -5,6 +5,11 @@ description: Complete form-to-API pipeline — FormMixin, ViewController, Params
 
 # Skill: Form → API Complete Pipeline
 
+<!-- centralized-rules -->
+> **🎛️ ViewController:** TextEditingController/ValueNotifier/ScrollController/FocusNode + UI handlers لازم في class منفصل اسمه `<Feature>ViewController`. See `view-controller-pattern` skill.
+
+
+
 ## When to Use
 
 - عند بناء أي form بيعمل submit لـ API (POST/PUT/PATCH)

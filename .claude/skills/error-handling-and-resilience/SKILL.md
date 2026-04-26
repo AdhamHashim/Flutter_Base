@@ -106,7 +106,7 @@ ErrorView(
 
 ### 6. Defensive Coding في fromJson
 
-- مغطى بالتفصيل في `flutter-feature-development.mdc`:
+- مغطى بالتفصيل في `feature-development`:
   - `??` default لكل field.
   - `tryParse` بدل `parse`.
   - **DateTime:** `DateTime.tryParse(json['date'] ?? '') ?? DateTime(2000)`

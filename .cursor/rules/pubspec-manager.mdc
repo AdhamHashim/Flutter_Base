@@ -1,14 +1,14 @@
 ---
 description: Package detection, platform configuration, method channels, and dependency management for Flutter_Base.
-globs: ["lib/**/*.dart"]
+globs: ["pubspec.yaml", "android/**/*.xml", "ios/**/*.plist"]
 ---
+
 
 # Skill: pubspec.yaml Package Manager
 
 ## Purpose
 When a Figma design requires a package not already in pubspec.yaml, automatically add it and run flutter pub get.
 
----
 
 ## Step 1: Check What's Already Installed
 
@@ -40,7 +40,6 @@ shared_preferences, path_provider
 share_plus, url_launcher, rxdart
 ```
 
----
 
 ## Step 2: Detect Required Packages from Figma Design
 
@@ -67,7 +66,6 @@ When reading a Figma node, detect these visual patterns and map to packages:
 | Dropdown search | `dropdown_search` | ✅ Already there |
 | HTML content | `flutter_html` | ✅ Already there |
 
----
 
 ## Step 3: Add Missing Package
 
@@ -97,7 +95,6 @@ cd /path/to/project && flutter pub get
 flutter pub deps | grep package_name
 ```
 
----
 
 ## Step 4: Platform-Specific Setup Reminders
 
@@ -111,7 +108,6 @@ If adding these packages, remind the user of platform setup needed:
 | `image_picker` | Already configured in base (image_picker is installed) |
 | `firebase_*` | Already configured (firebase_core is installed) |
 
----
 
 ## Step 5: Import in Dart File
 
@@ -125,7 +121,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 ```
 
----
 
 ## Step 6: Platform Configuration — Android & iOS (MANDATORY)
 
@@ -183,7 +178,6 @@ import GoogleMaps
 GMSServices.provideAPIKey("YOUR_API_KEY")
 ```
 
----
 
 ## Step 7: Method Channels over permission_handler (PREFERRED)
 
@@ -197,7 +191,6 @@ GMSServices.provideAPIKey("YOUR_API_KEY")
 **الاستثناء:**
 - لو الـ feature معقدة وتحتاج multiple permissions في وقت واحد مع UI management → يمكن استخدام package
 
----
 
 ## Step 8: Use Packages When Available (DON'T Build from Scratch)
 
@@ -219,7 +212,6 @@ GMSServices.provideAPIKey("YOUR_API_KEY")
 3. تأكد إنه compatible مع الـ Flutter version الحالية
 4. أضفه للـ pubspec.yaml وشغل `flutter pub get`
 
----
 
 ## Workflow for AI Agent
 

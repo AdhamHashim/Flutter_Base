@@ -1,0 +1,1 @@
+globs: ["pubspec.yaml", "android/**/*.xml", "ios/**/*.plist"]

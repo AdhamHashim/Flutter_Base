@@ -1,9 +1,15 @@
 ---
 description: Complete form-to-API pipeline — FormMixin, ViewController, Params, validation, LoadingButton, file upload, and success handling in Flutter_Base.
-globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/cubits/**/*.dart
+globs: ["lib/src/features/**/widgets/**/*.dart", "lib/src/features/**/cubits/**/*.dart"]
 ---
 
+
 # Skill: Form → API Complete Pipeline
+
+<!-- centralized-rules -->
+> **🎛️ ViewController:** TextEditingController/ValueNotifier/ScrollController/FocusNode + UI handlers لازم في class منفصل اسمه `<Feature>ViewController`. See `view-controller-pattern` skill.
+
+
 
 ## When to Use
 
@@ -11,7 +17,6 @@ globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/cubits/**/*.da
 - عند إنشاء create/edit screen
 - عند رفع صور أو ملفات مع form data
 
----
 
 ## The Pipeline (8 Steps)
 
@@ -35,7 +40,6 @@ Step 7: Handle Success (Go.back(result) or successDialog)
 Step 8: Handle Error (toast auto-handled by executeAsync)
 ```
 
----
 
 ## Step 1: ViewController
 
@@ -77,7 +81,6 @@ class EditProductViewController extends CreateProductViewController {
 }
 ```
 
----
 
 ## Step 2: Params Class
 
@@ -134,7 +137,6 @@ class ProductParams {
 }
 ```
 
----
 
 ## Step 3: Submit Cubit
 
@@ -202,7 +204,6 @@ class ContactUsCubit extends AsyncCubit<BaseModel?> {
 }
 ```
 
----
 
 ## Step 4: Form Widget
 
@@ -261,7 +262,6 @@ class _ProductFormWidget extends StatelessWidget {
 }
 ```
 
----
 
 ## Step 5: Screen with FormMixin
 
@@ -304,7 +304,6 @@ class _CreateProductBodyState extends State<_CreateProductBody> with FormMixin {
 }
 ```
 
----
 
 ## Step 6: LoadingButton Connection
 
@@ -320,7 +319,6 @@ LoadingButton(
 )
 ```
 
----
 
 ## Validation Patterns
 
@@ -350,7 +348,6 @@ validator: (v) {
 },
 ```
 
----
 
 ## Success & Error Handling
 
@@ -363,7 +360,6 @@ validator: (v) {
 
 Error: `executeAsync` automatically shows error toast. LoadingButton automatically stops loading on error.
 
----
 
 ## Form Pipeline Checklist
 

@@ -26,8 +26,8 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 
-# Local AI / editor docs (not tracked)
-.claude/skills/
-.cursor/
-CLAUDE.md
-HOW_TO_USE_PROMPTS.md
+
+
+# OS / FUSE noise
+.DS_Store
+.fuse_hidden*

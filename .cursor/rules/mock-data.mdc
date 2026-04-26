@@ -1,8 +1,15 @@
 ---
 description: Mock data switching system — environment variable based, unified across all cubits, centralized mock files in config/mocks/, with executeMockOrAsync helper to eliminate boilerplate.
-globs: lib/src/core/config/mocks/**/*.dart, lib/src/features/**/cubits/**/*.dart, lib/src/core/config/mock_config.dart
+globs: ["lib/src/core/config/mocks/**/*.dart", "lib/src/features/**/cubits/**/*.dart", "lib/src/core/config/mock_config.dart"]
+---
+
 
 # Skill: Mock Data System — Flutter_Base
+
+<!-- centralized-rules -->
+> **⚠️ Mock data ممنوع تلقائياً.** See `no-mock-without-permission` skill — لا تضيف mock data بدون طلب صريح من المستخدم.
+
+
 
 ## Purpose
 
@@ -10,7 +17,6 @@ globs: lib/src/core/config/mocks/**/*.dart, lib/src/features/**/cubits/**/*.dart
 يشتغل وقت الـ build (مش runtime) — زي الـ flavors.
 Mock data مركزية في `config/mocks/` — الـ cubit يفضل نضيف ومقروء.
 
----
 
 ## How It Works
 
@@ -20,7 +26,6 @@ flutter run --dart-define=USE_MOCK=false    ← real API (production)
 flutter run                                 ← default = false (real API)
 ```
 
----
 
 ## Architecture
 
@@ -46,7 +51,6 @@ lib/src/features/{feature}/
 > **⚠️ Mock files NEVER inside `entity/` folder.**
 > All mock files live in `lib/src/core/config/mocks/` — centralized, easy to find, keeps feature folders clean.
 
----
 
 ## Step 1: MockConfig Class (Core — Single Switch Point + Helper)
 
@@ -130,7 +134,6 @@ Future<void> fetchProducts() async {
 }
 ```
 
----
 
 ## Step 2: Mock Data Files (Centralized in config/mocks/)
 
@@ -230,7 +233,6 @@ class ProductMock {
 > **Mock file is a plain class — NOT a `part of` any imports file.**
 > Import directly: `import 'package:app/src/core/config/mocks/product_mock.dart';`
 
----
 
 ## Step 3: Cubit Integration (Using executeMockOrAsync)
 
@@ -353,7 +355,6 @@ class ProductsCubit extends PaginatedCubit<ProductEntity> {
 }
 ```
 
----
 
 ## Step 4: Run Commands
 
@@ -384,7 +385,6 @@ flutter run  # same as false
 }
 ```
 
----
 
 ## List Services = Always Paginated (MANDATORY RULE)
 
@@ -446,7 +446,6 @@ class ProductsCubit extends PaginatedCubit<ProductEntity> {
 > **Rule of thumb:** If the list has its own screen / can grow beyond 20 items → `PaginatedCubit`.
 > If it's a dropdown or a section inside a bigger screen → `AsyncCubit<List<T>>` is fine.
 
----
 
 ## Mock Data Quality Rules
 
@@ -487,7 +486,6 @@ setSuccess(data: ProductMock.list);  // no delay — FORBIDDEN
 // ❌ WRONG — same data for every page
 ```
 
----
 
 ## Mock Data Checklist (Per Feature)
 
@@ -502,7 +500,6 @@ setSuccess(data: ProductMock.list);  // no delay — FORBIDDEN
 - [ ] List endpoints use `PaginatedCubit` + `paginatedResponse` (not AsyncCubit with list)
 - [ ] Tested with `--dart-define=USE_MOCK=true` — screens show mock data correctly
 
----
 
 ## Migration from Old Pattern
 
@@ -520,7 +517,6 @@ mv lib/src/features/products/entity/product_mock.dart lib/src/core/config/mocks/
 # 5. Remove old part declaration from view_imports.dart
 ```
 
----
 
 ## When to Switch to Real API
 

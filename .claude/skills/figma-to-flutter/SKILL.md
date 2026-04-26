@@ -5,11 +5,16 @@ description: Convert Figma designs to Flutter code using Flutter_Base architectu
 
 # Skill: Figma → Flutter (Flutter_Base Architecture)
 
+<!-- centralized-rules -->
+> **⛔ Figma MCP read failure → STOP.** See `figma-mcp-read-first` skill — لا تخمّن، لا تكمل، بلّغ المستخدم.
+
+
+
 ## Purpose
 Convert Figma designs to Flutter code using Flutter_Base architecture.
 For design token values, see `design-tokens` skill.
 For widget patterns, see `flutter-patterns` skill.
-For coding standards, see `flutter-base-coding-standards.mdc`.
+For coding standards, see `coding-standards`.
 
 ---
 

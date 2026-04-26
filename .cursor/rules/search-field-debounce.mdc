@@ -1,7 +1,8 @@
 ---
 description: Real search field with rxdart debounce pattern — never use fake Container+Text search bars.
-globs: ["lib/**/*.dart"]
+globs: ["lib/src/features/**/widgets/**/*.dart"]
 ---
+
 
 # Skill: Search Field with Debounce
 

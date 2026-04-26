@@ -1,0 +1,164 @@
+---
+description: Reference for core extensions (TextStyleEx, padding/margin extensions, .szH/.szW, .toSliver, .onClick, FormatString, ContextExtension, FormMixin, IndexedMap) and helpers (Validators, InputFormatters, Helpers, ImageHelper, LauncherHelper, CacheStorage). Read this BEFORE writing any custom utility logic — most things are already there.
+globs: ["lib/**/*.dart"]
+---
+
+
+# Extensions & Helpers — USE BEFORE WRITING CUSTOM LOGIC
+
+> **Golden rule:** قبل ما تكتب أي logic جديد لـ utility — اقرأ هذا الملف. فيه احتمال كبير اللي محتاجه موجود كـ extension أو helper.
+
+## 12. Extensions — USE ALWAYS
+
+### 12.1 — TextStyleEx (`core/extensions/text_style_extensions.dart`)
+
+```dart
+// Font weight
+const TextStyle().bold       // FontWeight.bold
+const TextStyle().semiBold   // w600
+const TextStyle().medium     // w500
+const TextStyle().regular    // w400
+const TextStyle().light      // w300
+
+// Font size (uses screenutil .sp)
+const TextStyle().s12   // 12.sp
+const TextStyle().s14   // 14.sp
+const TextStyle().s16   // 16.sp
+
+// Colors (from AppColors)
+const TextStyle().setMainTextColor    // AppColors.main
+const TextStyle().setSecondryColor    // AppColors.secondary
+const TextStyle().setHintColor        // AppColors.hintText
+const TextStyle().setErrorColor       // AppColors.error
+const TextStyle().setWhiteColor       // AppColors.white
+const TextStyle().setPrimaryColor     // AppColors.primary
+const TextStyle().setColor(AppColors.xxx)  // custom color
+
+// Chain example
+const TextStyle().setMainTextColor.s14.semiBold
+```
+
+### 12.2 — Padding/Margin Extensions
+
+```dart
+// Padding (RTL-safe versions preferred)
+widget.paddingAll(AppPadding.pH16)
+widget.paddingSymmetric(horizontal: AppPadding.pW20, vertical: AppPadding.pH8)
+widget.paddingStart(AppPadding.pW16)   // ✅ RTL-safe (physical right)
+widget.paddingEnd(AppPadding.pW16)     // ✅ RTL-safe (physical left)
+widget.paddingOnly(top: AppPadding.pH8, bottom: AppPadding.pH8)
+widget.paddingOnlyDirectional(start: AppPadding.pW16)
+
+// Margin
+widget.marginAll(AppMargin.mH8)
+widget.marginSymmetric(horizontal: AppMargin.mW16)
+widget.marginTop(AppMargin.mH12)
+widget.marginBottom(AppMargin.mH12)
+widget.marginStart(AppMargin.mW16)   // ✅ RTL-safe
+widget.marginEnd(AppMargin.mW16)     // ✅ RTL-safe
+```
+
+### 12.3 — SizedBox Helpers
+
+```dart
+12.szH   // SizedBox(height: 12.h)
+16.szW   // SizedBox(width: 16.w)
+// Use AppSize constants: AppSize.sH12.szH
+```
+
+### 12.4 — Click Extension
+
+```dart
+myWidget.onClick(onTap: () => Go.to(const NextScreen()))
+```
+
+### 12.5 — Context Extension
+
+```dart
+context.width    // MediaQuery width
+context.height   // MediaQuery height
+context.locale   // current Locale
+```
+
+
+
+
+## 13. Helpers — USE BEFORE WRITING CUSTOM LOGIC
+
+### 13.1 — Validators (`core/helpers/validators.dart`)
+
+```dart
+// ✅ Use in form fields
+validator: Validators.validateEmpty
+validator: Validators.validateEmail
+validator: Validators.validatePhone    // digits only, 8-15 chars
+validator: Validators.validatePassword // uppercase + lowercase + digit + special
+validator: (v) => Validators.validatePasswordConfirm(v, pass)
+validator: Validators.validateDropDown<T>
+validator: Validators.noValidate      // no validation, XSS check only
+```
+
+### 13.2 — InputFormatters (`core/helpers/input_formatters.dart`)
+
+```dart
+inputFormatters: [PhoneNumberFormatter()]        // digits + +, -, (, )
+inputFormatters: [EmailFormatter()]              // email chars only
+inputFormatters: [NumberOnlyFormatter()]         // digits only
+inputFormatters: [TextOnlyFormatter()]           // letters + arabic + spaces
+inputFormatters: [TextWithNumberFormatter()]     // letters + numbers + arabic
+inputFormatters: [IntegerNumberFormatter()]      // integers, optional max value
+inputFormatters: [DecimalNumberFormatter()]      // decimals, optional decimal places
+inputFormatters: [DateTimeFormatter()]           // auto-format DD/MM/YYYY
+inputFormatters: [NoSpecialCharactersFormatter()] // no special chars
+```
+
+### 13.3 — Helpers (`core/helpers/helpers.dart`)
+
+```dart
+Helpers.showByLang(ar: 'عربي', en: 'English')  // returns string based on locale
+Helpers.getFcmToken()                            // FCM push token
+Helpers.changeStatusbarColor(statusBarColor: ...) // status bar tint
+Helpers.shareApp(url)                           // share via share_plus
+Helpers.getDeviceType()                         // 'ios' or 'android'
+```
+
+### 13.4 — CacheService (`core/helpers/cache_service.dart`)
+
+Local storage via shared preferences — use for tokens, user prefs, etc.
+
+
+
+
+## 8.4. Helpers & Shared → AUDIT BEFORE CREATING
+
+> **Read `core/helpers/` and `core/shared/` FIRST before writing any utility logic.**
+
+**Available Helpers (`core/helpers/`):**
+- `Validators` — form validation (empty, email, phone, password, dropdown, XSS)
+- `InputFormatters` — Phone, Email, NumberOnly, TextOnly, DateTime, Integer, Decimal, NoSpecialChars
+- `ArabicNumbersFormatter` — auto-converts ٠-٩ → 0-9 in text fields
+- `Helpers` — `showByLang()`, `getFcmToken()`, `changeStatusbarColor()`, `shareApp()`, `getDeviceType()`
+- `ImageHelper` — pick/crop images, camera, gallery, file picker
+- `LauncherHelper` — launch URL, WhatsApp, social media, phone, email
+- `CacheStorage` / `SecureStorage` — local storage wrappers
+- `CustomLoading` — full-screen loading overlay
+
+**Available Shared (`core/shared/`):**
+- `BaseModel<T>` — generic API response wrapper
+- `UserModel` — user entity
+- `ImageEntity` — image model (network + local)
+- `UserCubit` — current user state
+- Service Locator — `injector<T>()`
+
+**Available Extensions (`core/extensions/`):**
+- `TextStyleEx` — text style chain (color, size, weight)
+- `FormatString` — `.toEnglishNumbers()`, `.capitalize()`, `.toCurrency()`, `.copyToClipboard()`
+- `DateTimeFormatHelper` — `.toFullDate()`, `.toTime()`, `.toDayMonthYear()`, etc.
+- `ContextExtension` — `context.width`, `context.hideKeyboard()`, `context.isArabic`
+- `PaddingExtension` / `MarginExtension` — RTL-safe widget padding/margin
+- `OnClick` — `.onClick(onTap: fn)`
+- `SizedBoxHelper` — `.szH`, `.szW`
+- `SliverExtension` — `.toSliver()`
+- `SeparatorExtension` — `.joinWith(separator)` on List<Widget>
+- `IndexedMap` — `.indexedMap((index, item) => ...)` on List
+- `FormMixin` — `formKey`, `validate()`, `validateAndScroll()`

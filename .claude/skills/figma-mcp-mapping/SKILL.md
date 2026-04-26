@@ -5,6 +5,11 @@ description: Figma MCP to Flutter_Base token mapping — colors, sizes, padding,
 
 # Figma MCP → Flutter_Base Token Mapping
 
+<!-- centralized-rules -->
+> **⛔ Figma MCP read failure → STOP.** See `figma-mcp-read-first` skill — لا تخمّن، لا تكمل، بلّغ المستخدم.
+
+
+
 ## ⚠️ RTL Conversion
 
 > **See `rtl-arabic` skill for full RTL rules.** Core equation:
@@ -225,7 +230,7 @@ Container(
 
 ## Widget Mapping
 
-> **See `flutter-base-coding-standards.mdc` section 11 for full widget inventory with usage examples.**
+> **See `coding-standards` section 11 for full widget inventory with usage examples.**
 > **See sections 12-13 for extension and helper quick references.**
 
 Key mappings: Screen→`DefaultScaffold`, Button→`LoadingButton`/`DefaultButton`, Input→`CustomTextFiled`, Image→`CachedImage`, State→`AsyncBlocBuilder`, Icon→`IconWidget`

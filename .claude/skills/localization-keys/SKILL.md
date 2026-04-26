@@ -1,0 +1,71 @@
+---
+name: localization-keys
+description: Localization workflow — extract every UI string into lang.json with the "key #$ English": "عربي" format, regenerate LocaleKeys, and use LocaleKeys.xxx.tr() everywhere. No hardcoded text.
+---
+
+# Skill: Localization Keys — lang.json + LocaleKeys
+
+## When to Use
+
+- أي feature أو screen جديدة
+- أي نص جديد بيظهر للمستخدم
+- بعد قراءة Figma — كل النصوص اللي طلعت من scan_text_nodes لازم تتـضاف هنا
+
+## القاعدة الأساسية (NON-NEGOTIABLE)
+
+> **كل نص يظهر للمستخدم لازم يتضاف في `assets/translations/lang.json` أولاً، ويُستخدم من `LocaleKeys.xxx.tr()` فقط.**
+> **ممنوع أي نص مباشر في الـ widgets — حتى "OK" أو "نعم".**
+
+---
+
+## Format ملف lang.json
+
+```json
+{
+  "key_name #$ English text": "Arabic text",
+  "feature_title #$ Feature Title": "عنوان الميزة"
+}
+```
+
+**القاعدة:** `"snake_case_key #$ English Text": "النص العربي"`
+
+## Strings مع Parameters
+
+```json
+{ "provider_welcome_back #$ Welcome back, {name}": "أهلا بعودتك، {name}" }
+```
+
+```dart
+Text(LocaleKeys.providerWelcomeBack(name: user.name))
+```
+
+## Generate
+
+```bash
+dart run generate/strings/main.dart
+```
+
+## تسمية الـ Keys
+
+| القاعدة | مثال صح | مثال غلط |
+|---------|---------|----------|
+| snake_case | my_reservations | myReservations |
+| البداية باسم الـ feature | complaints_title | title |
+| وصفي | auth_login_btn | btn1 |
+
+## Workflow عند قراءة Figma
+
+1. scan_text_nodes(nodeId) → اجمع كل النصوص
+2. لكل نص → key بـ snake_case، format `"key #$ English": "عربي"`
+3. شغّل dart run generate/strings/main.dart
+4. استخدم LocaleKeys.xxx.tr() — ممنوع أي نص مباشر
+
+## Checklist
+
+```
+□ كل النصوص في lang.json بـ format "key #$ English": "عربي"
+□ كل key بـ snake_case ويبدأ باسم الـ feature
+□ تم تشغيل dart run generate/strings/main.dart
+□ كل widget يستخدم LocaleKeys — لا نص مباشر
+□ Parameters تستخدم {variableName} في lang.json
+```

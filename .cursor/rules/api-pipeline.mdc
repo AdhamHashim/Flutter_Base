@@ -1,8 +1,17 @@
 ---
 description: Complete API integration pipeline from Postman → ApiConstants → Entity → CrudBaseParams → Cubit → UI. Step-by-step for GET/list endpoints.
-globs: lib/src/features/**/cubits/**/*.dart, lib/src/core/network/**/*.dart
+globs: ["lib/src/features/**/cubits/**/*.dart", "lib/src/core/network/**/*.dart"]
+---
+
 
 # Skill: API Pipeline — Postman to Working Screen
+
+<!-- centralized-rules -->
+> **🛡️ Entity Safety:** `factory initial()` + `??` defaults + `tryParse`. See `coding-standards` skill §8.5.
+> **🔄 CRUD Local Update:** NEVER re-fetch after add/edit/delete — update state locally. See `bloc-patterns` skill.
+> **⚠️ Mock data ممنوع تلقائياً.** See `no-mock-without-permission` skill.
+
+
 
 ## When to Use
 
@@ -10,7 +19,6 @@ globs: lib/src/features/**/cubits/**/*.dart, lib/src/core/network/**/*.dart
 - عند قراءة Postman collection وتحويلها لكود
 - عند إنشاء cubit جديد بيجيب data من API
 
----
 
 ## The Pipeline (7 Steps)
 
@@ -32,7 +40,6 @@ Step 6: Connect to UI with BlocProvider + AsyncBlocBuilder
 Step 7: Verify & test
 ```
 
----
 
 ## Step 1: Read Postman Collection
 
@@ -79,7 +86,6 @@ From Postman, extract:
 | Token location | `data.user.token` | `data.token` |
 | Status/enum fields | `{value, text_ar, text_en, tag_color}` | plain string |
 
----
 
 ## Step 2: Add to ApiConstants
 
@@ -102,7 +108,6 @@ class ApiConstants {
 - Group by feature with comment header
 - NEVER hardcode URLs in cubits — always `ApiConstants.xxx`
 
----
 
 ## Step 3: Create Entity
 
@@ -177,7 +182,6 @@ class ProductEntity {
 | List<Entity> | `(json['x'] as List?)?.map((e) => Entity.fromJson(e)).toList() ?? []` | `json['x'].map(...)` |
 | Nested Object | `json['x'] != null ? Entity.fromJson(json['x']) : Entity.initial()` | `Entity.fromJson(json['x'])` |
 
----
 
 ## Step 4: Create Cubit
 
@@ -298,7 +302,6 @@ class ProductsCubit extends PaginatedCubit<ProductEntity> {
 }
 ```
 
----
 
 ## Step 5: Register DI
 
@@ -309,7 +312,6 @@ dart run build_runner build --delete-conflicting-outputs
 
 **Verify:** Check that `injector.config.dart` has your new cubit registered.
 
----
 
 ## Step 6: Connect to UI
 
@@ -355,7 +357,6 @@ class _ProductsBody extends StatelessWidget {
 }
 ```
 
----
 
 ## Step 7: Verify
 
@@ -368,7 +369,6 @@ class _ProductsBody extends StatelessWidget {
 - [ ] Pull-to-refresh works
 - [ ] Error state shows `ErrorView` with retry button
 
----
 
 ## Common Mistakes
 

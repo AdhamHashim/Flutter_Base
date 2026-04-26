@@ -1,7 +1,7 @@
 ---
 description: Auto-extract screens from a Figma file and generate individual feature task files.
-globs: ["lib/**/*.dart"]
 ---
+
 
 # Skill: Figma Task Extractor — Auto-Generate Feature Tasks from Figma File
 
@@ -11,7 +11,6 @@ Automate the extraction of ALL screens from a Figma file and generate individual
 task prompt files (based on `feature_prompt.md`) for each screen. This eliminates
 manual task creation and ensures every screen is covered.
 
----
 
 ## When to Use
 
@@ -19,7 +18,6 @@ manual task creation and ensures every screen is covered.
 - User says: "extract tasks", "generate tasks from Figma", "جهزلي التاسكات"
 - Starting a new project/feature set with multiple screens
 
----
 
 ## Workflow — 3 Phases
 
@@ -69,7 +67,6 @@ For each screen, compute:
 - **screen_name**: Original Figma name (for display)
 - **execution_order**: Based on position in Figma (top-to-bottom, left-to-right) or prototype flow
 
----
 
 ### PHASE 2: Generate Task Files
 
@@ -133,7 +130,6 @@ Show the user:
    - Adjust execution order if needed
    - Remove screens that shouldn't be implemented (e.g., design-only, deprecated)
 
----
 
 ### PHASE 3: Execute Tasks Sequentially
 
@@ -178,7 +174,6 @@ When implementing each screen, ensure navigation connections to already-built sc
 
 Continue to Step 3.1 until all tasks are `✅ done`.
 
----
 
 ## Screen Name → Feature Name Conversion
 
@@ -199,7 +194,6 @@ Rules:
 5. Remove duplicate underscores
 6. Trim leading/trailing underscores
 
----
 
 ## Filtering Rules — Which Frames to Include
 
@@ -220,7 +214,6 @@ Rules:
 - "Home" + "Home Empty" + "Home Skeleton" → single task "home"
 - "Product Details" + "Product Details - Modal" → single task "product_details"
 
----
 
 ## Script Alternative
 
@@ -232,7 +225,6 @@ python scripts/generate_figma_tasks.py "<FIGMA_URL>"
 Requires `FIGMA_ACCESS_TOKEN` environment variable.
 See `scripts/generate_figma_tasks.py` for details.
 
----
 
 ## Quick Reference — MCP Tools Used
 

@@ -1,7 +1,8 @@
 ---
 description: Navigation patterns for Flutter_Base — Go.to() with arguments, back with result, refresh parent screen, named routes, and tab navigation.
-globs: lib/src/features/**/view/**/*.dart, lib/src/core/navigation/**/*.dart
+globs: ["lib/src/features/**/view/**/*.dart", "lib/src/core/navigation/**/*.dart"]
 ---
+
 
 # Skill: Navigation Patterns — Flutter_Base
 
@@ -12,7 +13,6 @@ globs: lib/src/features/**/view/**/*.dart, lib/src/core/navigation/**/*.dart
 - عند العودة بنتيجة (back with result)
 - عند الحاجة لتحديث الشاشة السابقة بعد action
 
----
 
 ## Navigation API — Quick Reference
 
@@ -27,7 +27,6 @@ globs: lib/src/features/**/view/**/*.dart, lib/src/core/navigation/**/*.dart
 | Back to root | `Go.backToInitial()` | Pops to first route |
 | Named route | `Go.toNamed(NamedRoutes.home)` | For registered routes |
 
----
 
 ## Pattern 1: Simple Navigation (No Arguments)
 
@@ -39,7 +38,6 @@ GestureDetector(
 )
 ```
 
----
 
 ## Pattern 2: Navigation with Arguments
 
@@ -79,7 +77,6 @@ class ProductDetailScreen extends StatelessWidget {
 | Any → Create | Nothing (or parent ID) | New item, empty form |
 | Filter → Result | Filter params object | Structured data |
 
----
 
 ## Pattern 3: Back with Result (CRITICAL)
 
@@ -166,7 +163,6 @@ void removeProduct(String id) {
 }
 ```
 
----
 
 ## Pattern 4: Refresh Parent Without Back-with-Result
 
@@ -189,7 +185,6 @@ Go.back();
 **Warning:** This only works if both screens share the same BlocProvider ancestor.
 For separate screens (pushed via Go.to), use Pattern 3 (back with result).
 
----
 
 ## Pattern 5: Tab Navigation (BottomNavBar)
 
@@ -230,7 +225,6 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
 - Tab screens cubits → provide ABOVE the IndexedStack, in MultiBlocProvider
 - Inner navigation (from tab screen) → normal `Go.to()`
 
----
 
 ## Pattern 6: Replace Screen (Auth Flow)
 
@@ -248,7 +242,6 @@ BlocListener<LoginCubit, AsyncState<UserEntity>>(
 Go.offAll(const LoginScreen());
 ```
 
----
 
 ## Transition Types
 
@@ -259,7 +252,6 @@ Go.offAll(const LoginScreen());
 | `TransitionType.scale` | Dialogs that open as full screen |
 | `TransitionType.cupertino` | iOS-style back swipe needed |
 
----
 
 ## Navigation Checklist
 

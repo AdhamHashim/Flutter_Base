@@ -428,3 +428,149 @@ If Figma uses a value not in the token map (e.g., 9px, 17px, 27px):
 | `UserCubit` | `cubits/user_cubit/` | Current user state management |
 | `BaseUrlCubit` | `cubits/base_url/` | API base URL management |
 | Service Locator | `service_locators/` | GetIt + Injectable: `injector<T>()` |
+
+---
+
+# Additional Token Rules (extracted from coding-standards)
+
+## 3. Sizes → AppSize / AppPadding / AppMargin / AppCircular
+
+```dart
+// ✅
+SizedBox(height: AppSize.sH16)
+padding: EdgeInsets.all(AppPadding.pH16)
+BorderRadius.circular(AppCircular.r8)
+
+// ❌ FORBIDDEN
+SizedBox(height: 16)
+BorderRadius.circular(8)
+```
+
+---
+
+
+## 5. Spacing → .szH / .szW Extensions ONLY (NEVER SizedBox)
+
+> **في Column أو Row، استخدم `.szH` / `.szW` دايماً للـ spacing. ممنوع SizedBox.**
+
+```dart
+// ✅ CORRECT — use spacing extensions
+Column(children: [
+  Text('Title'),
+  12.szH,    // SizedBox(height: 12.h)
+  Text('Subtitle'),
+  8.szH,
+])
+
+Row(children: [
+  IconWidget(...),
+  8.szW,     // SizedBox(width: 8.w)
+  Text('Label'),
+])
+
+// ❌ FORBIDDEN — raw SizedBox for spacing
+SizedBox(height: 12)
+SizedBox(width: 8)
+const SizedBox(height: 16)
+```
+
+---
+
+
+## 6. Padding/Margin → Widget Extensions ONLY (NEVER Padding Widget)
+
+> **ممنوع استخدام `Padding(...)` widget مباشرة. استخدم الـ extensions دايماً.**
+
+```dart
+// ✅ CORRECT — use padding/margin extensions
+myWidget.paddingAll(AppPadding.pH16)
+myWidget.paddingSymmetric(horizontal: AppPadding.pW20)
+myWidget.paddingStart(AppPadding.pW16)   // RTL-safe
+myWidget.paddingEnd(AppPadding.pW16)     // RTL-safe
+myWidget.paddingOnly(top: AppPadding.pH8, bottom: AppPadding.pH8)
+myWidget.paddingOnlyDirectional(start: AppPadding.pW16)
+myWidget.marginAll(AppMargin.mH8)
+myWidget.marginStart(AppMargin.mW16)     // RTL-safe
+myWidget.onClick(onTap: () {})
+
+// ❌ FORBIDDEN — Padding widget directly
+Padding(
+  padding: EdgeInsets.symmetric(horizontal: AppPadding.pW20),
+  child: myWidget,
+)
+
+// ❌ FORBIDDEN — GestureDetector directly
+GestureDetector(onTap: fn, child: myWidget)
+```
+
+---
+
+
+## 17. Icon Background Check (AppAssets)
+
+> Some SVG/PNG icons in AppAssets already include their background shape (circle/rect with fill).
+> **Always check the asset** before wrapping in a Container with a background color.
+> - Icon has background → use `IconWidget` directly, no Container wrapper
+> - Icon is transparent → wrap in Container with the desired background
+
+```dart
+// ✅ Icon already has background baked in
+IconWidget(icon: AppAssets.svg.featureSvg.myIcon.path, height: AppSize.sH40)
+
+// ✅ Icon is transparent — add background
+Container(
+  decoration: BoxDecoration(color: AppColors.fill, borderRadius: BorderRadius.circular(AppCircular.r10)),
+  child: IconWidget(icon: AppAssets.svg.baseSvg.search.path, color: AppColors.primary, height: AppSize.sH20),
+)
+
+// ❌ WRONG — double background
+Container(color: AppColors.fill, child: IconWidget(icon: iconWithBuiltInBg))
+```
+
+---
+
+
+## 18. Network Images → CachedImage ALWAYS
+
+> ALL network/remote images (cards, lists, details, avatars) MUST use `CachedImage` from `core/widgets/image_widgets/cached_image.dart`.
+> Never use `Image.network()` directly.
+
+```dart
+// ✅ Card image
+CachedImage(url: item.image, width: AppSize.sW60, height: AppSize.sH60,
+  borderRadius: BorderRadius.circular(AppCircular.r8))
+
+// ✅ Circular avatar
+CachedImage(url: user.photo, width: AppSize.sW44, height: AppSize.sH44,
+  boxShape: BoxShape.circle)
+
+// ❌ FORBIDDEN
+Image.network(item.image, width: 60, height: 60)
+```
+
+---
+
+
+## 23. Icon Inside Container → Center Widget (MANDATORY)
+
+> **أي أيقونة داخل Container بـ background لازم تتلف في `Center` widget.**
+
+```dart
+// ✅ CORRECT
+Container(
+  width: AppSize.sH48, height: AppSize.sH48,
+  decoration: BoxDecoration(color: AppColors.grey1, borderRadius: BorderRadius.circular(AppCircular.r8)),
+  child: Center(
+    child: IconWidget(icon: AppAssets.svg.appSvg.sent.path, width: AppSize.sW24, height: AppSize.sH24, color: AppColors.main),
+  ),
+)
+
+// ❌ WRONG — Icon stretches to Container size
+Container(
+  width: AppSize.sH48, height: AppSize.sH48,
+  child: IconWidget(...),  // ← no Center = stretches!
+)
+```
+
+---
+

@@ -1,9 +1,17 @@
 ---
-description: Automatic post-feature code review — finds and fixes critical issues, architecture violations, and quality gaps.
-alwaysApply: true
+description: Automatic code review after completing any feature — finds and fixes critical issues, architecture violations, and quality gaps.
+globs: ["lib/src/features/**/*.dart"]
 ---
 
+
 # Skill: Post-Feature Code Review
+
+<!-- centralized-rules -->
+> **🛡️ Entity Safety:** `factory initial()` + `??` defaults + `tryParse`. See `coding-standards` skill §8.5.
+> **🔄 CRUD Local Update:** NEVER re-fetch after add/edit/delete — update state locally. See `bloc-patterns` skill.
+> **⚠️ Mock data ممنوع تلقائياً.** See `no-mock-without-permission` skill.
+
+
 
 ## When to Use
 
@@ -16,7 +24,6 @@ alwaysApply: true
 اعمل Review على **كل الملفات اللي اتعدلت أو اتضافت** في الـ feature.
 لكل ملف، طبّق الـ checks الآتية بالترتيب.
 
----
 
 ## 1. Critical Issues (Must Fix — يوقف التسليم)
 
@@ -39,7 +46,6 @@ alwaysApply: true
 - [ ] Sensitive data في logs (`print()` أو `debugPrint()`)
 - [ ] SQL injection أو XSS في user input بدون sanitization
 
----
 
 ## 2. Architecture Compliance
 
@@ -65,7 +71,6 @@ alwaysApply: true
 - [ ] Widgets في `presentation/widgets/`
 - [ ] Imports في `presentation/imports/view_imports.dart`
 
----
 
 ## 3. State Management
 
@@ -88,7 +93,6 @@ alwaysApply: true
 - [ ] SnackBar/Dialog → `BlocListener` مش `BlocBuilder`
 - [ ] لا يوجد side effects داخل `build()` method
 
----
 
 ## 4. Widget Quality
 
@@ -131,7 +135,6 @@ alwaysApply: true
 - [ ] Auth screen → `Scaffold` + `SafeArea` + manual status bar
 - [ ] Status bar color matches header (dark header → light icons)
 
----
 
 ## 5. RTL Compliance
 
@@ -159,7 +162,6 @@ alwaysApply: true
 - [ ] Card images في المكان الصح (يطابق الـ screenshot)
 - [ ] **لو الـ MCP data تناقض الـ screenshot → الـ screenshot هو الصح**
 
----
 
 ## 6. Forms & Validation
 
@@ -170,7 +172,6 @@ alwaysApply: true
 - [ ] `.toEnglishNumbers()` لأي input رقمي
 - [ ] `LoadingButton` لـ submit button (يمنع double tap)
 
----
 
 ## 7. Error Handling
 
@@ -180,7 +181,6 @@ alwaysApply: true
 - [ ] Network errors handled gracefully (مش crash)
 - [ ] Empty state: single-service → `EmptyWidget`, multi-section → `SizedBox.shrink()`
 
----
 
 ## 8. Performance & Memory
 
@@ -203,7 +203,6 @@ alwaysApply: true
 - [ ] `itemExtent` أو `prototypeItem` لـ uniform lists (أسرع)
 - [ ] `const` على static items داخل lists
 
----
 
 ## 9. Design Token Compliance
 
@@ -214,7 +213,6 @@ alwaysApply: true
 - [ ] Body padding > 12px reduced 2-4px from Figma
 - [ ] Font weight قد تحتاج تقليل لو أثقل من التصميم
 
----
 
 ## 10. Localization
 
@@ -223,7 +221,6 @@ alwaysApply: true
 - [ ] Keys مضافة في `lang.json` بـ snake_case
 - [ ] تم تشغيل `dart run generate/strings/main.dart`
 
----
 
 ## 11. Search Fields (if applicable)
 
@@ -233,7 +230,6 @@ alwaysApply: true
 - [ ] Dispose: controller + subscription + subject
 - [ ] Cubit فيه `search()` method
 
----
 
 ## 12. Platform & Packages (if applicable)
 
@@ -242,7 +238,6 @@ alwaysApply: true
 - [ ] تم التحقق من الـ packages الموجودة قبل إضافة package جديد
 - [ ] `pubspec.yaml` → package versions pinned
 
----
 
 ## Action Plan
 
@@ -280,7 +275,6 @@ alwaysApply: true
 - <5: Major rework needed
 ```
 
----
 
 ## Developer Assessment
 

@@ -1,7 +1,8 @@
 ---
 description: Multi-screen feature flow patterns — list/detail/edit/create with proper data passing, refresh, and screen linking in Flutter_Base.
-globs: lib/src/features/**/view/**/*.dart, lib/src/features/**/cubits/**/*.dart
+globs: ["lib/src/features/**/view/**/*.dart", "lib/src/features/**/cubits/**/*.dart"]
 ---
+
 
 # Skill: Multi-Screen Feature Flow
 
@@ -11,7 +12,6 @@ globs: lib/src/features/**/view/**/*.dart, lib/src/features/**/cubits/**/*.dart
 - عند ربط list → detail → edit → create
 - عند الحاجة لتحديث شاشة بعد action في شاشة تانية
 
----
 
 ## Flow Overview
 
@@ -38,7 +38,6 @@ globs: lib/src/features/**/view/**/*.dart, lib/src/features/**/cubits/**/*.dart
 └──────────────────────────────────────────────────────────┘
 ```
 
----
 
 ## Complete Example: Products Feature (4 Screens)
 
@@ -71,7 +70,6 @@ lib/src/features/products/
 │       └── ...
 ```
 
----
 
 ### Screen 1: Products List
 
@@ -144,7 +142,6 @@ Future<void> _goToCreate(BuildContext context) async {
 }
 ```
 
----
 
 ### Screen 2: Product Detail
 
@@ -220,7 +217,6 @@ class _ProductDetailBody extends StatelessWidget {
 }
 ```
 
----
 
 ### Screen 3: Create Product
 
@@ -278,7 +274,6 @@ class _CreateProductBodyState extends State<_CreateProductBody> with FormMixin {
 }
 ```
 
----
 
 ### Screen 4: Edit Product
 
@@ -346,7 +341,6 @@ class _EditProductBodyState extends State<_EditProductBody> with FormMixin {
 }
 ```
 
----
 
 ## Data Flow Summary
 
@@ -357,7 +351,6 @@ class _EditProductBodyState extends State<_EditProductBody> with FormMixin {
 | Delete | DetailScreen | `bool` (true) | List: `removeProduct(id)` |
 | Edit from List | EditScreen | `ProductEntity` | List: `updateProduct(entity)` |
 
----
 
 ## List Cubit Methods
 
@@ -383,7 +376,6 @@ class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
 }
 ```
 
----
 
 ## Shared Form Widget Pattern
 
@@ -419,7 +411,6 @@ class _ProductFormWidget extends StatelessWidget {
 }
 ```
 
----
 
 ## Screen Linking Checklist
 

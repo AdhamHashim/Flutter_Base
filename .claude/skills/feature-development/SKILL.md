@@ -5,6 +5,11 @@ description: Flutter feature development workflow — Figma MCP + Postman MCP + 
 
 # Flutter Feature Development — Full Workflow
 
+<!-- centralized-rules -->
+> **↔️ RTL rules:** See `rtl-arabic` skill — `start` = physical RIGHT, `end` = physical LEFT, Row first child = RIGHT, never `Positioned(left/right:)` etc.
+
+
+
 ## ⚠️ MCP Critical Rules
 
 ### Figma MCP:
@@ -47,14 +52,14 @@ description: Flutter feature development workflow — Figma MCP + Postman MCP + 
 
 ### Check core/ before building any widget:
 
-> **See `flutter-base-coding-standards.mdc` sections 8.4 and 11 for full widget/helper/extension inventory.**
+> **See `coding-standards` sections 8.4 and 11 for full widget/helper/extension inventory.**
 
 **Quick Reference — Must-Use Widgets:**
 - Buttons: `LoadingButton` (async submit), `DefaultButton` (simple)
 - Fields: `CustomTextFiled` (with label), `DefaultTextField` (raw), `AppDropdown<T>`
 - State: `AsyncBlocBuilder` / `AsyncSliverBlocBuilder` / `PaginatedListWidget`
 - Images: `CachedImage` (network), `UploadImageWidget`
-- Scaffold: `DefaultScaffold` (inner screens) — see `scaffold-statusbar.mdc`
+- Scaffold: `DefaultScaffold` (inner screens) — see `scaffold-patterns`
 - Dialogs: `successDialog`, `showCustomDialog`, `showDefaultBottomSheet`
 - Icons: `IconWidget` (handles SVG/PNG/Lottie/network)
 - Messages: `MessageUtils.showSnackBar`
@@ -90,7 +95,7 @@ Icon → match AppAssets → add if not found
 
 > **⚠️ If UI_ONLY mode → SKIP this phase entirely.** Create entities with static/dummy data. No API calls. No Postman.
 
-> **See `flutter-base-coding-standards.mdc` section 8.5 for full entity template, fromJson type table, and tryParse rules.**
+> **See `coding-standards` section 8.5 for full entity template, fromJson type table, and tryParse rules.**
 
 ### ⚠️ Entity Safety Summary (NON-NEGOTIABLE):
 1. **`factory initial()`** — MANDATORY for every entity (Skeletonizer + null-safety)
@@ -425,7 +430,7 @@ RTL (see rtl-arabic skill for full rules):
 □ CrossAxisAlignment.start for text alignment | Row: RIGHT element = FIRST child
 □ No Directionality on layouts (single Text exception only) | Visual test: titles on RIGHT
 
-Core Widgets (see flutter-base-coding-standards.mdc section 11):
+Core Widgets (see coding-standards skill section 11):
 □ LoadingButton, CustomTextFiled, AppDropdown, AsyncBlocBuilder, CachedImage, Go.xxx
 □ DefaultScaffold (inner) | Scaffold+SafeArea (auth) | Status bar synced
 

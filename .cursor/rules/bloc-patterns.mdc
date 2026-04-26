@@ -1,15 +1,20 @@
 ---
 description: AsyncCubit templates, CRUD local updates, AsyncBlocBuilder, PaginatedCubit, executeMockOrAsync, and BlocListener patterns for Flutter_Base.
-globs: ["lib/**/*.dart"]
+globs: ["lib/src/features/**/cubits/**/*.dart"]
 ---
 
+
 # Skill: BLoC/Cubit Patterns — Flutter_Base
+
+<!-- centralized-rules -->
+> **⚠️ Mock data ممنوع تلقائياً.** See `no-mock-without-permission` skill — لا تضيف mock data بدون طلب صريح من المستخدم.
+
+
 
 ## Architecture Overview
 
 All cubits that do API calls extend `AsyncCubit<T>`. Never create raw `Cubit` for data-fetching.
 
----
 
 ## AsyncCubit — Base Pattern
 
@@ -31,7 +36,6 @@ state.errorMessage  // String?
 state.isInitial / state.isLoading / state.isSuccess / state.isError / state.isLoadingMore
 ```
 
----
 
 ## executeMockOrAsync — Mock/Real Switch Helper (MANDATORY)
 
@@ -82,7 +86,6 @@ Future<void> fetchProducts() async {
 
 > **Mock files location:** `lib/src/core/config/mocks/{feature}_mock.dart` (centralized, NOT in entity/)
 
----
 
 ## Standard Cubit Template (with Mock Support)
 
@@ -125,7 +128,6 @@ class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
 }
 ```
 
----
 
 ## CRUD Local Update Rule (NON-NEGOTIABLE)
 
@@ -142,7 +144,6 @@ class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
 mapper: (_) => state.data..removeWhere((e) => e.id == id)
 ```
 
----
 
 ### CRUD Response Merge — Use API Response (CRITICAL)
 
@@ -181,7 +182,6 @@ result.when(
 }
 ```
 
----
 
 ## AsyncBlocBuilder Usage
 
@@ -209,7 +209,6 @@ AsyncSliverBlocBuilder<ItemsCubit, List<ItemEntity>>(
 )
 ```
 
----
 
 ## Multiple Cubits — MultiBlocProvider
 
@@ -226,7 +225,6 @@ MultiBlocProvider(
 **Multi-section empty:** `SizedBox.shrink()` (not `EmptyWidget`).
 **Heavy screens (4+ APIs):** Consider `compute()` for JSON parsing.
 
----
 
 ## BlocListener — For Actions
 
@@ -242,7 +240,6 @@ BlocListener<SubmitCubit, AsyncState<bool>>(
 )
 ```
 
----
 
 ## Pagination — PaginatedCubit
 
@@ -302,7 +299,6 @@ PaginatedListWidget<ItemEntity>(
 )
 ```
 
----
 
 ## Dropdown & Small Widget API — Isolate BlocBuilder (CRITICAL)
 
@@ -338,7 +334,6 @@ AsyncBlocBuilder<GetCitiesCubit, List<CityEntity>>(
 // ← if cities API fails, ENTIRE screen stops!
 ```
 
----
 
 ## Figma State Mapping
 
@@ -353,4 +348,4 @@ Figma "Loading More" → state.isLoadingMore → list + loader at bottom
 ## Entity Safety
 
 Every entity MUST have `factory initial()`, `fromJson` with `??` defaults, `tryParse` (never `parse`).
-See `flutter-base-coding-standards.mdc` section 8.5 for full rules.
+See `coding-standards` section 8.5 for full rules.

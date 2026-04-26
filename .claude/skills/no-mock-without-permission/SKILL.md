@@ -1,0 +1,61 @@
+---
+name: no-mock-without-permission
+description: Never add mock data automatically — wait for explicit user request. Cubits use executeAsync directly with real API; mock files only created when user asks.
+---
+
+# Mock Data — لا تضيف بدون إذن
+
+## القاعدة الأساسية (NON-NEGOTIABLE)
+
+> **ممنوع إنشاء أي mock data أو mock files تلقائياً.**
+> **Mock data تُضاف فقط لما المستخدم يطلبها صراحةً.**
+
+---
+
+## ما هو ممنوع تلقائياً
+
+```
+❌ إنشاء {feature}_mock.dart في core/config/mocks/
+❌ إضافة executeMockOrAsync في الـ cubits
+❌ إضافة MockConfig.useMock checks
+❌ إضافة mock data في أي entity أو cubit
+❌ ذكر "هتضيف mock data" في الخطة بدون طلب
+```
+
+---
+
+## ما يجوز فقط بإذن صريح
+
+المستخدم لازم يقول صراحةً واحدة من:
+- "ضيف mock data"
+- "اعمل mock للـ feature دي"
+- "أنا عاوز USE_MOCK"
+- أي طلب واضح للـ mock
+
+---
+
+## الكود الصح بدون Mock
+
+```dart
+@injectable
+class ProductsCubit extends AsyncCubit<List<ProductEntity>> {
+  ProductsCubit() : super([]);
+
+  Future<void> fetchProducts() async {
+    await executeAsync(
+      operation: () => baseCrudUseCase.call(CrudBaseParams(
+        api: ApiConstants.products,
+        httpRequestType: HttpRequestType.get,
+        mapper: (json) => (json['data']['data'] as List)
+            .map((e) => ProductEntity.fromJson(e)).toList(),
+      )),
+    );
+  }
+}
+```
+
+---
+
+## لما المستخدم يطلب Mock
+
+اتبع `mock-data` skill كامل.

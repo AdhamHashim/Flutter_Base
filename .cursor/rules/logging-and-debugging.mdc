@@ -1,7 +1,8 @@
 ---
-description: Logging, debugging, and diagnostics rules for Flutter_Base.
-globs: ["lib/**/*.dart"]
+description: Safe logging and debugging practices for Flutter_Base.
+globs: ["lib/src/features/**/cubits/**/*.dart", "lib/src/core/**/*.dart"]
 ---
+
 
 ## Logging & Debugging
 
@@ -11,7 +12,6 @@ globs: ["lib/**/*.dart"]
 - لو احتجت logging:
   - استخدم `AppBlocObserver` أو logger موحد (عبر DI) وليس `print` في كل مكان.
 
----
 
 ### 2. Bloc / Cubit Observability
 
@@ -24,7 +24,6 @@ globs: ["lib/**/*.dart"]
 - مؤقتة أثناء debug.
 - و يتم حذفها قبل الدمج.
 
----
 
 ### 3. Debug Utilities
 
@@ -40,7 +39,6 @@ if (kDebugMode) {
 - قبل التسليم:
   - [ ] تأكد أن كل الـ debugPrint محذوف أو موضوع خلف flag واضح يمكن تعطيله.
 
----
 
 ### 4. Error Logging
 
@@ -50,7 +48,6 @@ if (kDebugMode) {
 - Exceptions غير متوقعة:
   - التقطها في مكان واحد مركزي إن أمكن (runZonedGuarded / FlutterError.onError).
 
----
 
 ### 5. Checklist
 
@@ -58,4 +55,3 @@ if (kDebugMode) {
 - [ ] لا يوجد `debugPrint()` غير محمي بـ `kDebugMode` أو مستخدم في مكان مركزي فقط.
 - [ ] أخطاء الـ bloc/cubit يمكن تتبعها عبر `AppBlocObserver`.
 - [ ] لا يوجد logging مكرر في كل cubit لنفس المعلومة.
-

@@ -1,7 +1,8 @@
 ---
 description: BlocProvider scoping rules — where to provide cubits, single vs multi, shared vs isolated, and common mistakes in Flutter_Base.
-globs: lib/src/features/**/view/**/*.dart
+globs: ["lib/src/features/**/view/**/*.dart"]
 ---
+
 
 # Skill: BlocProvider Scoping Rules
 
@@ -12,7 +13,6 @@ globs: lib/src/features/**/view/**/*.dart
 - عند مشاركة cubit بين أكتر من شاشة
 - عند ظهور أخطاء "Could not find" أو "BlocProvider.of() called with a context that does not contain"
 
----
 
 ## Rule #1: Every Screen Creates Its Own BlocProvider
 
@@ -49,7 +49,6 @@ class ProductDetailScreen extends StatelessWidget {
 }
 ```
 
----
 
 ## Rule #2: Cubit Lifecycle = Screen Lifecycle
 
@@ -69,7 +68,6 @@ BlocProvider.value(
 
 **Warning:** `BlocProvider.value` does NOT dispose the cubit.
 
----
 
 ## Rule #3: Single API = Single BlocProvider
 
@@ -90,7 +88,6 @@ class NotificationsScreen extends StatelessWidget {
 }
 ```
 
----
 
 ## Rule #4: Multiple APIs = MultiBlocProvider
 
@@ -115,7 +112,6 @@ class HomeScreen extends StatelessWidget {
 }
 ```
 
----
 
 ## Rule #5: Action Cubits — NO ..fetch()
 
@@ -133,7 +129,6 @@ MultiBlocProvider(
 )
 ```
 
----
 
 ## Rule #6: Dropdown/Widget-Level BlocProvider (Isolated)
 
@@ -165,7 +160,6 @@ class _CityDropdown extends StatelessWidget {
 // If cities API fails → entire screen shows error
 ```
 
----
 
 ## Rule #7: Tab Screens — Provide ABOVE IndexedStack
 
@@ -193,7 +187,6 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
 }
 ```
 
----
 
 ## Rule #8: BlocListener Placement
 
@@ -214,7 +207,6 @@ class _ProductDetailBody extends StatelessWidget {
 }
 ```
 
----
 
 ## Common Scoping Mistakes
 
@@ -227,7 +219,6 @@ class _ProductDetailBody extends StatelessWidget {
 | BlocProvider.value without manual dispose | Memory leak | Dispose the cubit manually when its owner disposes |
 | Sharing cubit between Go.to() routes | Context breaks between routes | Each pushed screen creates its own BlocProvider |
 
----
 
 ## Decision Tree
 
@@ -252,7 +243,6 @@ Need a cubit?
     └── Between parent and children in same tree → BlocProvider.value
 ```
 
----
 
 ## Scoping Checklist
 

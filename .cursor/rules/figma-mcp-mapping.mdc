@@ -1,17 +1,21 @@
 ---
 description: Figma MCP to Flutter_Base token mapping — colors, sizes, padding, radius, fonts. Use when reading Figma nodes via MCP.
-globs: ["lib/**/*.dart"]
-alwaysApply: false
+globs: ["lib/src/features/**/widgets/**/*.dart"]
 ---
 
+
 # Figma MCP → Flutter_Base Token Mapping
+
+<!-- centralized-rules -->
+> **⛔ Figma MCP read failure → STOP.** See `figma-mcp-read-first` skill — لا تخمّن، لا تكمل، بلّغ المستخدم.
+
+
 
 ## ⚠️ RTL Conversion
 
 > **See `rtl-arabic` skill for full RTL rules.** Core equation:
 > `Figma RIGHT → Flutter "start"` | `Figma LEFT → Flutter "end"` | `Row first child → physical RIGHT`
 
----
 
 ## ⚠️ Screen-Level Padding/Margin Adjustment (Figma → Code)
 
@@ -37,7 +41,6 @@ body.paddingAll(AppPadding.pH12) // ✅ no reduction needed
 
 **This applies ONLY to screen-level body padding/margin — NOT to card-internal spacing or component padding.**
 
----
 
 ## ⚠️ RTL Section Verification (Figma MCP Reading — CRITICAL)
 
@@ -67,7 +70,6 @@ Row(children: [CachedImage(...), Expanded(child: textColumn)])
 Row(children: [Expanded(child: textColumn), CachedImage(...)])
 ```
 
----
 
 ## ⚠️ Icon Background Check (AppAssets Icons)
 
@@ -101,7 +103,6 @@ Container(
 )
 ```
 
----
 
 ## Reading Figma Nodes
 
@@ -122,7 +123,6 @@ Container(
 - `style.fontSize` → `FontSizeManager.sXX`
 - `layoutMode` → VERTICAL=Column, HORIZONTAL=Row, NONE=Stack
 
----
 
 ## Color Mapping
 
@@ -130,7 +130,6 @@ Container(
 
 **Workflow:** Figma hex → read `color_manager.dart` → match by **purpose** (not just hex) → use existing → truly new? add with **generic name** (never screen-prefixed)
 
----
 
 ## Size Mapping
 
@@ -152,7 +151,6 @@ Container(
 | 70 | `AppSize.sH70` | `AppSize.sW70` |
 | 85 | `AppSize.sH85` | — |
 
----
 
 ## Padding Mapping
 
@@ -170,7 +168,6 @@ Container(
 | 35 | `AppPadding.pH35` | — |
 | 60 | — | `AppPadding.pW60` |
 
----
 
 ## Border Radius Mapping
 
@@ -186,7 +183,6 @@ Container(
 | 40 | `AppCircular.r40` |
 | full circle | `AppCircular.infinity` |
 
----
 
 ## Font Mapping
 
@@ -222,11 +218,10 @@ Container(
 
 **For non-standard px:** Use `SizedBox(height: 9.h)` directly with screenutil.
 
----
 
 ## Widget Mapping
 
-> **See `flutter-base-coding-standards.mdc` section 11 for full widget inventory with usage examples.**
+> **See `coding-standards` section 11 for full widget inventory with usage examples.**
 > **See sections 12-13 for extension and helper quick references.**
 
 Key mappings: Screen→`DefaultScaffold`, Button→`LoadingButton`/`DefaultButton`, Input→`CustomTextFiled`, Image→`CachedImage`, State→`AsyncBlocBuilder`, Icon→`IconWidget`

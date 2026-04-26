@@ -5,6 +5,11 @@ description: Keep Flutter_Base features clean, modular, and easy to change.
 
 # Skill: Clean Code & Refactoring — Flutter_Base
 
+<!-- centralized-rules -->
+> **🧩 Widget splitting:** Body widget = layout only. Each section/card in its own file. See `flutter-patterns` skill.
+
+
+
 ## When to Use
 
 - قبل توسيع feature قديم.

@@ -65,19 +65,10 @@ Colors.purple
 
 ## 3. Sizes → AppSize / AppPadding / AppMargin / AppCircular
 
-```dart
-// ✅
-SizedBox(height: AppSize.sH16)
-padding: EdgeInsets.all(AppPadding.pH16)
-BorderRadius.circular(AppCircular.r8)
-
-// ❌ FORBIDDEN
-SizedBox(height: 16)
-BorderRadius.circular(8)
-```
+> **See `design-tokens` skill for the full sizing/padding/margin/radius tables.**
+> Quick: never raw numbers. Use `AppSize.sHXX`, `AppPadding.pHXX`, `AppMargin.mHXX`, `AppCircular.rXX`.
 
 ---
-
 ## 4. Text Style → Extension Chain ONLY
 
 ### ⚠️ Font Size Adjustment (Figma → Code)
@@ -130,59 +121,16 @@ Text(title, style: const TextStyle().s24.bold)
 
 ## 5. Spacing → .szH / .szW Extensions ONLY (NEVER SizedBox)
 
-> **في Column أو Row، استخدم `.szH` / `.szW` دايماً للـ spacing. ممنوع SizedBox.**
-
-```dart
-// ✅ CORRECT — use spacing extensions
-Column(children: [
-  Text('Title'),
-  12.szH,    // SizedBox(height: 12.h)
-  Text('Subtitle'),
-  8.szH,
-])
-
-Row(children: [
-  IconWidget(...),
-  8.szW,     // SizedBox(width: 8.w)
-  Text('Label'),
-])
-
-// ❌ FORBIDDEN — raw SizedBox for spacing
-SizedBox(height: 12)
-SizedBox(width: 8)
-const SizedBox(height: 16)
-```
+> **See `design-tokens` skill for spacing details.**
+> Quick: ALWAYS `.szH` / `.szW`. Never raw `SizedBox(width: ...)`.
 
 ---
-
 ## 6. Padding/Margin → Widget Extensions ONLY (NEVER Padding Widget)
 
-> **ممنوع استخدام `Padding(...)` widget مباشرة. استخدم الـ extensions دايماً.**
-
-```dart
-// ✅ CORRECT — use padding/margin extensions
-myWidget.paddingAll(AppPadding.pH16)
-myWidget.paddingSymmetric(horizontal: AppPadding.pW20)
-myWidget.paddingStart(AppPadding.pW16)   // RTL-safe
-myWidget.paddingEnd(AppPadding.pW16)     // RTL-safe
-myWidget.paddingOnly(top: AppPadding.pH8, bottom: AppPadding.pH8)
-myWidget.paddingOnlyDirectional(start: AppPadding.pW16)
-myWidget.marginAll(AppMargin.mH8)
-myWidget.marginStart(AppMargin.mW16)     // RTL-safe
-myWidget.onClick(onTap: () {})
-
-// ❌ FORBIDDEN — Padding widget directly
-Padding(
-  padding: EdgeInsets.symmetric(horizontal: AppPadding.pW20),
-  child: myWidget,
-)
-
-// ❌ FORBIDDEN — GestureDetector directly
-GestureDetector(onTap: fn, child: myWidget)
-```
+> **See `design-tokens` skill for padding/margin extension reference.**
+> Quick: ALWAYS `.paddingAll()`, `.paddingStart()`, `.marginAll()` etc. Never `Padding(...)` widget directly.
 
 ---
-
 ## 7. Navigation → Go Class
 
 ```dart
@@ -339,40 +287,10 @@ final phone = params.phoneController.text; // may contain ٠١٢٣٤
 
 ## 8.4. Helpers & Shared → AUDIT BEFORE CREATING
 
-> **Read `core/helpers/` and `core/shared/` FIRST before writing any utility logic.**
-
-**Available Helpers (`core/helpers/`):**
-- `Validators` — form validation (empty, email, phone, password, dropdown, XSS)
-- `InputFormatters` — Phone, Email, NumberOnly, TextOnly, DateTime, Integer, Decimal, NoSpecialChars
-- `ArabicNumbersFormatter` — auto-converts ٠-٩ → 0-9 in text fields
-- `Helpers` — `showByLang()`, `getFcmToken()`, `changeStatusbarColor()`, `shareApp()`, `getDeviceType()`
-- `ImageHelper` — pick/crop images, camera, gallery, file picker
-- `LauncherHelper` — launch URL, WhatsApp, social media, phone, email
-- `CacheStorage` / `SecureStorage` — local storage wrappers
-- `CustomLoading` — full-screen loading overlay
-
-**Available Shared (`core/shared/`):**
-- `BaseModel<T>` — generic API response wrapper
-- `UserModel` — user entity
-- `ImageEntity` — image model (network + local)
-- `UserCubit` — current user state
-- Service Locator — `injector<T>()`
-
-**Available Extensions (`core/extensions/`):**
-- `TextStyleEx` — text style chain (color, size, weight)
-- `FormatString` — `.toEnglishNumbers()`, `.capitalize()`, `.toCurrency()`, `.copyToClipboard()`
-- `DateTimeFormatHelper` — `.toFullDate()`, `.toTime()`, `.toDayMonthYear()`, etc.
-- `ContextExtension` — `context.width`, `context.hideKeyboard()`, `context.isArabic`
-- `PaddingExtension` / `MarginExtension` — RTL-safe widget padding/margin
-- `OnClick` — `.onClick(onTap: fn)`
-- `SizedBoxHelper` — `.szH`, `.szW`
-- `SliverExtension` — `.toSliver()`
-- `SeparatorExtension` — `.joinWith(separator)` on List<Widget>
-- `IndexedMap` — `.indexedMap((index, item) => ...)` on List
-- `FormMixin` — `formKey`, `validate()`, `validateAndScroll()`
+> **See `extensions-and-helpers` skill for the full Helpers/Shared catalog.**
+> Quick: search `core/helpers/` and `core/shared/` BEFORE writing any utility.
 
 ---
-
 ## 8.5. Entity Safety → initial() + fromJson defaults + tryParse ALWAYS
 
 ### Every entity MUST have:
@@ -555,7 +473,7 @@ SingleChildScrollView(
 
 ## 9. Screen Structure
 
-> **See `scaffold-statusbar.mdc` rule for which scaffold to use per screen type.**
+> **See `scaffold-patterns` rule for which scaffold to use per screen type.**
 
 ```dart
 // ✅ Inner screens (most screens): StatelessWidget + BlocProvider + DefaultScaffold
@@ -611,319 +529,22 @@ TextAlign.left/right             // use TextAlign.start/end
 
 ## 11. Core Widgets — USE BEFORE BUILDING NEW
 
-> **Golden Rule:** Search `core/widgets/` before writing any widget. If it exists → use it.
-
-### 11.1 — Buttons (`core/widgets/buttons/`)
-
-| Widget | Usage |
-|--------|-------|
-| `LoadingButton(title, onTap)` | Async button with built-in loading state — use for ALL form submits |
-| `DefaultButton(title, onTap)` | Simple non-async button |
-| `ButtonClose()` | Standard close/dismiss button |
-| `CustomAnimatedButton(...)` | Animated press-effect button |
-
-```dart
-// ✅ CORRECT — async form submit
-LoadingButton(
-  title: LocaleKeys.submit.tr(),
-  color: AppColors.primary,
-  borderRadius: AppCircular.r12,
-  onTap: () async => context.read<MyCubit>().submit(params),
-)
-```
+> **See `widget-reference` skill for the full core widgets catalog.**
+> Quick: search `core/widgets/` BEFORE building anything new.
 
 ---
-
-### 11.2 — Text Fields (`core/widgets/fields/text_fields/`)
-
-| Widget | Usage |
-|--------|-------|
-| `CustomTextFiled(hint, title, controller, validator, textInputType, textInputAction)` | **Primary field** — includes label + asterisk + validation styling. Use for all form fields. |
-| `DefaultTextField(...)` | Base field — used inside CustomTextFiled. Use directly only if no label needed. |
-| `CustomPinTextField(controller, onCompleted)` | OTP / PIN 4-digit field with pinput |
-
-```dart
-// ✅ CORRECT — form field with label
-CustomTextFiled(
-  title: LocaleKeys.phoneLabel.tr(),
-  hint: LocaleKeys.phoneHint.tr(),
-  controller: params.phoneController,
-  textInputType: TextInputType.phone,
-  textInputAction: TextInputAction.next,
-  validator: Validators.validatePhone,
-  inputFormatters: [PhoneNumberFormatter()],
-)
-
-// ❌ WRONG — don't build a custom labeled field from scratch
-```
-
----
-
-### 11.3 — Dropdowns (`core/widgets/fields/drop_downs/`)
-
-| Widget | Usage |
-|--------|-------|
-| `AppDropdown<T>(items, onChanged, itemAsString, label, hint)` | Full-featured dropdown with search, multi-select, loading/error states |
-
-```dart
-// ✅ CORRECT
-AppDropdown<CityEntity>(
-  items: cities,
-  label: LocaleKeys.city.tr(),
-  hint: LocaleKeys.selectCity.tr(),
-  value: selectedCity,
-  itemAsString: (c) => c.name,
-  onChanged: (c) => setState(() => selectedCity = c),
-  validator: Validators.validateDropDown,
-  isLoading: cubit.isLoading,
-)
-```
-
-Key params: `isMultiSelect`, `showSearchBox`, `isLoading`, `isFailer`, `readonly`, `maxHeight`
-
----
-
-### 11.4 — Dialogs & Bottom Sheets (`core/widgets/dialogs/` + `core/widgets/pickers/`)
-
-| Function | Usage |
-|----------|-------|
-| `successDialog(context, title: ..., desc: ...)` | Standard success popup with Lottie animation + auto-close |
-| `showCustomDialog(context, child: ...)` | Generic styled dialog with scale+fade animation |
-| `showDefaultBottomSheet(child: ...)` | Standard bottom sheet with drag handle |
-| `CustomDatePicker` | Date picker widget |
-
-```dart
-// ✅ CORRECT — success after API call
-successDialog(context, title: LocaleKeys.savedSuccessfully.tr());
-
-// ✅ CORRECT — custom dialog
-showCustomDialog(
-  context,
-  child: MyDialogContent(),
-  barrierDismissible: true,
-);
-
-// ✅ CORRECT — bottom sheet
-showDefaultBottomSheet(child: MySheetContent());
-```
-
----
-
-### 11.5 — State Handling (`core/widgets/handling_views/` + `core/widgets/tools/`)
-
-| Widget | Usage |
-|--------|-------|
-| `AsyncBlocBuilder<Cubit, DataType>(builder: ..., skeletonBuilder: ...)` | Wraps loading/error/success states automatically |
-| `AsyncSliverBlocBuilder<Cubit, DataType>(...)` | Sliver version for CustomScrollView |
-| `PaginatedListWidget<Cubit, ItemType>(itemBuilder: ..., config: ...)` | Paginated list with infinite scroll |
-| `EmptyWidget(title: ..., desc: ..., path: ...)` | Empty state with image/lottie |
-| `ErrorView(error: ...)` | Error state with Lottie animation |
-
-```dart
-// ✅ CORRECT — API-driven list
-AsyncBlocBuilder<GetItemsCubit, List<ItemEntity>>(
-  skeletonBuilder: (ctx) => ItemSkeleton(),
-  builder: (ctx, items) => items.isEmpty
-      ? EmptyWidget(title: LocaleKeys.noItems.tr(), desc: '')
-      : ListView.builder(itemBuilder: ...),
-)
-
-// ✅ CORRECT — paginated list
-PaginatedListWidget<GetItemsCubit, ItemEntity>(
-  itemBuilder: (ctx, item, idx) => ItemCard(item: item),
-  emptyWidget: EmptyWidget(title: LocaleKeys.noItems.tr(), desc: ''),
-)
-```
-
----
-
-### 11.6 — Image Widgets (`core/widgets/image_widgets/`)
-
-| Widget | Usage |
-|--------|-------|
-| `CachedImage(url, width, height)` | Cached network image with placeholder + tap-to-view |
-| `CustomAvatar(url, radius)` | Circular avatar from network |
-| `UploadImageWidget(onUpload)` | Image upload with native picker, single or multi |
-| `ImageView(mediaPath, mediaType, mediaSource)` | Full-screen image/video viewer |
-
-```dart
-// ✅ Network image
-CachedImage(url: item.image, width: AppSize.sW60, height: AppSize.sH60,
-  borderRadius: BorderRadius.circular(AppCircular.r8))
-
-// ✅ Circular avatar
-CachedImage(url: user.photo, width: AppSize.sW44, height: AppSize.sH44,
-  boxShape: BoxShape.circle)
-
-// ✅ Upload
-UploadImageWidget(
-  uploadImageType: UploadImageType.single,
-  onUpload: (files) => params.imageFile = files.first,
-)
-```
-
----
-
-### 11.7 — Other Widgets
-
-| Widget | Usage |
-|--------|-------|
-| `IconWidget(icon, color, height, width)` | Versatile — handles SVG/PNG/Lottie/network/IconData automatically |
-| `BadgeIconWidget(child, badgeCount)` | Badge overlay on any widget |
-| `CustomHtmlWidget(data)` | Renders HTML content with project styles |
-| `RiyalPriceText(price)` | Saudi Riyal symbol with correct font |
-| `CustomLoading.showLoadingView()` | Centered SpinKit loading indicator |
-| `CustomLoading.showFullScreenLoading()` | Full-screen overlay loader |
-| `MessageUtils.showSnackBar(context, baseStatus, message)` | Themed snackbar |
-
-```dart
-// ✅ Icon (SVG from assets)
-IconWidget(icon: AppAssets.svg.baseSvg.search.path, color: AppColors.primary, height: AppSize.sH20)
-
-// ✅ Badge
-BadgeIconWidget(child: IconWidget(...), badgeCount: unreadCount)
-
-// ✅ Price
-RiyalPriceText(price: '250.00', priceTextStyle: const TextStyle().setMainTextColor.s14.bold)
-// OR
-Text('250.00', style: ...).withRiyalPrice(color: AppColors.primary)
-
-// ✅ Snackbar
-MessageUtils.showSnackBar(context: context, baseStatus: BaseStatus.success, message: LocaleKeys.saved.tr())
-```
-
----
-
-### 11.8 — Scaffold + Status Bar
-
-> **See `scaffold-statusbar.mdc` for full scaffold selection guide and status bar rules.**
-
-- Inner screens → `DefaultScaffold` (handles header + status bar automatically)
-- Auth screens → plain `Scaffold` + `SafeArea` (no appbar)
-- Home → custom `Scaffold` + `CustomNavigationBar`
-- **NEVER** build custom header containers in body widgets
-
----
-
 ## 12. Extensions — USE ALWAYS
 
-### 12.1 — TextStyleEx (`core/extensions/text_style_extensions.dart`)
-
-```dart
-// Font weight
-const TextStyle().bold       // FontWeight.bold
-const TextStyle().semiBold   // w600
-const TextStyle().medium     // w500
-const TextStyle().regular    // w400
-const TextStyle().light      // w300
-
-// Font size (uses screenutil .sp)
-const TextStyle().s12   // 12.sp
-const TextStyle().s14   // 14.sp
-const TextStyle().s16   // 16.sp
-
-// Colors (from AppColors)
-const TextStyle().setMainTextColor    // AppColors.main
-const TextStyle().setSecondryColor    // AppColors.secondary
-const TextStyle().setHintColor        // AppColors.hintText
-const TextStyle().setErrorColor       // AppColors.error
-const TextStyle().setWhiteColor       // AppColors.white
-const TextStyle().setPrimaryColor     // AppColors.primary
-const TextStyle().setColor(AppColors.xxx)  // custom color
-
-// Chain example
-const TextStyle().setMainTextColor.s14.semiBold
-```
-
-### 12.2 — Padding/Margin Extensions
-
-```dart
-// Padding (RTL-safe versions preferred)
-widget.paddingAll(AppPadding.pH16)
-widget.paddingSymmetric(horizontal: AppPadding.pW20, vertical: AppPadding.pH8)
-widget.paddingStart(AppPadding.pW16)   // ✅ RTL-safe (physical right)
-widget.paddingEnd(AppPadding.pW16)     // ✅ RTL-safe (physical left)
-widget.paddingOnly(top: AppPadding.pH8, bottom: AppPadding.pH8)
-widget.paddingOnlyDirectional(start: AppPadding.pW16)
-
-// Margin
-widget.marginAll(AppMargin.mH8)
-widget.marginSymmetric(horizontal: AppMargin.mW16)
-widget.marginTop(AppMargin.mH12)
-widget.marginBottom(AppMargin.mH12)
-widget.marginStart(AppMargin.mW16)   // ✅ RTL-safe
-widget.marginEnd(AppMargin.mW16)     // ✅ RTL-safe
-```
-
-### 12.3 — SizedBox Helpers
-
-```dart
-12.szH   // SizedBox(height: 12.h)
-16.szW   // SizedBox(width: 16.w)
-// Use AppSize constants: AppSize.sH12.szH
-```
-
-### 12.4 — Click Extension
-
-```dart
-myWidget.onClick(onTap: () => Go.to(const NextScreen()))
-```
-
-### 12.5 — Context Extension
-
-```dart
-context.width    // MediaQuery width
-context.height   // MediaQuery height
-context.locale   // current Locale
-```
+> **See `extensions-and-helpers` skill for the full extensions reference.**
+> Quick: TextStyleEx (`.bold`, `.s14`), spacing (`.szH/.szW`), padding (`.paddingAll`), `.toSliver`, `.onClick`, FormatString, ContextExtension, FormMixin, IndexedMap.
 
 ---
-
 ## 13. Helpers — USE BEFORE WRITING CUSTOM LOGIC
 
-### 13.1 — Validators (`core/helpers/validators.dart`)
-
-```dart
-// ✅ Use in form fields
-validator: Validators.validateEmpty
-validator: Validators.validateEmail
-validator: Validators.validatePhone    // digits only, 8-15 chars
-validator: Validators.validatePassword // uppercase + lowercase + digit + special
-validator: (v) => Validators.validatePasswordConfirm(v, pass)
-validator: Validators.validateDropDown<T>
-validator: Validators.noValidate      // no validation, XSS check only
-```
-
-### 13.2 — InputFormatters (`core/helpers/input_formatters.dart`)
-
-```dart
-inputFormatters: [PhoneNumberFormatter()]        // digits + +, -, (, )
-inputFormatters: [EmailFormatter()]              // email chars only
-inputFormatters: [NumberOnlyFormatter()]         // digits only
-inputFormatters: [TextOnlyFormatter()]           // letters + arabic + spaces
-inputFormatters: [TextWithNumberFormatter()]     // letters + numbers + arabic
-inputFormatters: [IntegerNumberFormatter()]      // integers, optional max value
-inputFormatters: [DecimalNumberFormatter()]      // decimals, optional decimal places
-inputFormatters: [DateTimeFormatter()]           // auto-format DD/MM/YYYY
-inputFormatters: [NoSpecialCharactersFormatter()] // no special chars
-```
-
-### 13.3 — Helpers (`core/helpers/helpers.dart`)
-
-```dart
-Helpers.showByLang(ar: 'عربي', en: 'English')  // returns string based on locale
-Helpers.getFcmToken()                            // FCM push token
-Helpers.changeStatusbarColor(statusBarColor: ...) // status bar tint
-Helpers.shareApp(url)                           // share via share_plus
-Helpers.getDeviceType()                         // 'ios' or 'android'
-```
-
-### 13.4 — CacheService (`core/helpers/cache_service.dart`)
-
-Local storage via shared preferences — use for tokens, user prefs, etc.
+> **See `extensions-and-helpers` skill for the full Helpers reference.**
+> Quick: Validators, InputFormatters, Helpers, ImageHelper, LauncherHelper, CacheStorage.
 
 ---
-
 ## 14. Navigation → Go Class (ONLY)
 
 ```dart
@@ -978,113 +599,28 @@ All endpoints → `ApiConstants` in `core/network/api_endpoints.dart`. Add new e
 
 ## 17. Icon Background Check (AppAssets)
 
-> Some SVG/PNG icons in AppAssets already include their background shape (circle/rect with fill).
-> **Always check the asset** before wrapping in a Container with a background color.
-> - Icon has background → use `IconWidget` directly, no Container wrapper
-> - Icon is transparent → wrap in Container with the desired background
-
-```dart
-// ✅ Icon already has background baked in
-IconWidget(icon: AppAssets.svg.featureSvg.myIcon.path, height: AppSize.sH40)
-
-// ✅ Icon is transparent — add background
-Container(
-  decoration: BoxDecoration(color: AppColors.fill, borderRadius: BorderRadius.circular(AppCircular.r10)),
-  child: IconWidget(icon: AppAssets.svg.baseSvg.search.path, color: AppColors.primary, height: AppSize.sH20),
-)
-
-// ❌ WRONG — double background
-Container(color: AppColors.fill, child: IconWidget(icon: iconWithBuiltInBg))
-```
+> **See `design-tokens` skill (Icon Background section).**
+> Quick: some AppAssets icons already include their background — check before wrapping in Container.
 
 ---
-
 ## 18. Network Images → CachedImage ALWAYS
 
-> ALL network/remote images (cards, lists, details, avatars) MUST use `CachedImage` from `core/widgets/image_widgets/cached_image.dart`.
-> Never use `Image.network()` directly.
-
-```dart
-// ✅ Card image
-CachedImage(url: item.image, width: AppSize.sW60, height: AppSize.sH60,
-  borderRadius: BorderRadius.circular(AppCircular.r8))
-
-// ✅ Circular avatar
-CachedImage(url: user.photo, width: AppSize.sW44, height: AppSize.sH44,
-  boxShape: BoxShape.circle)
-
-// ❌ FORBIDDEN
-Image.network(item.image, width: 60, height: 60)
-```
+> **See `design-tokens` skill (Network Images section).**
+> Quick: ALWAYS `CachedImage`. NEVER `Image.network`.
 
 ---
-
 ## 19. Access Modifiers — ALWAYS Apply
 
-> Use proper Dart access modifiers when creating classes, methods, and fields.
-
-```dart
-// ✅ Private widget (used only inside same file / part-of file)
-class _MyFeatureBody extends StatelessWidget { ... }
-
-// ✅ Private method (not exposed outside class)
-void _handleTap() { ... }
-
-// ✅ Private field
-final String _internalValue;
-
-// ✅ Public API — only what needs to be accessed from outside
-class MyFeatureCubit extends AsyncCubit<List<ItemEntity>> {
-  Future<void> fetchItems() async { ... }  // public — called from view
-  void _processData(List data) { ... }     // private — internal logic
-}
-
-// ❌ WRONG — everything public by default
-class MyWidget {
-  String helperValue = '';          // should be _helperValue if internal
-  void processInternal() { ... }   // should be _processInternal if not needed outside
-}
-```
-
-**Rules:**
-- Widget classes used only within their feature file → prefix with `_` (private)
-- Helper methods not called from outside → prefix with `_`
-- Fields not exposed to other classes → prefix with `_`
-- Only expose what is needed for the public API
+> **See `naming-and-cleanup` skill for the full access modifier rules.**
+> Quick: prefix with `_` for file/library-private. Public types only when re-exported.
 
 ---
-
 ## 20. Naming Conventions — MANDATORY
 
-> Every variable, function, class, and file name MUST be descriptive and self-documenting.
-
-| Element | Convention | Example |
-|---|---|---|
-| File names | `snake_case` | `category_factories_body.dart` |
-| Class names | `PascalCase` | `CategoryFactoriesBody` |
-| Variables / fields | `camelCase` | `selectedCategory`, `isLoading` |
-| Constants | `camelCase` or `SCREAMING_SNAKE` | `maxRetryCount`, `API_TIMEOUT` |
-| Functions / methods | `camelCase`, verb-first | `fetchCategories()`, `deleteItem()`, `handleSubmit()` |
-| Cubits | `VerbNounCubit` | `GetCategoriesCubit`, `DeleteItemCubit` |
-| Entities | `NounEntity` | `CategoryEntity`, `ProductEntity` |
-| Params | `NounParams` | `AddProductParams`, `LoginParams` |
-| Screens | `NounScreen` | `CategoryFactoriesScreen` |
-| Body widgets | `NounBody` | `CategoryFactoriesBody` |
-
-```dart
-// ✅ GOOD — descriptive names
-final List<CategoryEntity> availableCategories;
-Future<void> fetchCategoryFactories() async { ... }
-class GetCategoryFactoriesCubit extends AsyncCubit<...> { ... }
-
-// ❌ BAD — vague/abbreviated
-final List<CategoryEntity> data;    // "data" tells nothing
-Future<void> fetch() async { ... }  // fetch what?
-class MyCubit extends AsyncCubit<...> { ... } // "My" is meaningless
-```
+> **See `naming-and-cleanup` skill for the full naming reference.**
+> Quick: PascalCase classes, snake_case files, camelCase variables, VerbNounCubit, NounEntity.
 
 ---
-
 ## 21. Shared Widget Reuse — AUDIT BEFORE CREATING (CRITICAL)
 
 > **قبل إنشاء أي widget جديد — لازم تراجع الشاشات والـ features اللي اتعملت قبل كده.**
@@ -1124,94 +660,16 @@ ProductCardWidget(product: item, showPrice: false, showRating: true)
 
 ## 22. ViewController Class Pattern (MANDATORY)
 
-> **⚠️ ممنوع نهائياً: أي Controller أو ValueNotifier أو AnimationController أو ScrollController أو FocusNode داخل الـ View مباشرة.**
-> **كل حاجة تتعلق بالـ UI state + handlers بتاعتها لازم تكون في class منفصل (ViewController). الـ View تستدعي الـ class بس.**
-
-### القاعدة الأساسية:
-- **ممنوع** وضع `TextEditingController`, `ValueNotifier`, `ScrollController`, `AnimationController`, `FocusNode` داخل الـ State أو الـ Widget
-- **ممنوع** استخدام `setState` للـ UI state — استخدم `ValueNotifier` + `ValueListenableBuilder`
-- **إلزامي** إنشاء class منفصل (ViewController) يحتوي: الـ controllers + الـ notifiers + الـ handlers
-- الـ View تستخدم **object واحد** من الـ ViewController وتنادي منه فقط
-
-```dart
-// ✅ CORRECT — Separate ViewController class
-class ChatViewController {
-  final TextEditingController messageController = TextEditingController();
-  final ValueNotifier<bool> isSending = ValueNotifier(false);
-
-  void onSend(BuildContext context) {
-    final text = messageController.text.trim();
-    if (text.isEmpty) return;
-    context.read<ChatCubit>().sendMessage(text);
-    messageController.clear();
-  }
-
-  void dispose() {
-    messageController.dispose();
-    isSending.dispose();
-  }
-}
-
-// ✅ View uses one ViewController object — يستدعي بس
-class _ChatInputState extends State<_ChatInput> {
-  late final ChatViewController _vc = ChatViewController();
-
-  @override
-  void dispose() { _vc.dispose(); super.dispose(); }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(children: [
-      Expanded(child: DefaultTextField(controller: _vc.messageController, title: LocaleKeys.typeMessage.tr())),
-      8.szW,
-      ValueListenableBuilder<bool>(
-        valueListenable: _vc.isSending,
-        builder: (_, sending, _) => _SendButton(onTap: () => _vc.onSend(context), isLoading: sending),
-      ),
-    ]);
-  }
-}
-
-// ❌ FORBIDDEN — controllers/notifiers في الـ View
-class _ChatInputState extends State<_ChatInput> {
-  final _controller = TextEditingController();  // ❌ ممنوع — لازم في ViewController
-  bool _isSending = false;                        // ❌ ممنوع — استخدم ValueNotifier في ViewController
-  final ValueNotifier<int> _tabIndex = ValueNotifier(0);  // ❌ ممنوع — لازم في ViewController
-  void _onSend() { setState(() => ...); }        // ❌ ممنوع — استخدم ValueNotifier + handler في ViewController
-}
-```
-
-**Rules:**
-- كل `TextEditingController`, `ValueNotifier`, `ScrollController`, `FocusNode` → داخل ViewController **فقط**
-- كل UI logic function (onSend, onSearch, selectTab, etc.) → داخل ViewController
-- استخدم `ValueNotifier` + `ValueListenableBuilder` بدل `setState`
-- الـ View تنادي `_vc.dispose()` في `dispose()`
+> **See `view-controller-pattern` skill for the full pattern.**
+> Quick: TextEditingController, ValueNotifier, ScrollController, FocusNode + UI handlers MUST live in a `<Feature>ViewController` class — never in the View/State directly.
 
 ---
-
 ## 23. Icon Inside Container → Center Widget (MANDATORY)
 
-> **أي أيقونة داخل Container بـ background لازم تتلف في `Center` widget.**
-
-```dart
-// ✅ CORRECT
-Container(
-  width: AppSize.sH48, height: AppSize.sH48,
-  decoration: BoxDecoration(color: AppColors.grey1, borderRadius: BorderRadius.circular(AppCircular.r8)),
-  child: Center(
-    child: IconWidget(icon: AppAssets.svg.appSvg.sent.path, width: AppSize.sW24, height: AppSize.sH24, color: AppColors.main),
-  ),
-)
-
-// ❌ WRONG — Icon stretches to Container size
-Container(
-  width: AppSize.sH48, height: AppSize.sH48,
-  child: IconWidget(...),  // ← no Center = stretches!
-)
-```
+> **See `design-tokens` skill (Icon Inside Container section).**
+> Quick: when wrapping an Icon inside a Container with background → wrap the Icon in `Center` widget.
 
 ---
-
 ## 24. Section Sub-Folders — Complex Screens
 
 > **لما الشاشة فيها 4+ sections مختلفة، كل مجموعة مرتبطة حطها في sub-folder.**
@@ -1301,113 +759,22 @@ flutter_html, video_player, rxdart, share_plus, url_launcher, injectable
 
 ## 29. Clean Code — Remove Unused Imports & Parameters (MANDATORY)
 
-> **كل ملف لازم يكون نظيف — لا imports مش مستخدمة ولا parameters مش مستخدمة.**
-
-```dart
-// ❌ FORBIDDEN — unused import
-import 'package:flutter/foundation.dart'; // ← not used anywhere in file
-
-// ❌ FORBIDDEN — unused optional parameter warning
-class MyWidget extends StatelessWidget {
-  final String? subtitle;  // ← never passed by any caller → REMOVE IT
-  const MyWidget({super.key, this.subtitle});
-}
-// Warning: "A value for optional parameter 'subtitle' isn't ever given."
-
-// ✅ CORRECT — only declare parameters that are actually used
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
-}
-```
-
-**Rules:**
-- بعد كل feature → شغّل `flutter analyze` وشيل كل unused imports
-- لو parameter مش بيتبعت من أي caller → شيله
-- لو parameter هيتحتاج في المستقبل → أضفه لما تحتاجه فعلاً، مش من الأول
+> **See `naming-and-cleanup` skill.**
+> Quick: delete unused imports + remove unused optional parameters before delivery. Run `flutter analyze`.
 
 ---
-
 ## 30. const — Add to EVERY Widget That Can Be const (MANDATORY)
 
-> **أي widget أو constructor ممكن يبقى const → لازم يبقى const.**
-
-```dart
-// ✅ CORRECT
-const _MyBody()
-const SizedBox.shrink()
-const EdgeInsets.all(0)
-children: const [Divider()]
-
-// ❌ WRONG — missing const
-_MyBody()           // ← can be const, add it!
-SizedBox.shrink()   // ← can be const, add it!
-```
-
-**Quick rule:** لو Flutter analyzer بيقولك "Prefer const" → أضفها. دي بتقلل rebuilds وبتحسن performance.
+> **See `naming-and-cleanup` skill.**
+> Quick: add `const` to every widget/constructor that can be const.
 
 ---
-
 ## 31. Models & Enums → Entity Folder ONLY (NEVER Inside Widgets)
 
-> **أي model, enum, helper class خاص بالـ feature لازم يكون في `entity/` folder — مش جوا widget class.**
-
-```dart
-// ✅ CORRECT — status model in entity folder
-// entity/transaction_status_model.dart
-class TransactionStatusModel {
-  final String key;
-  final String label;
-  final Color bgColor;
-  final Color textColor;
-
-  const TransactionStatusModel({
-    required this.key, required this.label,
-    required this.bgColor, required this.textColor,
-  });
-
-  static TransactionStatusModel fromStatus(String status) {
-    switch (status) {
-      case 'paid':
-        return TransactionStatusModel(
-          key: status, label: LocaleKeys.paid.tr(),
-          bgColor: AppColors.danger.withValues(alpha: 0.1),
-          textColor: AppColors.danger,
-        );
-      case 'completed':
-        return TransactionStatusModel(
-          key: status, label: LocaleKeys.completed.tr(),
-          bgColor: AppColors.green10,
-          textColor: AppColors.green,
-        );
-      default:
-        return TransactionStatusModel(
-          key: status, label: status,
-          bgColor: AppColors.grey1,
-          textColor: AppColors.hintText,
-        );
-    }
-  }
-}
-
-// ✅ Usage in widget — clean and simple
-final statusModel = TransactionStatusModel.fromStatus(transaction.status);
-Text(statusModel.label, style: const TextStyle().setColor(statusModel.textColor).s12.medium)
-
-// ❌ FORBIDDEN — helper methods scattered inside widget class
-class _TransactionCard extends StatelessWidget {
-  String _statusKey(String status) { ... }      // ← move to model!
-  Color _statusBgColor(String status) { ... }   // ← move to model!
-  Color _statusTextColor(String status) { ... } // ← move to model!
-}
-```
-
-**Rules:**
-- كل logic خاص بتحويل data (status → color, status → label) → model/entity
-- Widget = UI فقط، يستدعي الـ model ويعرض النتيجة
-- لو الـ model مشترك بين أكثر من feature → `app_shared/entity/`
+> **See `naming-and-cleanup` skill.**
+> Quick: models, enums, helper functions (status→color, status→label) live in `entity/` folder — never inside the widget class.
 
 ---
-
 ## 32. Dropdown & Small Widgets — Isolate API Calls (CRITICAL)
 
 > **لما يكون فيه dropdown أو widget صغير في الشاشة بيجيب data من API — لازم يكون الـ BlocBuilder/Listener عليه هو بس، مش على كل الشاشة.**

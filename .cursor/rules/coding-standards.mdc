@@ -1,0 +1,855 @@
+---
+description: Master coding standards reference — colors, sizes, text styles, core widgets, extensions, helpers, forms, navigation, naming, entity safety, slivers, and platform config.
+globs: ["lib/**/*.dart"]
+---
+
+
+# Flutter_Base — Coding Standards
+
+## 1. Single Import Per Feature File
+
+```dart
+// ✅ CORRECT
+import '../imports/view_imports.dart';
+
+// ❌ WRONG: scattered imports
+import 'package:flutter/material.dart';
+import '../../../../config/res/app_sizes.dart';
+```
+
+`view_imports.dart` uses **`part of` system** — each file in the feature starts with:
+```dart
+part of '../imports/view_imports.dart';
+```
+
+
+## 2. Colors → AppColors ONLY (Reuse Before Creating)
+
+### ⚠️ Color Reuse Rule
+
+> Read `color_manager.dart` FIRST. Match Figma colors against existing AppColors **by purpose**, not just exact hex.
+> Core colors are shared across ALL screens. Only add truly new colors with **generic names** (never screen-prefixed).
+
+```dart
+// ✅ CORRECT — use existing AppColors
+color: AppColors.forth,
+backgroundColor: AppColors.scaffoldBackground,
+style: const TextStyle().setColor(AppColors.primary) // for labels/body text
+
+// ❌ FORBIDDEN — raw colors
+Color(0xFF583D82)
+Colors.purple
+
+// ❌ FORBIDDEN — screen-prefixed color names for NEW colors
+// AppColors.cartBackground // use AppColors.fill if close enough
+// Note: AppColors.loginPrimary is a legacy name already used in DefaultScaffold/status bar — do NOT rename it, but do NOT create new screen-prefixed colors
+```
+
+| Hex | AppColors | Purpose |
+|-----|-----------|---------|
+| #1C1C1C | `AppColors.main` | Titles, headings |
+| #474747 | `AppColors.primary` | Body text, labels |
+| #292929 | `AppColors.secondary` | Dark secondary text |
+| #583D82 | `AppColors.forth` / `AppColors.buttonColor` | Purple accent, buttons |
+| #666666 | `AppColors.hintText` | Hints, subtitles, placeholders |
+| #F9FAFB | `AppColors.fill` | Field/card light background |
+| #FFFFFF | `AppColors.white` / `AppColors.scaffoldBackground` | White backgrounds |
+| #C5C6C9 | `AppColors.border` | Borders, dividers |
+| #E34D4D | `AppColors.error` | Error red |
+| #DFDFDF | `AppColors.grey1` | Light grey |
+| #C7C7C7 | `AppColors.grey2` | Medium grey |
+
+**Close-match rule:** If Figma has a similar-purpose color (e.g. #6B7280 for grey text), use `AppColors.hintText` instead of creating a new one.
+
+
+## 3. Sizes → AppSize / AppPadding / AppMargin / AppCircular
+
+> **See `design-tokens` skill for the full sizing/padding/margin/radius tables.**
+> Quick: never raw numbers. Use `AppSize.sHXX`, `AppPadding.pHXX`, `AppMargin.mHXX`, `AppCircular.rXX`.
+
+## 4. Text Style → Extension Chain ONLY
+
+### ⚠️ Font Size Adjustment (Figma → Code)
+
+> When converting from Figma:
+> - **Figma ≤ 13sp (10, 11, 12, 13) → KEEP AS-IS — لا تقلل.** النصوص الصغيرة لازم تفضل زي ما هي.
+> - Figma 14–18sp → reduce by 1–2sp (e.g. Figma 16 → `.s14` or `.s15`)
+> - Figma ≥ 20sp → reduce by 2sp (e.g. Figma 22 → `.s20`)
+
+```dart
+// ✅ REQUIRED
+Text('title', style: const TextStyle().setMainTextColor.s14.medium)
+Text('hint', style: const TextStyle().setHintColor.s12.regular)
+Text('error', style: const TextStyle().setErrorColor.s12.bold)
+
+// ✅ Figma 12sp small text → keep .s12 (don't reduce small text)
+Text('small', style: const TextStyle().setHintColor.s12.regular)
+
+// ✅ Figma 16sp title → code .s14
+Text('title', style: const TextStyle().setMainTextColor.s14.bold)
+
+// ✅ Figma 14sp body → code .s13 or .s12
+Text('body', style: const TextStyle().setMainTextColor.s13.regular)
+
+// ❌ FORBIDDEN — raw TextStyle
+TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF1C1C1C))
+
+// ❌ FORBIDDEN — using Figma font size directly without adjustment
+// Figma says 16sp → DON'T use .s16, use .s14 or .s15 instead
+```
+
+### ⚠️ Font Weight Adjustment (Figma → Code)
+
+> الخطوط من Figma أحياناً بتطلع أتقل في Flutter. جرب وزن أخف أولاً.
+
+```dart
+// Figma Bold (700) → try SemiBold (600) first, if too light then 700
+// Figma SemiBold (600) → try Medium (500) first
+// Figma Medium (500) → keep 500
+// Figma Regular (400) → keep 400
+
+// ✅ CORRECT — adjusted from Figma Bold 24sp
+Text(title, style: const TextStyle().s22.semiBold)
+
+// ❌ WRONG — raw Figma values (will look too big/heavy)
+Text(title, style: const TextStyle().s24.bold)
+```
+
+
+## 5. Spacing → .szH / .szW Extensions ONLY (NEVER SizedBox)
+
+> **See `design-tokens` skill for spacing details.**
+> Quick: ALWAYS `.szH` / `.szW`. Never raw `SizedBox(width: ...)`.
+
+## 6. Padding/Margin → Widget Extensions ONLY (NEVER Padding Widget)
+
+> **See `design-tokens` skill for padding/margin extension reference.**
+> Quick: ALWAYS `.paddingAll()`, `.paddingStart()`, `.marginAll()` etc. Never `Padding(...)` widget directly.
+
+## 7. Navigation → Go Class
+
+```dart
+// ✅
+Go.to(const MyScreen())
+Go.back()
+Go.toNamed(Routes.myScreen)
+
+// ❌
+Navigator.push(context, MaterialPageRoute(builder: (_) => Screen()))
+```
+
+
+## 8. Localization → lang.json + LocaleKeys (MANDATORY)
+
+> **⚠️ قاعدة أساسية: كل نص يظهر للمستخدم لازم يتضاف في `lang.json` أولاً ويُستخدم من `LocaleKeys` فقط — بدون أي استثناء.**
+
+### 8.0.1 — Format ملف lang.json
+
+```json
+// assets/translations/lang.json
+{
+  "key_name #$ English text": "Arabic text",
+  "feature_title #$ Feature Title": "عنوان الميزة"
+}
+```
+
+**Format القاعدة:** `"snake_case_key #$ English Text": "النص العربي"`
+- الـ key بـ `snake_case`
+- بعد `#$` → النص الإنجليزي
+- القيمة → النص العربي
+
+### 8.0.2 — Strings مع Parameters (Variables)
+
+```json
+{
+  "provider_welcome_back #$ Welcome back, {name}": "أهلا بعودتك، {name}"
+}
+```
+
+```dart
+Text(LocaleKeys.providerWelcomeBack(name: user.name))
+```
+
+### 8.0.3 — Generate بعد أي تعديل
+
+```bash
+dart run generate/strings/main.dart
+```
+
+يولّد: `en.json` + `ar.json` + `locale_keys.g.dart`
+
+### 8.0.4 — تسمية الـ Keys
+
+| القاعدة | مثال صح | مثال غلط |
+|---------|---------|----------|
+| `snake_case` دائماً | `my_reservations` | `myReservations` |
+| البداية باسم الـ feature | `complaints_title` | `title` |
+| وصفي ومحدد | `complaints_reason_label` | `label1` |
+
+### 8.0.5 — عند قراءة تصميم من Figma MCP
+
+```
+1. scan_text_nodes() → اجمع كل النصوص من التصميم
+2. أضف كل نص في lang.json (عناوين، أزرار، hints، placeholders، tabs، labels، رسائل خطأ)
+3. شغّل dart run generate/strings/main.dart
+4. استخدم LocaleKeys فقط في الكود — لا تتجاوز أي نص حتى لو كلمة واحدة
+```
+
+### 8.0.6 — أمثلة
+
+```dart
+// ✅ CORRECT
+Text(LocaleKeys.screenTitle)
+DefaultScaffold(title: LocaleKeys.myReservations)
+hint: LocaleKeys.searchForTeam
+EmptyWidget(title: LocaleKeys.noReservationsTitle, desc: LocaleKeys.noReservationsDesc)
+
+// ❌ FORBIDDEN — hardcoded text
+Text('العنوان')
+Text('Title')
+Text('OK')
+hint: 'ابحث هنا'
+```
+
+### 8.0.7 — Checklist
+
+```
+□ كل النصوص في lang.json بـ format "key #$ English": "عربي"
+□ كل key بـ snake_case ويبدأ باسم الـ feature
+□ تم تشغيل generate command
+□ كل widget يستخدم LocaleKeys — لا يوجد نص مباشر في dart files
+□ Parameters تستخدم {variableName} في lang.json
+```
+
+
+## 8.1. Forms → FormMixin + validateAndScroll() ALWAYS
+
+```dart
+// ✅ Params class uses FormMixin
+class MyParams with FormMixin {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+}
+
+// ✅ Form uses params.formKey
+Form(key: params.formKey, child: Column(children: [...]))
+
+// ✅ Submit uses validateAndScroll() (auto-scrolls to first error)
+if (params.validateAndScroll()) { await cubit.submit(params); }
+
+// ❌ FORBIDDEN — manual form validation
+final formKey = GlobalKey<FormState>();
+if (formKey.currentState?.validate() ?? false) { ... }
+```
+
+
+## 8.2. Number Keyboard → toEnglishNumbers() ALWAYS
+
+> Arabic keyboard inputs ٠١٢٣ instead of 0123. MUST convert before API calls.
+
+```dart
+// ✅ Convert Arabic numerals before sending
+final phone = params.phoneController.text.toEnglishNumbers();
+final amount = params.amountController.text.toEnglishNumbers();
+
+// ✅ Add ArabicNumbersFormatter to number/phone fields
+inputFormatters: [ArabicNumbersFormatter(), PhoneNumberFormatter()]
+
+// ❌ FORBIDDEN — sending text directly from number fields
+final phone = params.phoneController.text; // may contain ٠١٢٣٤
+```
+
+
+## 8.3. Fields → Validators + InputFormatters ALWAYS
+
+> Every field MUST have a `validator` from `Validators` and appropriate `inputFormatters`.
+
+| Field type | Validator | InputFormatters |
+|---|---|---|
+| Name/text | `Validators.validateEmpty` | `TextOnlyFormatter()` |
+| Email | `Validators.validateEmail` | `EmailFormatter()` |
+| Phone | `Validators.validatePhone` | `PhoneNumberFormatter()`, `ArabicNumbersFormatter()` |
+| Password | `Validators.validatePassword` | — |
+| Number | `Validators.validateEmpty` | `IntegerNumberFormatter()` or `DecimalNumberFormatter()`, `ArabicNumbersFormatter()` |
+| Dropdown | `Validators.validateDropDown` | — |
+| Optional | `Validators.noValidate` | (appropriate formatter) |
+
+
+## 8.4. Helpers & Shared → AUDIT BEFORE CREATING
+
+> **See `extensions-and-helpers` skill for the full Helpers/Shared catalog.**
+> Quick: search `core/helpers/` and `core/shared/` BEFORE writing any utility.
+
+## 8.5. Entity Safety → initial() + fromJson defaults + tryParse ALWAYS
+
+### Every entity MUST have:
+1. `factory initial()` — with safe default values (for Skeletonizer + null-safety)
+2. `fromJson` with `??` defaults — for ALL non-nullable fields (API data can change anytime)
+3. `tryParse` with fallback — NEVER use `parse` (crashes on bad data)
+
+```dart
+// ✅ CORRECT — safe entity
+class ItemEntity {
+  final int id;
+  final String name;
+  final double price;
+  final String? image;
+
+  const ItemEntity({required this.id, required this.name, required this.price, this.image});
+
+  factory ItemEntity.initial() => const ItemEntity(id: 0, name: '', price: 0.0);
+
+  factory ItemEntity.fromJson(Map<String, dynamic> json) => ItemEntity(
+    id: json['id'] ?? 0,
+    name: json['name'] ?? '',
+    price: double.tryParse(json['price'].toString()) ?? 0.0,
+    image: json['image'],  // nullable — no ??
+  );
+}
+
+// ❌ FORBIDDEN — unsafe entity
+class ItemEntity {
+  factory ItemEntity.fromJson(Map<String, dynamic> json) => ItemEntity(
+    id: int.parse(json['id']),       // CRASH on null/wrong type
+    name: json['name'],               // CRASH on null
+    price: json['price'] as double,   // CRASH on null/wrong type
+  );
+  // Missing factory initial() ← FORBIDDEN
+}
+```
+
+### tryParse rule:
+```dart
+// ✅ ALWAYS use tryParse + fallback
+int.tryParse(value.toString()) ?? 0
+double.tryParse(value.toString()) ?? 0.0
+
+// ❌ NEVER use parse (throws on bad data)
+int.parse(value)
+double.parse(value)
+```
+
+
+## 8.6. Multiple Scrollables → CustomScrollView + Slivers (MANDATORY)
+
+> When a screen body has **more than one scrollable section** (e.g. banner + list, header + grid + list, filters + products), **ALWAYS** use `CustomScrollView` with slivers instead of nesting scroll widgets inside `SingleChildScrollView`.
+
+### Why?
+- `SingleChildScrollView` + nested `ListView` = **double scroll conflict** → jank, layout errors, bad performance
+- `shrinkWrap: true` on nested lists forces Flutter to **lay out ALL items at once** → defeats lazy loading, kills performance on large lists
+- `CustomScrollView` with slivers = **single unified scroll** → smooth, lazy-loaded, no conflicts
+
+### Decision Rule:
+
+| Screen structure | Approach |
+|---|---|
+| Single list/grid only | `ListView.builder` or `GridView.builder` directly |
+| Static content + 1 list at bottom | `CustomScrollView` + `SliverToBoxAdapter` (static) + `SliverList` |
+| Multiple sections (header + filters + list + footer) | `CustomScrollView` + slivers for everything |
+| Multiple API sections (banners + categories + products) | `CustomScrollView` + `AsyncSliverBlocBuilder` per section |
+
+### ✅ CORRECT — CustomScrollView with slivers:
+
+```dart
+CustomScrollView(
+  physics: const AlwaysScrollableScrollPhysics(),
+  slivers: [
+    // Static header → wrap in SliverToBoxAdapter (or use .toSliver())
+    _buildHeader().toSliver(),
+
+    // Filter chips → wrap in SliverToBoxAdapter
+    _buildFilters().toSliver(),
+
+    // API list → use SliverList.builder (lazy loaded!)
+    SliverList.builder(
+      itemCount: items.length,
+      itemBuilder: (_, i) => ItemCard(item: items[i]),
+    ),
+
+    // Bottom spacing
+    SliverToBoxAdapter(child: 20.szH),
+  ],
+)
+```
+
+### ✅ CORRECT — Multi-API screen with AsyncSliverBlocBuilder:
+
+```dart
+CustomScrollView(
+  physics: const AlwaysScrollableScrollPhysics(),
+  slivers: [
+    // Banners section
+    AsyncSliverBlocBuilder<BannersCubit, List<BannerEntity>>(
+      builder: (ctx, banners) {
+        if (banners.isEmpty) return const SizedBox.shrink().toSliver();
+        return BannerCarousel(banners: banners).toSliver();
+      },
+    ),
+
+    // Categories section
+    AsyncSliverBlocBuilder<CategoriesCubit, List<CategoryEntity>>(
+      builder: (ctx, cats) {
+        if (cats.isEmpty) return const SizedBox.shrink().toSliver();
+        return CategoriesRow(categories: cats).toSliver();
+      },
+    ),
+
+    // Products grid
+    AsyncSliverBlocBuilder<ProductsCubit, List<ProductEntity>>(
+      builder: (ctx, products) {
+        if (products.isEmpty) return const SizedBox.shrink().toSliver();
+        return SliverGrid.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          itemCount: products.length,
+          itemBuilder: (_, i) => ProductCard(product: products[i]),
+        );
+      },
+    ),
+  ],
+)
+```
+
+### ❌ FORBIDDEN — nested scrollables:
+
+```dart
+// ❌ SingleChildScrollView + nested ListView = BAD performance
+SingleChildScrollView(
+  child: Column(
+    children: [
+      _buildHeader(),
+      _buildFilters(),
+      ListView.builder(           // ← nested scroll inside scroll!
+        shrinkWrap: true,          // ← forces layout of ALL items
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: items.length,
+        itemBuilder: (_, i) => ItemCard(item: items[i]),
+      ),
+    ],
+  ),
+)
+
+// ❌ Multiple shrinkWrap lists = VERY BAD
+SingleChildScrollView(
+  child: Column(
+    children: [
+      ListView.builder(shrinkWrap: true, physics: NeverScrollableScrollPhysics(), ...),
+      ListView.builder(shrinkWrap: true, physics: NeverScrollableScrollPhysics(), ...),
+      GridView.builder(shrinkWrap: true, physics: NeverScrollableScrollPhysics(), ...),
+    ],
+  ),
+)
+```
+
+### Sliver Quick Reference:
+
+| Normal widget | Sliver equivalent |
+|---|---|
+| Any widget | `widget.toSliver()` or `SliverToBoxAdapter(child: widget)` |
+| `ListView.builder` | `SliverList.builder(itemCount, itemBuilder)` |
+| `ListView.separated` | `SliverList.separated(itemCount, itemBuilder, separatorBuilder)` |
+| `GridView.builder` | `SliverGrid.builder(gridDelegate, itemCount, itemBuilder)` |
+| `Padding` around slivers | `SliverPadding(padding, sliver: ...)` |
+| Fill remaining space | `SliverFillRemaining(child: ...)` |
+| `AsyncBlocBuilder` | `AsyncSliverBlocBuilder` |
+
+### When SingleChildScrollView IS acceptable:
+- Screen has **only static content** (forms, text, images — no lists/grids)
+- Auth screens (login, register) where content is fixed and short
+- Detail screens with **no lists** — just static fields
+
+
+## 9. Screen Structure
+
+> **See `scaffold-patterns` rule for which scaffold to use per screen type.**
+
+```dart
+// ✅ Inner screens (most screens): StatelessWidget + BlocProvider + DefaultScaffold
+class MyScreen extends StatelessWidget {
+  const MyScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => injector<MyCubit>()..fetchData(),
+      child: DefaultScaffold(
+        title: LocaleKeys.myTitle.tr(),
+        body: const _MyBody(),
+      ),
+    );
+  }
+}
+
+// ✅ Auth screens: plain Scaffold + SafeArea (no appbar)
+// Status bar: Helpers.changeStatusbarColor(statusBarColor: AppColors.scaffoldBackground, statusBarIconBrightness: Brightness.dark)
+
+// ❌ FORBIDDEN — building custom header inside body widget for inner screens
+// Use DefaultScaffold instead — it handles colored header, back arrow, title, status bar
+```
+
+
+## 10. RTL Rules — CRITICAL
+
+**App is RTL by default — use directional APIs everywhere.**
+
+> **See `rtl-arabic` skill for full RTL rules, conversion tables, and examples.**
+
+### The Core Equation:
+```
+Flutter "start" = physical RIGHT = Arabic text side = Figma RIGHT side
+Flutter "end"   = physical LEFT  = Figma LEFT side
+Row first child = physical RIGHT | Row last child = physical LEFT
+```
+
+### Quick Forbidden List:
+```dart
+// ❌ ALL FORBIDDEN — use directional alternatives
+Positioned(left/right: x)       // use PositionedDirectional(end/start: x)
+Align(Alignment.centerLeft/Right) // use AlignmentDirectional.centerEnd/Start
+EdgeInsets.only(left/right: x)   // use EdgeInsetsDirectional.only(end/start: x)
+TextAlign.left/right             // use TextAlign.start/end
+```
+
+> **Note:** `Directionality(textDirection: TextDirection.rtl)` مسموح على مستوى widget واحد فقط لحل مشكلة نص معكوس داخل component — ممنوع على مستوى الشاشة.
+
+
+## 11. Core Widgets — USE BEFORE BUILDING NEW
+
+> **See `widget-reference` skill for the full core widgets catalog.**
+> Quick: search `core/widgets/` BEFORE building anything new.
+
+## 12. Extensions — USE ALWAYS
+
+> **See `extensions-and-helpers` skill for the full extensions reference.**
+> Quick: TextStyleEx (`.bold`, `.s14`), spacing (`.szH/.szW`), padding (`.paddingAll`), `.toSliver`, `.onClick`, FormatString, ContextExtension, FormMixin, IndexedMap.
+
+## 13. Helpers — USE BEFORE WRITING CUSTOM LOGIC
+
+> **See `extensions-and-helpers` skill for the full Helpers reference.**
+> Quick: Validators, InputFormatters, Helpers, ImageHelper, LauncherHelper, CacheStorage.
+
+## 14. Navigation → Go Class (ONLY)
+
+```dart
+Go.to(const MyScreen())                  // push
+Go.off(const MyScreen())                 // pushReplacement
+Go.offAll(const MyScreen())              // pushAndRemoveUntil (clear stack)
+Go.back()                               // pop
+Go.backToInitial()                      // pop to first route
+Go.toNamed(NamedRoutes.myScreen)        // named push
+Go.offNamed(NamedRoutes.myScreen)       // named replacement
+Go.offAllNamed(NamedRoutes.myScreen)    // named clear stack
+Go.context                              // global context (for dialogs etc.)
+
+// ❌ FORBIDDEN
+Navigator.push(context, MaterialPageRoute(...))
+```
+
+
+## 15. Network — API Pattern
+
+```dart
+// ✅ All API calls via baseCrudUseCase inside AsyncCubit
+await executeAsync(
+  operation: () async => baseCrudUseCase.call(
+    CrudBaseParams(
+      api: ApiConstants.myEndpoint,      // from api_endpoints.dart — no raw strings
+      httpRequestType: HttpRequestType.get,
+      mapper: (json) => MyEntity.fromJson(json['data']),
+      body: params.toJson(),             // for POST/PUT
+      queryParameters: {'page': page},  // for GET with query
+    ),
+  ),
+);
+
+// ❌ FORBIDDEN
+Dio().get('https://api.example.com/endpoint')
+```
+
+All endpoints → `ApiConstants` in `core/network/api_endpoints.dart`. Add new endpoints there.
+
+
+## 16. Screen-Level Padding/Margin Adjustment (Figma → Code)
+
+> Figma MCP often returns large padding/margin for the screen body. These look oversized on device.
+> - Figma body padding ≤ 12px → **keep as-is**
+> - Figma body padding > 12px → **reduce by 2–4px** (e.g. Figma 16 → 12 or 14, Figma 20 → 16)
+> - This applies ONLY to screen-level body padding — NOT card-internal or component padding.
+
+
+## 17. Icon Background Check (AppAssets)
+
+> **See `design-tokens` skill (Icon Background section).**
+> Quick: some AppAssets icons already include their background — check before wrapping in Container.
+
+## 18. Network Images → CachedImage ALWAYS
+
+> **See `design-tokens` skill (Network Images section).**
+> Quick: ALWAYS `CachedImage`. NEVER `Image.network`.
+
+## 19. Access Modifiers — ALWAYS Apply
+
+> **See `naming-and-cleanup` skill for the full access modifier rules.**
+> Quick: prefix with `_` for file/library-private. Public types only when re-exported.
+
+## 20. Naming Conventions — MANDATORY
+
+> **See `naming-and-cleanup` skill for the full naming reference.**
+> Quick: PascalCase classes, snake_case files, camelCase variables, VerbNounCubit, NounEntity.
+
+## 21. Shared Widget Reuse — AUDIT BEFORE CREATING (CRITICAL)
+
+> **قبل إنشاء أي widget جديد — لازم تراجع الشاشات والـ features اللي اتعملت قبل كده.**
+> لو فيه card أو component بنفس التصميم أو تصميم قريب → **استدعيه بدل ما تكرره.**
+
+**Rule:** Before building ANY card/component widget:
+1. **Search `app_shared/widgets/`** — is it already shared?
+2. **Search existing features** — does a similar widget exist (especially from recent screens)?
+3. If same design 100% → **use it directly**
+4. If minor differences → **add optional params** to the existing widget (don't create a copy)
+5. If used in 2+ features → **move to `app_shared/widgets/`**
+6. **Never duplicate** card widgets across features
+
+```
+lib/src/features/logic/app_shared/
+├── widgets/
+│   ├── product_card_widget.dart    ← reused across home, search, category screens
+│   ├── factory_card_widget.dart    ← reused across categories and search
+│   └── order_summary_widget.dart   ← reused across orders and checkout
+```
+
+```dart
+// ✅ Reuse shared card
+import '../../../app_shared/widgets/product_card_widget.dart';
+ProductCardWidget(product: item)
+
+// ✅ Same card with minor variations → optional params
+ProductCardWidget(product: item, showPrice: false, showRating: true)
+
+// ❌ WRONG — duplicate the same card in every feature
+// features/home/widgets/home_product_card.dart  ← copy 1
+// features/search/widgets/search_product_card.dart  ← copy 2 (same widget!)
+// features/favorites/widgets/fav_product_card.dart  ← copy 3 (same widget!)
+```
+
+
+## 22. ViewController Class Pattern (MANDATORY)
+
+> **See `view-controller-pattern` skill for the full pattern.**
+> Quick: TextEditingController, ValueNotifier, ScrollController, FocusNode + UI handlers MUST live in a `<Feature>ViewController` class — never in the View/State directly.
+
+## 23. Icon Inside Container → Center Widget (MANDATORY)
+
+> **See `design-tokens` skill (Icon Inside Container section).**
+> Quick: when wrapping an Icon inside a Container with background → wrap the Icon in `Center` widget.
+
+## 24. Section Sub-Folders — Complex Screens
+
+> **لما الشاشة فيها 4+ sections مختلفة، كل مجموعة مرتبطة حطها في sub-folder.**
+
+```
+widgets/
+├── feature_body.dart          ← layout only (stays at root)
+├── header/                    ← header group
+│   ├── header_widget.dart
+│   └── search_bar.dart
+├── products/                  ← products group
+│   ├── products_section.dart
+│   └── product_card.dart
+```
+
+- 4+ sections مع 2+ widgets لكل section → sub-folders
+- شاشة بسيطة (body + card + filter) → flat structure
+
+
+## 25. Platform Configuration — Android & iOS (MANDATORY)
+
+> **أي feature تحتاج camera, gallery, microphone, location, maps → لازم تضيف permissions للـ Android و iOS.**
+
+| Feature | Android (AndroidManifest.xml) | iOS (Info.plist) |
+|---------|------|------|
+| Camera | `CAMERA` permission | `NSCameraUsageDescription` |
+| Gallery | `READ_EXTERNAL_STORAGE`, `READ_MEDIA_IMAGES` | `NSPhotoLibraryUsageDescription` |
+| Microphone | `RECORD_AUDIO` | `NSMicrophoneUsageDescription` |
+| Location/Maps | `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION` | `NSLocationWhenInUseUsageDescription` |
+| Google Maps | `com.google.android.geo.API_KEY` meta-data | `GMSServices.provideAPIKey()` in AppDelegate |
+
+**Prefer method channels over `permission_handler` package** — أقل dependencies وتحكم أكبر.
+
+
+## 26. Package Preference — Use Existing Packages
+
+> **لو فيه حاجة ممكن تتعمل بـ package مستقر → استخدمه. لا تبني من الصفر.**
+
+| Feature | Use Package | Don't Build |
+|---------|-------------|-------------|
+| Rating stars | `flutter_rating_bar` | ❌ Custom star widget |
+| Charts | `fl_chart` | ❌ Custom canvas |
+| QR code | `qr_flutter` / `mobile_scanner` | ❌ Custom renderer |
+| Maps | `google_maps_flutter` | ❌ Custom map |
+| Signature | `signature` | ❌ Custom gesture drawing |
+| WebView | `webview_flutter` | ❌ Custom browser |
+| Dotted border | `dotted_border` | ❌ Custom dashed paint |
+
+قبل ما تبني أي حاجة: ابحث pub.dev → تأكد إنه مستقر → أضفه للـ pubspec → `flutter pub get`.
+
+
+## 27. RTL — Text Inside Components Mirroring Fix
+
+> **نص داخل components أحياناً بيتعكس. لو النص بيظهر معكوس داخل widget معقد → استخدم `textDirection`.**
+
+```dart
+// ✅ Fix reversed text inside complex components
+Text(
+  LocaleKeys.itemName.tr(),
+  textDirection: TextDirection.rtl,
+  style: const TextStyle().setMainTextColor.s14.regular,
+)
+
+// ✅ Alternative — wrap in Directionality
+Directionality(
+  textDirection: TextDirection.rtl,
+  child: Text(LocaleKeys.description.tr()),
+)
+```
+
+**متى تستخدم:** داخل dialog, bottom sheet, custom card, أو third-party widget لو النص ظهر معكوس.
+**متى لا تستخدم:** النص طبيعي → لا تضيف textDirection.
+
+
+## 28. Installed Packages — Do NOT Re-Add
+
+dio, firebase_core, firebase_messaging, cached_network_image, flutter_bloc,
+get_it, flutter_screenutil, skeletonizer, flutter_animate, lottie, flutter_svg,
+carousel_slider, dropdown_search, pinput, easy_localization, image_picker,
+flutter_html, video_player, rxdart, share_plus, url_launcher, injectable
+
+
+## 29. Clean Code — Remove Unused Imports & Parameters (MANDATORY)
+
+> **See `naming-and-cleanup` skill.**
+> Quick: delete unused imports + remove unused optional parameters before delivery. Run `flutter analyze`.
+
+## 30. const — Add to EVERY Widget That Can Be const (MANDATORY)
+
+> **See `naming-and-cleanup` skill.**
+> Quick: add `const` to every widget/constructor that can be const.
+
+## 31. Models & Enums → Entity Folder ONLY (NEVER Inside Widgets)
+
+> **See `naming-and-cleanup` skill.**
+> Quick: models, enums, helper functions (status→color, status→label) live in `entity/` folder — never inside the widget class.
+
+## 32. Dropdown & Small Widgets — Isolate API Calls (CRITICAL)
+
+> **لما يكون فيه dropdown أو widget صغير في الشاشة بيجيب data من API — لازم يكون الـ BlocBuilder/Listener عليه هو بس، مش على كل الشاشة.**
+> **لو الـ service فشلت، الـ dropdown بس هو اللي يتأثر — الشاشة باقيها تشتغل عادي.**
+
+```dart
+// ✅ CORRECT — isolated API call inside the dropdown widget itself
+class _CityDropdown extends StatelessWidget {
+  const _CityDropdown({required this.onChanged});
+  final ValueChanged<CityEntity?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => injector<GetCitiesCubit>()..fetchCities(),
+      child: AsyncBlocBuilder<GetCitiesCubit, List<CityEntity>>(
+        builder: (ctx, cities) => AppDropdown<CityEntity>(
+          items: cities,
+          label: LocaleKeys.city.tr(),
+          itemAsString: (c) => c.name,
+          onChanged: onChanged,
+        ),
+        skeletonBuilder: (_) => AppDropdown<CityEntity>(
+          items: const [], label: LocaleKeys.city.tr(), isLoading: true,
+        ),
+      ),
+    );
+  }
+}
+
+// ❌ FORBIDDEN — wrapping entire screen with BlocBuilder for a small dropdown
+class _MyScreenBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AsyncBlocBuilder<GetCitiesCubit, List<CityEntity>>(  // ← if this fails, ENTIRE screen stops!
+      builder: (ctx, cities) => Column(children: [
+        _HeaderWidget(),
+        _FormWidget(),
+        AppDropdown(items: cities, ...),  // ← only this needs the data
+        _SubmitButton(),
+      ]),
+    );
+  }
+}
+```
+
+**Rules:**
+- Dropdown / chip / small data widget بيجيب data من API → يكون عنده `BlocProvider` + `AsyncBlocBuilder` خاص بيه
+- لو الـ service فشلت → الـ widget ده بس يعرض error، باقي الشاشة تشتغل عادي
+- ده بيمنع إن failure في service واحدة صغيرة يوقف الشاشة كلها
+
+
+## 33. Sliver vs Box — No Double-Wrap (CRITICAL)
+
+> **`SliverToBoxAdapter` expects a child of type `RenderBox`, NOT `RenderSliver`.**
+> If you wrap a widget that already returns a Sliver (e.g. `SliverToBoxAdapter`, `SliverList`) with `.toSliver()`, you get: *"expected a child of type RenderBox but received a child of type RenderSliverToBoxAdapter"*.
+
+**Rule:** For any widget used inside `CustomScrollView`'s `slivers` list, choose **one** of:
+
+| Approach | Widget returns | Parent usage |
+|----------|----------------|--------------|
+| **A** | Regular widget (Column, Container, etc.) | `MyWidget().toSliver()` |
+| **B** | Sliver (SliverToBoxAdapter, SliverList, etc.) | `MyWidget()` — **no** `.toSliver()` |
+
+```dart
+// ✅ CORRECT — section returns Box, parent wraps once
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Column(children: [...]);  // Box
+}
+// In body: _SectionWidget().toSliver()
+
+// ✅ CORRECT — section returns Sliver, parent does NOT wrap
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(child: Column(children: [...]));
+}
+// In body: _SectionWidget()   ← no .toSliver()
+
+// ❌ FORBIDDEN — double wrap
+class _SectionWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(child: Column(children: [...]));
+}
+// In body: _SectionWidget().toSliver()   ← SliverToBoxAdapter(child: SliverToBoxAdapter(...)) → CRASH
+```
+
+**Recommendation:** Prefer **Approach A**: section widgets return normal widgets (Column, Row, etc.); the parent uses `.toSliver()` once. Avoid returning `SliverToBoxAdapter` from a child if that child is ever used with `.toSliver()`.
+
+
+## 34. Extensions — READ & USE Before Writing Custom Logic (CRITICAL)
+
+> **قبل ما تكتب أي logic جديد — لازم تقرأ كل الـ extension files في `core/extensions/` وتستخدمها.**
+> ده بيشمل: `text_style_extensions`, `string_extension`, `context_extension`, `padding_extension`, `margin_extention`, `widget_extension`, `sized_box_helper`, `sliver_extension`, `seperator_helper`, `indexed_map`, `form_mixin`.
+
+**Full path:** `lib/src/core/extensions/`
+
+```dart
+// ✅ CORRECT — using existing extensions
+myWidget.paddingAll(AppPadding.pH16)        // from padding_extension.dart
+myWidget.marginStart(AppMargin.mW12)        // from margin_extention.dart
+myWidget.onClick(onTap: () => Go.to(...))   // from widget_extension.dart
+12.szH                                       // from sized_box_helper.dart
+widget.toSliver()                            // from sliver_extension.dart
+widgets.joinWith(8.szH)                      // from seperator_helper.dart
+list.indexedMap((i, item) => ...)            // from indexed_map.dart
+'٠١٢٣'.toEnglishNumbers()                   // from string_extension.dart
+
+// ❌ WRONG — writing custom logic that already exists as extension
+SizedBox(height: 12.h)                       // use 12.szH
+Padding(padding: EdgeInsets.all(16), ...)    // use .paddingAll()
+GestureDetector(onTap: fn, child: widget)    // use .onClick()
+SliverToBoxAdapter(child: widget)            // use .toSliver()
+```

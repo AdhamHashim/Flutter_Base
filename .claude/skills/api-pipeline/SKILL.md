@@ -5,6 +5,13 @@ description: Complete API integration pipeline from Postman → ApiConstants →
 
 # Skill: API Pipeline — Postman to Working Screen
 
+<!-- centralized-rules -->
+> **🛡️ Entity Safety:** `factory initial()` + `??` defaults + `tryParse`. See `coding-standards` skill §8.5.
+> **🔄 CRUD Local Update:** NEVER re-fetch after add/edit/delete — update state locally. See `bloc-patterns` skill.
+> **⚠️ Mock data ممنوع تلقائياً.** See `no-mock-without-permission` skill.
+
+
+
 ## When to Use
 
 - عند ربط أي endpoint جديد (GET list, GET detail, DELETE)

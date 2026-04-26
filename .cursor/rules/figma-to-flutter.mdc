@@ -1,17 +1,22 @@
 ---
 description: Convert Figma designs to Flutter code using Flutter_Base architecture with safety checks and token mapping.
-globs: ["lib/**/*.dart"]
+globs: ["lib/src/features/**/widgets/**/*.dart", "lib/src/features/**/view/**/*.dart"]
 ---
 
+
 # Skill: Figma → Flutter (Flutter_Base Architecture)
+
+<!-- centralized-rules -->
+> **⛔ Figma MCP read failure → STOP.** See `figma-mcp-read-first` skill — لا تخمّن، لا تكمل، بلّغ المستخدم.
+
+
 
 ## Purpose
 Convert Figma designs to Flutter code using Flutter_Base architecture.
 For design token values, see `design-tokens` skill.
 For widget patterns, see `flutter-patterns` skill.
-For coding standards, see `flutter-base-coding-standards.mdc`.
+For coding standards, see `coding-standards`.
 
----
 
 ## Phase 1: Read Figma Node via MCP
 
@@ -32,7 +37,6 @@ For coding standards, see `flutter-base-coding-standards.mdc`.
 - `style.fontSize` → **reduce 1–2sp** then map to `FontSizeManager.sXX`
 - `layoutMode` → VERTICAL=Column, HORIZONTAL=Row, NONE=Stack
 
----
 
 ## Phase 2: Figma MCP Safety Checks
 
@@ -72,7 +76,6 @@ For coding standards, see `flutter-base-coding-standards.mdc`.
 3. اسأل: "هل الشاشة دي ليها حالات تانية (empty, error, loading, disabled)؟"
 4. لو أيوه → ابني الـ conditional UI حتى لو الـ MCP مرجعهاش
 
----
 
 ## Phase 2.5: Text Extraction → lang.json (MANDATORY)
 
@@ -100,7 +103,6 @@ For coding standards, see `flutter-base-coding-standards.mdc`.
 - Placeholders, tab labels, chip labels, filter names → كلهم من `LocaleKeys`
 - لو النص موجود مسبقاً في `lang.json` → استخدمه، لا تكرره
 
----
 
 ## Phase 3: Mapping Workflow
 
@@ -140,7 +142,6 @@ const TextStyle().setHintColor.s12.regular       // Figma 14sp hint
 | Shadow | `boxShadow: [AppColors.containerShadow]` |
 | Loading state | `AsyncBlocBuilder` with `skeletonBuilder` |
 
----
 
 ## Phase 4: Pixel Accuracy Checklist
 

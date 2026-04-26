@@ -1,6 +1,8 @@
 ---
 description: Auto-generate API contracts (Postman Collection JSON) from Figma screens — unified entities, pagination, multi-step forms, file upload, and mock data support.
-globs: postman/**/*.json, lib/src/core/network/**/*.dart, lib/src/features/**/entity/**/*.dart
+globs: ["postman/**/*.json", "lib/src/core/network/**/*.dart", "lib/src/features/**/entity/**/*.dart"]
+---
+
 
 # Skill: API Design — Figma Screen → Postman Collection + Flutter Integration
 
@@ -11,7 +13,6 @@ globs: postman/**/*.json, lib/src/core/network/**/*.dart, lib/src/features/**/en
 - عند إنشاء Postman Collection للـ backend team
 - عند ربط الـ API بالـ Flutter code (cubits + entities + ApiConstants)
 
----
 
 ## The Pipeline (6 Steps)
 
@@ -31,7 +32,6 @@ Step 5: Create Entity + Cubit (with mock support)
 Step 6: Connect to UI (mock-first, then real API)
 ```
 
----
 
 ## Step 1: Analyze UI — Service Extraction Rules
 
@@ -137,7 +137,6 @@ Response: { "status": "success", "code": 200, "message": "..." }
 // ❌ FORBIDDEN: Different response shapes for same entity
 ```
 
----
 
 ## Step 2: Endpoint Naming Convention
 
@@ -177,7 +176,6 @@ Examples:
   check-code / resend-code (for registration verification)
 ```
 
----
 
 ## Step 3: Postman Collection JSON Structure
 
@@ -280,7 +278,6 @@ postman/
 ✅ CORRECT: ملف واحد + nested folders (App → Feature → Endpoints)
 ```
 
----
 
 ## Unified Response Format (CRITICAL — Must Match Backend Style)
 
@@ -379,7 +376,6 @@ postman/
 "status": "fail"     → خطأ (validation, auth, not found)
 ```
 
----
 
 ## Request Body Format (CRITICAL)
 
@@ -520,7 +516,6 @@ postman/
 "is_active": "0"           ← string "0" not boolean false
 ```
 
----
 
 ## Headers (MANDATORY — Every Request)
 
@@ -538,7 +533,6 @@ postman/
 
 > **مفيش `Content-Type` header يدوي — Postman/Dio بتحدده تلقائياً**
 
----
 
 ## Endpoint Documentation Standard (MANDATORY)
 
@@ -599,7 +593,6 @@ description: "[mobile figma design](https://figma.com/...)\n[web figma design](h
 - لو في موبايل بس → اكتب لينك الموبايل بس
 - الـ node-id لازم يكون specific للشاشة
 
----
 
 ## Collection Item Template
 
@@ -719,7 +712,6 @@ if (res?.data?.country_code) {
 
 > **⚠️ دايماً save في الاتنين: `pm.collectionVariables` + `pm.environment` — عشان يشتغل في أي بيئة**
 
----
 
 ## Status Object Pattern (Rich Status/Enum Fields)
 
@@ -768,7 +760,6 @@ Color get color => switch (tagColor) {
 };
 ```
 
----
 
 ## Nested Entity / Lookup Pattern
 
@@ -779,7 +770,6 @@ Color get color => switch (tagColor) {
 "supplier": { "id": 1, "name": "...", "image": "..." }
 ```
 
----
 
 ## Computed/Label Fields Pattern
 
@@ -799,7 +789,6 @@ Color get color => switch (tagColor) {
 
 > **استخدم الـ label fields في الـ UI مباشرة — أسهل وأضمن للترجمة.**
 
----
 
 ## Additional Tags Pattern
 
@@ -809,7 +798,6 @@ Color get color => switch (tagColor) {
 ]
 ```
 
----
 
 ## Step 4: Add to ApiConstants
 
@@ -826,7 +814,6 @@ class ApiConstants {
 }
 ```
 
----
 
 ## Step 5: Entity + Cubit (with Mock Support)
 
@@ -874,7 +861,6 @@ static Map<String, dynamic> paginatedResponse(int page, {int perPage = 15}) {
 }
 ```
 
----
 
 ## Postman Collection Generation Checklist
 
@@ -917,7 +903,6 @@ static Map<String, dynamic> paginatedResponse(int page, {int perPage = 15}) {
 - [ ] Multi-step forms: response example per step + per account type
 - [ ] OTP flows: send-code / check-code / resend-code pattern
 
----
 
 ## Registration Form Data Endpoint Pattern (get-register-data)
 
@@ -941,7 +926,6 @@ Response:
 
 **القاعدة:** أي form فيه dropdown بيعتمد على داتا من الباك اند → endpoint `get-{form-name}-data` يرجع كل الـ lookup lists المطلوبة.
 
----
 
 ## Temporary File Upload Pattern (اختياري — لو الباك اند بيدعمه)
 
@@ -965,7 +949,6 @@ Response:
 - الفايل بيتبعت inline مع الـ form-data في نفس الـ request
 - ده الباترن الأبسط والأشهر
 
----
 
 ## Auth Flow Pattern
 
@@ -984,7 +967,6 @@ Token format: Bearer {token} in Authorization header
 Token type: Laravel Sanctum (format: "N|alphanumeric_string")
 ```
 
----
 
 ## Query Parameters Pattern
 

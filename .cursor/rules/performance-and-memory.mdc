@@ -1,7 +1,8 @@
 ---
-description: Performance tuning + memory/lifecycle rules for Flutter_Base features. Always apply after basic feature structure is clear.
-globs: ["lib/**/*.dart"]
+description: Performance tuning + memory/lifecycle checklist for Flutter_Base features.
+globs: ["lib/src/features/**/widgets/**/*.dart"]
 ---
+
 
 ## Performance & Memory — Core Rules
 
@@ -53,7 +54,7 @@ class _TitleSection extends StatelessWidget {
 - **ممنوع**:
   - `ListView(children: [...])` لقوائم طويلة
   - `shrinkWrap: true` داخل `SingleChildScrollView` (إلا لو محتاج static-only)
-  - Nested scrollables بدون `CustomScrollView + Slivers` (مغطي في `flutter-feature-development.mdc`)
+  - Nested scrollables بدون `CustomScrollView + Slivers` (مغطي في `feature-development`)
 
 قاعدة بسيطة:
 - قائمة واحدة فقط → `ListView.builder` مباشرة.
@@ -65,7 +66,7 @@ class _TitleSection extends StatelessWidget {
   - 4+ API calls متوازية
   - أو response كبير (20+ items مع nested objects)
   - أو user شكا من jank أثناء التحميل
-- **استخدم** `compute()` أو isolate كما في `flutter-feature-development.mdc`.
+- **استخدم** `compute()` أو isolate كما في `feature-development`.
 
 ### 4. Avoid Unnecessary Rebuilds
 
@@ -91,7 +92,6 @@ class _OrdersList extends StatelessWidget {
 }
 ```
 
----
 
 ## Memory & Lifecycle — No Leaks
 
@@ -157,7 +157,6 @@ Future<void> _loadData() async {
   - controllers الخاصة بالـ UI
   - selection الخفيف (tab index, expanded item id)
 
----
 
 ## Quick Checklist (Per Feature)
 
@@ -177,4 +176,3 @@ Future<void> _loadData() async {
   - [ ] كل `StreamSubscription` يتم `cancel` في `dispose()`.
   - [ ] كل `PublishSubject` / `BehaviorSubject` يتم `close()` في `dispose()`.
   - [ ] `mounted` مفحوص قبل أي `setState` بعد `await`.
-

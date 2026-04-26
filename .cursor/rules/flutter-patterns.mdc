@@ -1,16 +1,16 @@
 ---
 description: Widget patterns, file structure, key widgets reference, and screen/body patterns for Flutter_Base.
-globs: ["lib/**/*.dart"]
+globs: ["lib/src/features/**/*.dart"]
 ---
+
 
 # Skill: Flutter_Base Widget Patterns
 
 ## Purpose
 Quick reference for using Flutter_Base base widgets and patterns when building features.
-For full coding standards, see `flutter-base-coding-standards.mdc`.
-For full development workflow, see `flutter-feature-development.mdc`.
+For full coding standards, see `coding-standards`.
+For full development workflow, see `feature-development`.
 
----
 
 ## File Structure — Separate Files Per Widget (MANDATORY)
 
@@ -35,7 +35,6 @@ lib/src/features/{feature_name}/
 
 **Body = layout only.** No `_buildXxx()` methods returning 10+ lines.
 
----
 
 ## view_imports.dart Part Ordering
 
@@ -53,14 +52,12 @@ part '../widgets/feature_header_widget.dart';
 part '../widgets/feature_card_widget.dart';
 ```
 
----
 
 ## Shared Widget Reuse — AUDIT BEFORE CREATING
 
 Before creating ANY widget → search `app_shared/widgets/` and existing features.
 Same design → reuse. Minor differences → add optional params. Used in 2+ features → move to `app_shared/`.
 
----
 
 ## Key Widget Quick Reference
 
@@ -89,7 +86,6 @@ Same design → reuse. Minor differences → add optional params. Used in 2+ fea
 | Price with Riyal | `RiyalPriceText(price)` or `.withRiyalPrice()` | SAR symbol |
 | HTML content | `CustomHtmlWidget(data)` | Styled HTML renderer |
 
----
 
 ## Screen Pattern
 
@@ -109,7 +105,6 @@ class MyFeatureScreen extends StatelessWidget {
 }
 ```
 
----
 
 ## Body Pattern — RefreshIndicator + AsyncBlocBuilder
 
@@ -147,7 +142,6 @@ class _MyFeatureBody extends StatelessWidget {
 }
 ```
 
----
 
 ## Multi-Section → CustomScrollView + Slivers
 
@@ -172,7 +166,6 @@ RefreshIndicator(
 
 **Never:** `SingleChildScrollView` + nested `ListView(shrinkWrap: true)` for data.
 
----
 
 ## ViewController Class Pattern (MANDATORY)
 
@@ -275,7 +268,6 @@ class _ChatInputState extends State<_ChatInput> {
 - الـ ViewController يعمل `dispose()` لكل الـ controllers/notifiers
 - الـ View تنادي `_vc.dispose()` في `dispose()` بتاعها
 
----
 
 ## LoadingButton — Golden Path (Form Submits)
 
@@ -312,7 +304,6 @@ BlocListener<SubmitCubit, AsyncState<bool>>(
 - أزرار cancel / back
 - أزرار filter / sort (مش async)
 
----
 
 ## Icon Inside Container → Center Widget (MANDATORY)
 
@@ -350,7 +341,6 @@ Container(
 )
 ```
 
----
 
 ## Section Sub-Folders — For Complex Screens
 
@@ -382,13 +372,12 @@ lib/src/features/home/presentation/
 - الشاشة بسيطة (body + card + filter فقط)
 - كل section = widget واحد فقط
 
----
 
 ## Cubit, Entity & Form Patterns
 
 > **See `bloc-patterns` skill for full AsyncCubit/CRUD/BlocListener patterns.**
-> **See `flutter-base-coding-standards.mdc` section 8.5 for entity safety rules.**
-> **See `flutter-base-coding-standards.mdc` section 8.1 for FormMixin pattern.**
+> **See `coding-standards` section 8.5 for entity safety rules.**
+> **See `coding-standards` section 8.1 for FormMixin pattern.**
 
 Quick reminders:
 - AsyncCubit: `@injectable` + `executeAsync()` + local CRUD updates (never re-fetch)

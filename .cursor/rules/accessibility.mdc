@@ -1,7 +1,8 @@
 ---
 description: Basic accessibility (a11y) rules for Flutter_Base — semantic labels, tap targets, and contrast.
-globs: ["lib/**/*.dart"]
+globs: ["lib/src/features/**/widgets/**/*.dart"]
 ---
+
 
 ## Accessibility (A11y) — Basics
 
@@ -20,7 +21,6 @@ IconWidget(
 ).paddingAll(AppPadding.pH8); // إجمالي ≈ 36–40، زوّد لو لازم
 ```
 
----
 
 ### 2. Semantic Labels للأيقونات الهامة
 
@@ -39,7 +39,6 @@ Semantics(
 
 استخدم هذا فقط للأيقونات المهمة (cart, delete, edit, close). لا تبالغ.
 
----
 
 ### 3. Images with Meaning
 
@@ -59,7 +58,6 @@ Semantics(
 )
 ```
 
----
 
 ### 4. Contrast
 
@@ -67,7 +65,6 @@ Semantics(
   - نص رمادي على خلفية فاتحة جداً ⇒ تأكد من استخدام `AppColors.main` أو `AppColors.primary` للنص الرئيسي.
   - نص فوق خلفيات ملوّنة (مثل buttons) ⇒ استخدم `AppColors.buttonText` أو `AppColors.white`.
 
----
 
 ### 5. Checklist (Optional لكن مفيد)
 
@@ -75,4 +72,3 @@ Semantics(
 - [ ] أيقونات مهمة بدون نص معها `Semantics(label: ..., button: true)`.
 - [ ] صور لها معنى (Product, Avatar) عندها label منطقي إن احتجنا.
 - [ ] ألوان النص والخلفية لا تجعل النص صعب القراءة.
-

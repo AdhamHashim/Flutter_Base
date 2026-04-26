@@ -5,6 +5,13 @@ description: Automatic code review after completing any feature — finds and fi
 
 # Skill: Post-Feature Code Review
 
+<!-- centralized-rules -->
+> **🛡️ Entity Safety:** `factory initial()` + `??` defaults + `tryParse`. See `coding-standards` skill §8.5.
+> **🔄 CRUD Local Update:** NEVER re-fetch after add/edit/delete — update state locally. See `bloc-patterns` skill.
+> **⚠️ Mock data ممنوع تلقائياً.** See `no-mock-without-permission` skill.
+
+
+
 ## When to Use
 
 - **تلقائياً** بعد الانتهاء من أي feature أو screen جديدة.

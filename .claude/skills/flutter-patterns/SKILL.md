@@ -7,8 +7,8 @@ description: Widget patterns, file structure, key widgets reference, and screen/
 
 ## Purpose
 Quick reference for using Flutter_Base base widgets and patterns when building features.
-For full coding standards, see `flutter-base-coding-standards.mdc`.
-For full development workflow, see `flutter-feature-development.mdc`.
+For full coding standards, see `coding-standards`.
+For full development workflow, see `feature-development`.
 
 ---
 
@@ -387,8 +387,8 @@ lib/src/features/home/presentation/
 ## Cubit, Entity & Form Patterns
 
 > **See `bloc-patterns` skill for full AsyncCubit/CRUD/BlocListener patterns.**
-> **See `flutter-base-coding-standards.mdc` section 8.5 for entity safety rules.**
-> **See `flutter-base-coding-standards.mdc` section 8.1 for FormMixin pattern.**
+> **See `coding-standards` section 8.5 for entity safety rules.**
+> **See `coding-standards` section 8.1 for FormMixin pattern.**
 
 Quick reminders:
 - AsyncCubit: `@injectable` + `executeAsync()` + local CRUD updates (never re-fetch)

@@ -1,7 +1,8 @@
 ---
 description: Keep DI usage and high-level layering consistent in Flutter_Base.
-globs: ["lib/**/*.dart"]
+globs: ["lib/src/features/**/cubits/**/*.dart", "lib/src/core/**/*.dart"]
 ---
+
 
 # Skill: DI & Architecture — Flutter_Base
 

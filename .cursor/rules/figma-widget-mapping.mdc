@@ -1,7 +1,8 @@
 ---
 description: Comprehensive mapping from Figma MCP elements (Frame, Auto-layout, Instance, Vector, Text) to Flutter_Base widgets. Use when converting Figma designs.
-globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/view/**/*.dart
+globs: ["lib/src/features/**/widgets/**/*.dart", "lib/src/features/**/view/**/*.dart"]
 ---
+
 
 # Skill: Figma Component to Flutter Widget Mapping
 
@@ -11,7 +12,6 @@ globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/view/**/*.dart
 - عند قراءة Figma MCP output وتحتاج تعرف الـ widget المقابل
 - عند مراجعة كود متحول من Figma
 
----
 
 ## Master Mapping Table
 
@@ -143,7 +143,6 @@ globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/view/**/*.dart
 | Disabled | Widget with `opacity: 0.5` + `IgnorePointer` |
 | Selected/Active | Conditional `decoration` or `color` based on state |
 
----
 
 ## RTL Conversion Rules (Figma MCP to Code)
 
@@ -159,7 +158,6 @@ globs: lib/src/features/**/widgets/**/*.dart, lib/src/features/**/view/**/*.dart
 **What to reverse:** Row children order, padding start/end assignment
 **What NOT to reverse:** Column children order, text content, sizes, colors, font sizes
 
----
 
 ## Figma Hidden Layers (CRITICAL)
 
@@ -175,7 +173,6 @@ Before coding, check for hidden/collapsed layers:
 
 These are often toggled off in Figma but MUST be implemented in code.
 
----
 
 ## Conversion Checklist
 

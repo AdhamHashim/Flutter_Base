@@ -1,7 +1,8 @@
 ---
 description: RTL Arabic rules, layout mirroring prevention, directional APIs, and localization for Flutter_Base.
-globs: ["lib/**/*.dart"]
+globs: ["lib/src/features/**/widgets/**/*.dart", "lib/src/features/**/view/**/*.dart"]
 ---
+
 
 # Skill: RTL Arabic — Flutter_Base
 
@@ -10,7 +11,6 @@ globs: ["lib/**/*.dart"]
 This project uses `easy_localization` + Expo Arabic font.
 Language detection via `context.isArabic` and `context.isRight`.
 
----
 
 ## Language Files
 
@@ -24,7 +24,6 @@ tr('key')                    // current language
 tr('key', args: [value])     // with args
 ```
 
----
 
 ## Font — Expo Arabic
 
@@ -41,7 +40,6 @@ Expo font family:
 FontFamily: `ConstantManager.fontFamily` = `'Expo'`
 Set globally in `AppTheme.light` → no need to set per widget.
 
----
 
 ## ⚠️ THE MOST IMPORTANT RULE — Layout Mirroring Prevention
 
@@ -207,7 +205,6 @@ Row(children: [
 □ Padding directional (paddingStart/End) مش paddingLeft/Right
 ```
 
----
 
 ## RTL Rules for Flutter_Base
 
@@ -397,7 +394,6 @@ Text(LocaleKeys.featureName_buttonSubmit.tr())
 hint: LocaleKeys.featureName_hintSearch.tr()
 ```
 
----
 
 ## Rule 11 — AppBar, BottomSheet, Dialog RTL (CRITICAL)
 
@@ -434,7 +430,6 @@ DefaultScaffold(
 - عناصر AppBar مش في المكان الصح
 - **على مستوى الـ content widget فقط — مش الشاشة كلها**
 
----
 
 ## Rule 12 — Text Directionality Inside Components (CRITICAL)
 
@@ -466,7 +461,6 @@ Text(
 - النص طبيعي ومعروض صح → لا تضيف Directionality
 - الـ screen-level RTL شغال → لا تكرره
 
----
 
 ## RTL Diagnostic Workflow (MANDATORY for Every Section)
 
@@ -500,7 +494,6 @@ Row(children: [CachedImage(...), Expanded(child: textColumn)])
 3. لو مش مطابق → اعكس الـ children order
 ```
 
----
 
 ## Directionality Wrapper — Exceptions List (CRITICAL)
 
@@ -535,7 +528,6 @@ Directionality(
 )
 ```
 
----
 
 ## Figma Arabic Text Detection
 
@@ -550,7 +542,6 @@ If text contains characters in range U+0600–U+06FF → Arabic text
 
 Regex to detect Arabic: `[\u0600-\u06FF]`
 
----
 
 ## Language Switching (already in base)
 

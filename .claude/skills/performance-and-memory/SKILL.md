@@ -53,7 +53,7 @@ class _TitleSection extends StatelessWidget {
 - **ممنوع**:
   - `ListView(children: [...])` لقوائم طويلة
   - `shrinkWrap: true` داخل `SingleChildScrollView` (إلا لو محتاج static-only)
-  - Nested scrollables بدون `CustomScrollView + Slivers` (مغطي في `flutter-feature-development.mdc`)
+  - Nested scrollables بدون `CustomScrollView + Slivers` (مغطي في `feature-development`)
 
 قاعدة بسيطة:
 - قائمة واحدة فقط → `ListView.builder` مباشرة.
@@ -65,7 +65,7 @@ class _TitleSection extends StatelessWidget {
   - 4+ API calls متوازية
   - أو response كبير (20+ items مع nested objects)
   - أو user شكا من jank أثناء التحميل
-- **استخدم** `compute()` أو isolate كما في `flutter-feature-development.mdc`.
+- **استخدم** `compute()` أو isolate كما في `feature-development`.
 
 ### 4. Avoid Unnecessary Rebuilds
 

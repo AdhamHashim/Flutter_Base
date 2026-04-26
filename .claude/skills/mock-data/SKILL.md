@@ -5,6 +5,11 @@ description: Mock data switching system — environment variable based, unified 
 
 # Skill: Mock Data System — Flutter_Base
 
+<!-- centralized-rules -->
+> **⚠️ Mock data ممنوع تلقائياً.** See `no-mock-without-permission` skill — لا تضيف mock data بدون طلب صريح من المستخدم.
+
+
+
 ## Purpose
 
 نظام موحد للـ switch بين mock data و real API عبر environment variable.

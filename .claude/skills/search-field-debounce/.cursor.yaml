@@ -1,0 +1,1 @@
+globs: ["lib/src/features/**/widgets/**/*.dart"]
