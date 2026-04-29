@@ -14,5 +14,5 @@ void setUpServiceLocator() {
 }
 
 void setUpGeneralDependencies() {
-  injector.registerFactory<NotificationService>(() => NotificationService());
+  injector.registerLazySingleton<NotificationService>(() => NotificationService());
 }

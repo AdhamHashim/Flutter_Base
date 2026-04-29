@@ -48,8 +48,8 @@ class DioService implements NetworkService {
           maxWidth: 100,
         ),
       );
-      _dio.interceptors.add(UnAuthenticatedInterceptor.instance);
     }
+    _dio.interceptors.add(UnAuthenticatedInterceptor.instance);
   }
 
   Future<String> getBaseUrl() async {
